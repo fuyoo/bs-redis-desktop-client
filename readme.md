@@ -43,20 +43,20 @@
 ## 软件预览
 
 **软件主界面**
-![1](./imgs/1.png)
+![1](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/1.png)
 
 **redis基本信息**
-![2](./imgs/2.png)
+![2](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/2.png)
 
 **key查看界面**
-![3](./imgs/3.png)
+![3](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/3.png)
 
 **redis配置信息详情**
 
-![4](./imgs/4.png)
+![4](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/4.png)
 
 **Pub/Sub调试**
-![5](./imgs/5.png)
+![5](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/5.png)
 
 ## 欢迎各位有兴趣的朋友提交PR
 
