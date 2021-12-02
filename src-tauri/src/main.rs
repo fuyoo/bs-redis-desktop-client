@@ -20,6 +20,7 @@ fn main() {
     if cfg!(debug_assertions) {
         env_logger::init();
     }
+    app::lock_single();
     let _app = tauri::Builder::default()
         .setup(|_app| {
             if !app::init_app_dir() {
@@ -76,6 +77,6 @@ fn main() {
         ])
         .build(tauri::generate_context!())
         .expect("发生了未知错误！");
-    app::lock_single();
+
     _app.run(app::handle_app_event);
 }

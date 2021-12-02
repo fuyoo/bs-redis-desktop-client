@@ -6,11 +6,12 @@ use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
 use std::{
     fs::create_dir_all,
-    io::{Read, Write},
     path::{Path, PathBuf},
     ptr::null,
     result::Result::Ok,
 };
+#[cfg(not(target_os = "windows"))]
+use std:: io::{Read, Write};
 use tauri::{
     command, AppHandle, CustomMenuItem, Event, Manager, Menu, SystemTray, SystemTrayEvent, Window,
     WindowMenuEvent, Wry,
@@ -168,6 +169,7 @@ pub fn handle_app_event(app_handle: &AppHandle<Wry>, event: Event) {
 }
 
 /// 创建pid文件
+#[cfg(not(target_os = "windows"))]
 pub fn crete_pid_file() {
     let pid = std::path::PathBuf::from(&APP.lock().app_dir).join("app.pid");
     let id = std::process::id();
