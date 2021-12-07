@@ -4,10 +4,11 @@
  */
 use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
+#[cfg(target_os = "windows")]
+ use ptr::null;
 use std::{
     fs::create_dir_all,
     path::{Path, PathBuf},
-    ptr::null,
     result::Result::Ok,
 };
 #[cfg(not(target_os = "windows"))]
