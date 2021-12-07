@@ -137,6 +137,7 @@ export default {
 
   .pre {
     margin: 15px;
+    word-break: break-all;
   }
 }
 </style>

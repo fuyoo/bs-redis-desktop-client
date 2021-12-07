@@ -17,7 +17,7 @@ tauri-build = { version = "1.0.0-beta.4" }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.0.0-beta.8", features = ["api-all", "system-tray", "updater"] }
+tauri = { version = "1.0.0-beta.8", features = ["api-all", "system-tray"] }
 uuid = { version = "0.8.2", features = ['v4'] }
 lazy_static = "1.4.0"
 parking_lot = "0.11.2"
@@ -30,11 +30,11 @@ tokio = { version = "1", features = ["full"] }
 libc = "0.2.106"
 
 [target.'cfg(windows)'.dependencies]
-windows = {version="^0.24", features=[
+windows = {version="^0.24", features= [
     "Win32_Foundation",
     "Win32_Security",
     "Win32_System_Threading",
-]}
+] }
 
 [features]
 default = ["custom-protocol"]
