@@ -1,64 +1,66 @@
 # BS Redis Desktop Client
+English|[中文](./readme_cn.md)
 
 > BS Redis Desktop Client rust + tauri
+> The BS redis desktop client is powered by Rust and Tauri, with very small weight, beautiful interface and faster running speed!
 
-## 为什么有这个工具?
+## why have this tool?
 
-* 太多的工具基于electron，太大太重。
-* rdm 对于我来说太丑了。
-* 基于rust和tauri的工具又快又轻。
-* 基于html的tauri让我可以轻松创建一个漂亮的GUI界面。
+* more tools based on electron，too heavy and large。
+* rdm so ugly for me。
+* rust and tauri fast and minimal samll。
+* html make me crate a pretty interface。
 
-## 软件下载及交流
+## Software download and communication
 
-* 软件下载：[软件官网](http://bs.echosocket.com)
-* 交流： QQ群：877290961
+* Software download：[Home Page](http://bs.echosocket.com)
+* Communication： QQ GROUP：877290961
 
-## 开始开发
+## Devlopment
 
-### 目录结构
+### Directory tree
 
 + `/src-tauri` 是 rust + [tauri](https://tauri.studio/) 主文件目录
 + `/ui` 是基于 [vue3](https://v3.vuejs.org/) + [element-plus](https://element-plus.org/zh-CN/) 的前端项目
 
-### 初始化环境
+### Init environment
 
-- 安装 nodejs 和 rust
-- 安装tauri-cli工具
+- install `nodejs` and `rust`
+- install `tauri-cli` tools
   `cargo install tauri-cli --version ^1.0.0-beta`
-- 到ui目录执行
-  `yarn install` 或者 `npm install` 安装依赖，
+- cd `ui` and execute the following command
+  `yarn install` or `npm install` install the dependence
 
-### 本地调试
+### Debugger
 
-- 在ui目录中执行 `yarn dev` 或者 `npm run dev` 启动ui界面
-- 在另起一个窗口，在当前目录下执行 `cargo tauri dev`
+- at `ui` directory execute `yarn dev` or `npm run dev` run front end
+- at other terminal exceute `cargo tauri dev` run tauri 
 
-### 其他
+### Other
 
-- 项目打包：在当前目录下执行 `cargo tauri build`
-- 更改图标：在ui目录执行 `yarn tauri icon 图片绝对路径` 或者 `npm run tauri icon 图片绝对路径`
+- packake：at `src-tauri` dir execute `cargo tauri build`
+- app icon：at `ui` dir  execute `yarn tauri icon "image absoute path"` or `npm run tauri icon "image absoute path"`
 
 
 ## 软件预览
 
-**软件主界面**
+**software home**
 ![1](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/1.png)
 
-**redis基本信息**
+**redis base info**
 ![2](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/2.png)
 
-**key查看界面**
+**key details**
 ![3](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/3.png)
 
-**redis配置信息详情**
+**redis config details**
 
 ![4](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/4.png)
 
-**Pub/Sub调试**
+**Pub/Sub Debugger**
 ![5](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/5.png)
 
-## 欢迎各位有兴趣的朋友提交PR
+## if you are interested for this project please make a PR! thanks a lot!
 
 ## LICENSE
 [MIT](./LICENSE)
