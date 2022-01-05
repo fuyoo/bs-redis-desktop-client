@@ -79,6 +79,14 @@ impl<T> Response<T> {
             msg: msg.to_string(),
         }
     }
+
+    pub fn ok(data: T, msg: &str) -> Self {
+        Self::new(200, data, msg)
+    }
+
+    pub fn err(data: T, msg: &str) -> Self {
+        Self::new(300, data, msg)
+    }
 }
 
 /// 创建任务栏图标

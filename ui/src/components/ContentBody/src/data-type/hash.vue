@@ -132,7 +132,10 @@ export default {
         ...this.pager
       })
           .then(res => {
-            this.tableData = res.data.records
+            this.tableData = res.data.records.map(kv => ({
+              key: String.fromCharCode(...kv.key),
+              value: String.fromCharCode(...kv.value),
+            }))
 
             if (res.data.cursor === 0) {
               this.isEnd = true
