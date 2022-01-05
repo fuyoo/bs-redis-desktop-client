@@ -5,7 +5,7 @@
 use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
 #[cfg(target_os = "windows")]
- use ptr::null;
+use std::ptr::null;
 use std::{
     fs::create_dir_all,
     path::{Path, PathBuf},
@@ -78,6 +78,14 @@ impl<T> Response<T> {
             data,
             msg: msg.to_string(),
         }
+    }
+
+    pub fn ok(data: T, msg: &str) -> Self {
+        Self::new(200, data, msg)
+    }
+
+    pub fn err(data: T, msg: &str) -> Self {
+        Self::new(300, data, msg)
     }
 }
 

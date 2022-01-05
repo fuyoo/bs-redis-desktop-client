@@ -653,7 +653,7 @@ pub async fn slice_list(key: String, start: isize, end: isize) -> Response<bool>
 #[derive(Debug, Deserialize, Serialize)]
 pub struct HashData {
     pub cursor: isize,
-    pub records: Vec<HashMap<String, String>>,
+    pub records: Vec<HashMap<String, Vec<u8>>>,
 }
 
 #[command]
@@ -691,9 +691,9 @@ pub async fn scan_hash_data(
                                 match v {
                                     Value::Data(data) => {
                                         if k % 2 == 0 {
-                                            key.push(String::from_utf8(data.clone())?);
+                                            key.push(data.clone());
                                         } else {
-                                            val.push(String::from_utf8(data.clone())?);
+                                            val.push(data.clone());
                                         }
                                     }
                                     _ => {}
@@ -715,8 +715,8 @@ pub async fn scan_hash_data(
         Ok(hash_data)
     });
     match res {
-        Ok(data) => Response::new(200, Some(data), "查询成功！"),
-        Err(e) => Response::new(200, None, &format!("{}", e)),
+        Ok(data) => Response::ok(Some(data), "查询成功！"),
+        Err(e) => Response::err(None, &format!("{}", e)),
     }
 }
 
