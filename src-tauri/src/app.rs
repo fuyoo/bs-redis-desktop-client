@@ -190,15 +190,14 @@ pub fn crete_pid_file() {
 pub fn lock_single() {
     unsafe {
         let _ = OpenMutexW(0, true, "bs_redis_desktop_client@fuyoo");
-        if let WIN32_ERROR(code) = GetLastError() {
-            if code == 2 {
-                // 创建锁
-                let _ =  CreateMutexW(null(),true,"bs_redis_desktop_client@fuyoo");
-            }  else {
-                // 已经存在了，退出
-                send_wake_up();
-                std::process::exit(0);
-            }
+        let WIN32_ERROR(code) = GetLastError();
+        if code == 2 {
+            // 创建锁
+            let _ =  CreateMutexW(null(),true,"bs_redis_desktop_client@fuyoo");
+        }  else {
+            // 已经存在了，退出
+            send_wake_up();
+            std::process::exit(0);
         }
     }
 }
