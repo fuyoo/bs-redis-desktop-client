@@ -25,8 +25,8 @@ use tauri::{SystemTrayMenu, SystemTrayMenuItem};
 use tokio::net::UdpSocket;
 #[cfg(target_os = "windows")]
 use windows::Win32::{
-    Foundation::{GetLastError, PSTR, WIN32_ERROR},
-    System::Threading::CreateMutexA,
+    Foundation::{GetLastError, WIN32_ERROR},
+    System::Threading::{OpenMutexW,CreateMutexW},
 };
 
 lazy_static! {
@@ -189,14 +189,15 @@ pub fn crete_pid_file() {
 #[cfg(target_os = "windows")]
 pub fn lock_single() {
     unsafe {
-        let _ = CreateMutexA(null(), true, PSTR(&mut 125));
-        let error = GetLastError();
-        match error {
-            WIN32_ERROR(code) => {
-                if code != 0 {
-                    send_wake_up();
-                    std::process::exit(0);
-                }
+        let _ = OpenMutexW(0, true, "bs_redis_desktop_client@fuyoo");
+        if let WIN32_ERROR(code) = GetLastError() {
+            if code == 2 {
+                // 创建锁
+                let _ =  CreateMutexW(null(),true,"bs_redis_desktop_client@fuyoo");
+            }  else {
+                // 已经存在了，退出
+                send_wake_up();
+                std::process::exit(0);
             }
         }
     }
