@@ -34,7 +34,9 @@ windows = {version="^0.24", features= [
     "Win32_Foundation",
     "Win32_Security",
     "Win32_System_Threading",
+    "Win32_UI_WindowsAndMessaging"
 ] }
+winreg = "0.10.1"
 
 [features]
 default = ["custom-protocol"]

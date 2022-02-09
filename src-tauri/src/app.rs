@@ -12,7 +12,7 @@ use std::{
     result::Result::Ok,
 };
 #[cfg(not(target_os = "windows"))]
-use std:: io::{Read, Write};
+use std::io::{Read, Write};
 use tauri::{
     command, AppHandle, CustomMenuItem, Event, Manager, Menu, SystemTray, SystemTrayEvent, Window,
     WindowMenuEvent, Wry,
@@ -26,9 +26,14 @@ use tokio::net::UdpSocket;
 #[cfg(target_os = "windows")]
 use windows::Win32::{
     Foundation::{GetLastError, WIN32_ERROR},
-    System::Threading::{OpenMutexW,CreateMutexW},
+    System::Threading::{OpenMutexW, CreateMutexW},
 };
-
+#[cfg(target_os = "windows")]
+use winreg::enums::*;
+#[cfg(target_os = "windows")]
+use winreg::RegKey;
+#[cfg(target_os = "windows")]
+use windows::Win32::UI::WindowsAndMessaging::{MessageBoxW, MB_OK};
 lazy_static! {
     pub static ref APP: Mutex<App> = Mutex::new(App::new());
 }
@@ -185,6 +190,7 @@ pub fn crete_pid_file() {
     let mut fd = std::fs::File::create(pid).unwrap();
     let _ = fd.write_all(format!("{}", id).as_bytes()).unwrap();
 }
+
 /// 锁定单例模式 windows
 #[cfg(target_os = "windows")]
 pub fn lock_single() {
@@ -193,8 +199,8 @@ pub fn lock_single() {
         let WIN32_ERROR(code) = GetLastError();
         if code == 2 {
             // 创建锁
-            let _ =  CreateMutexW(null(),true,"bs_redis_desktop_client@fuyoo");
-        }  else {
+            let _ = CreateMutexW(null(), true, "bs_redis_desktop_client@fuyoo");
+        } else {
             // 已经存在了，退出
             send_wake_up();
             std::process::exit(0);
@@ -229,6 +235,7 @@ pub fn lock_single() {
         }
     }
 }
+
 /// 发送拉起请求
 fn send_wake_up() {
     tauri::async_runtime::block_on(async {
@@ -239,6 +246,35 @@ fn send_wake_up() {
         }
         res.send_to(&data, "127.0.0.1:24254").await.unwrap();
     });
+}
+#[cfg(target_os = "windows")]
+fn open_reg_key() -> std::io::Result<()> {
+    // first find current user reg table
+    let current_key = RegKey::predef(HKEY_CURRENT_USER);
+    let wv2 = current_key.open_subkey("Software\\Microsoft\\EdgeUpdate\\Clients\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}");
+    if let Ok(key) = wv2 {
+        let res: std::io::Result<String> = key.get_value("pv");
+        if let Ok(_) = res {
+            return Ok(());
+        }
+    };
+    // then find all account reg table
+    let hklm = RegKey::predef(HKEY_LOCAL_MACHINE);
+    let w2 = hklm.open_subkey("SOFTWARE\\WOW6432Node\\Microsoft\\EdgeUpdate\\Clients\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}")?;
+    let _: String = w2.get_value("pv")?;
+    Ok(())
+}
+
+//windows下检查是否安装了WebView2
+#[cfg(target_os = "windows")]
+pub fn webview2_is_installed() {
+    if let Err(_) = open_reg_key() {
+        unsafe {
+            MessageBoxW(None, "WebView2运行时未找到，点击确定按钮去安装吧！", "出错啦！", MB_OK);
+            let _ = tauri::api::shell::open("https://developer.microsoft.com/zh-cn/microsoft-edge/webview2/#download-section".to_string(), None);
+            std::process::exit(0);
+        }
+    };
 }
 
 #[command]
