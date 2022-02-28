@@ -1,6 +1,6 @@
 #![cfg_attr(
-    all(not(debug_assertions), target_os = "windows"),
-    windows_subsystem = "windows"
+all(not(debug_assertions), target_os = "windows"),
+windows_subsystem = "windows"
 )]
 
 mod app;
@@ -16,13 +16,18 @@ extern crate rusqlite;
 #[macro_use]
 extern crate anyhow;
 
+
 fn main() {
     if cfg!(debug_assertions) {
         env_logger::init();
     }
+
     app::lock_single();
     let _app = tauri::Builder::default()
         .setup(|_app| {
+            if cfg!(target_os = "windows") {
+                app::webview2_is_installed();
+            }
             if !app::init_app_dir() {
                 panic!("工作目录初始化失败！");
             }
