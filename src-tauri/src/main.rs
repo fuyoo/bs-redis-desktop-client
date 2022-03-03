@@ -25,9 +25,8 @@ fn main() {
     app::lock_single();
     let _app = tauri::Builder::default()
         .setup(|_app| {
-            if cfg!(target_os = "windows") {
-                app::webview2_is_installed();
-            }
+            #[cfg(target_os = "windows")]
+            app::webview2_is_installed();
             if !app::init_app_dir() {
                 panic!("工作目录初始化失败！");
             }
