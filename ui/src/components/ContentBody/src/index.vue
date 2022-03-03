@@ -8,10 +8,10 @@
         <icon name="layout-column-line"></icon>
       </div>
       <button class="tab-item" :class="{'tab-active':tab === 'BaseInfo'}" @click="tab = 'BaseInfo'">
-        信息
+        {{ i18n.mainPage.content.tabBar.info }}
       </button>
       <button class="tab-item" :class="{'tab-active':tab === 'DetailInfo'}" @click="tab = 'DetailInfo'">
-        数据
+        {{ i18n.mainPage.content.tabBar.data }}
       </button>
 
       <button v-if="openPubSub" class="tab-item" :class="{'tab-active':tab === 'PubSub'}" @click="tab = 'PubSub'">
@@ -21,7 +21,7 @@
     <component :is="tab"></component>
   </div>
   <div class="not-connect" v-else>
-    <el-empty description="没有连接"></el-empty>
+    <el-empty :description="i18n.mainPage.content.dataPage.notConnectText"></el-empty>
   </div>
 </template>
 
@@ -75,7 +75,8 @@ export default {
     let store = useStore()
     return {
       menuShow: computed(() => store.state.menuShow),
-      clientInfo: computed(() => store.state.clientInfo)
+      clientInfo: computed(() => store.state.clientInfo),
+      i18n: computed(() => store.state.i18n)
     }
   }
 }

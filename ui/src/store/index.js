@@ -1,6 +1,7 @@
 import {createStore} from 'vuex'
 import {ElMessage} from 'element-plus'
 import {invoke} from '@tauri-apps/api'
+import i18n from ":/i18n";
 
 const store = createStore({
     state() {
@@ -8,14 +9,16 @@ const store = createStore({
             connectionList: [],
             menuShow: true,
             clientInfo: {},
-            pubsub: []
+            pubsub: [],
+            i18n: i18n("en")
         }
     },
     getters: {
         clientInfo: state => state.clientInfo,
         menuShow: state => state.menuShow,
         connectionList: state => state.connectionList,
-        pubsub: state => state.pubsub
+        pubsub: state => state.pubsub,
+        i18n: state => state.i18n
     },
     mutations: {
         updatePubSub(state, payload) {

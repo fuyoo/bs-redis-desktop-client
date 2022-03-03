@@ -4,7 +4,7 @@
       <div class="new-connection">
         <el-button @click="newConnectionFn" style="width: 100%" type="primary" size="mini">
           <icon name="add-line"></icon>
-          添加新连接
+          {{ i18n.mainPage.menu.button }}
         </el-button>
       </div>
       <div class="conn-list-container">
@@ -18,30 +18,31 @@
                 <div class="action">
                   <el-button type="primary" size="mini" @click="editConnectionFn(item)">
                     <icon name="edit-fill"></icon>
-                    编辑
+                    {{ i18n.mainPage.menu.listButton.edit }}
                   </el-button>
                   <el-button type="primary" size="mini" @click="deleteConnectionFn(item.id)">
                     <icon name="delete-bin--fill"></icon>
-                    删除
+                    {{ i18n.mainPage.menu.listButton.delete }}
                   </el-button>
                   <el-button :loading="connectingLoading" type="primary" v-if="info.id === item.id "
                              @click="toggleConnectFn(item)" size="mini">
                     <icon name="link-unlink-m"></icon>
-                    断开
+                    {{ i18n.mainPage.menu.listButton.disconnect }}
                   </el-button>
                   <el-button :loading="connectingLoading" type="primary" v-else size="mini"
                              @click="toggleConnectFn(item)">
                     <icon name="link-m"></icon>
-                    连接
+                    {{ i18n.mainPage.menu.listButton.connect }}
                   </el-button>
                 </div>
                 <div class="conn-list" v-if="info.databases && info.id === item.id">
                   <div class="conn-list-item" :class="{active: info.id === item.id && info.db === index-1+''}"
                        v-for="index in Number(info.databases)" @click="chooseDatabaseFn(index - 1 +'')">
                   <span>
-                    <icon name="database--fill"></icon> 数据库 {{ index - 1 }}
+                    <icon name="database--fill"></icon> {{ i18n.mainPage.menu.listItemName }} {{ index - 1 }}
                   </span>
-                    <span class="using" v-if="info.id === item.id && info.db === index-1+''">使用中</span>
+                    <span class="using"
+                          v-if="info.id === item.id && info.db === index-1+''">{{ i18n.mainPage.menu.status }}</span>
                   </div>
                 </div>
               </div>
@@ -59,6 +60,7 @@ import {invoke} from '@tauri-apps/api/tauri'
 import Dialog from './dialog'
 import {computed} from 'vue'
 import {useStore} from 'vuex'
+import {mapGetters} from "vuex";
 
 export default {
   name: 'DatabaseMenu',
@@ -102,6 +104,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['i18n']),
     /**
      * 是否显示菜单
      * @returns {string}
@@ -139,7 +142,7 @@ export default {
           .then(async res => {
             if (res.code === 200) {
               this.info.db = db
-              this.$store.dispatch('setClientInfo',  Object.assign({status:true},this.info))
+              this.$store.dispatch('setClientInfo', Object.assign({status: true}, this.info))
             }
           })
     },
@@ -228,6 +231,7 @@ export default {
   user-select: none;
   -webkit-user-select: none;
   flex-shrink: 0;
+
   .new-connection {
     display: flex;
     justify-content: center;
@@ -304,6 +308,7 @@ export default {
     .conn-list {
       border-top: 1px solid $border;
       padding: 10px 0;
+
       .conn-list-item {
         padding: 0 10px;
         line-height: 30px;

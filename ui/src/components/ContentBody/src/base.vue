@@ -13,7 +13,7 @@
         </div>
       </div>
       <div class="look-more">
-        <el-button type="primary" @click="lookMoreFn">查看更多</el-button>
+        <el-button type="primary" @click="lookMoreFn">{{ i18n.mainPage.content.baseInfo.lookMore }}</el-button>
       </div>
     </div>
   </el-scrollbar>
@@ -23,6 +23,7 @@
 import {invoke} from '@tauri-apps/api/tauri'
 import {WebviewWindow} from '@tauri-apps/api/window'
 import {mapGetters} from 'vuex'
+
 export default {
   name: 'BaseInfo',
   data() {
@@ -80,9 +81,9 @@ export default {
         return false
       }
     },
-    ...mapGetters(['clientInfo'])
+    ...mapGetters(['clientInfo','i18n'])
   },
-  watch:{
+  watch: {
     clientInfo() {
       this.getRedisInfo()
     }
@@ -141,7 +142,7 @@ export default {
     lookMoreFn() {
       new WebviewWindow('redis-config-details', {
         url: '/#/detail',
-        title: '配置详情',
+        title: this.i18n.mainPage.content.baseInfo.newWindowTitle,
         'center': true,
         skipTaskbar: true,
         alwaysOnTop: true

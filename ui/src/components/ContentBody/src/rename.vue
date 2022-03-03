@@ -1,5 +1,5 @@
 <template>
-  <el-dialog width="360px" title="重命名key" v-model="visible" :close-on-click-modal="false">
+  <el-dialog width="360px" :title="lang()" v-model="visible" :close-on-click-modal="false">
     <el-form ref="form" label-width="80px" :model="form">
       <el-form-item prop="key" label="key" :rules="{required:true,message:'请输入key'}">
         <el-input clearable v-model="form.key" :readonly="true" placeholder="请输入key"></el-input>
@@ -17,7 +17,7 @@
 
 <script>
 import {invoke} from '@tauri-apps/api/tauri';
-
+import {mapGetters} from "vuex";
 export default {
   name: 'rename',
   data() {
@@ -26,7 +26,13 @@ export default {
       form: {}
     }
   },
+  computed:{
+    ...mapGetters(['i18n'])
+  },
   methods: {
+    lang(){
+      return this.i18n.mainPage.content.dataPage.renameDialog
+    },
     initFormData() {
       this.form = {
         newKey: '',

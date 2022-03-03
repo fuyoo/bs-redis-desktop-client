@@ -3,7 +3,7 @@
 
     <div class="key-container" ref="keyContainer" :style="{width: keyContainerWidth+'px'}">
       <div class="search">
-        <input @keyup="autoFilterFn" v-model="query" type="text" class="s-i" placeholder="请输入查询表达式(*a*)">
+        <input @keyup="autoFilterFn" v-model="query" type="text" class="s-i" :placeholder="lang().searchPlaceHolder">
         <button class="s-btn" @click="filterKeyFn">
           <icon name="search-line"></icon>
         </button>
@@ -11,9 +11,10 @@
       <div class="keys" v-loading="keysLoading">
         <div style="line-height: 30px;font-size: 14px;margin-left: -5px">
           <icon name="database--line"></icon>&nbsp;
-          <span style="font-size: 12px">数据库{{ clientInfo.db }}</span>
+          <span style="font-size: 12px">{{lang().databaseList.title}}&nbsp;{{ clientInfo.db }}</span>
         </div>
-        <el-tree-v2 @node-click="chooseKeyFn" width="100%" :height="treeHeight" icon="div" ref="etv2" empty-text="没有数据"
+        <el-tree-v2 @node-click="chooseKeyFn" width="100%" :height="treeHeight" icon="div"
+                    ref="etv2" :empty-text="lang().databaseList.emptyTreeText"
                     :props="{label:'title'}"></el-tree-v2>
       </div>
       <div class="move-bar" @mousedown="mousedownFn"></div>
@@ -22,35 +23,35 @@
       <div class="action-bar">
         <el-button size="mini" type="primary" @click="newkeyFn">
           <icon name="add-line"></icon>
-          新增
+          {{lang().actionBar.add}}
         </el-button>
         <el-button size="mini" v-if="key" type="primary" @click="renameFn">
           <icon name="edit--line"></icon>
-          重命名
+          {{lang().actionBar.rename}}
         </el-button>
         <el-button size="mini" v-if="key" type="primary" @click="ttlFn">
           <icon name="time-line"></icon>
-          TTL
+          {{lang().actionBar.ttl}}
         </el-button>
         <el-button size="mini" v-if="key" type="primary" @click="delFn">
           <icon name="delete-bin--line2"></icon>
-          删除
+          {{lang().actionBar.del}}
         </el-button>
         <el-button size="mini" type="primary" v-if="key" @click="refreshFn">
           <icon name="refresh-line"></icon>
-          刷新
+          {{lang().actionBar.refresh}}
         </el-button>
       </div>
       <el-scrollbar class="info-container" v-loading="keyInfoLoading">
         <div class="wallpaper" v-if="key">
           <div class="key-base-info">
-            <div class="kbi-title">Key基础信息</div>
+            <div class="kbi-title">{{lang().tableInfo.title}}</div>
             <div class="kbi-table">
               <div class="kbi-tr">
-                <div class="kbi-td-1">key</div>
-                <div class="kbi-td-2">类型</div>
-                <div class="kbi-td-3">大小</div>
-                <div class="kbi-td-4">TTL(毫秒)</div>
+                <div class="kbi-td-1">{{lang().tableInfo.tHeader[0]}}</div>
+                <div class="kbi-td-2">{{lang().tableInfo.tHeader[1]}}</div>
+                <div class="kbi-td-3">{{lang().tableInfo.tHeader[2]}}</div>
+                <div class="kbi-td-4">{{lang().tableInfo.tHeader[3]}}</div>
               </div>
               <div class="kbi-tr">
                 <div class="kbi-td-1">{{ key }}</div>
@@ -63,7 +64,7 @@
           <component ref="dataCMP" :is="keyInfo.t" :k="key"></component>
         </div>
         <div class="none" v-else>
-          <el-empty description="请选择KEY"></el-empty>
+          <el-empty :description="lang().notChooseKey"></el-empty>
         </div>
       </el-scrollbar>
     </div>
@@ -124,7 +125,7 @@ export default {
     treeHeight() {
       return this.bodyHeight - 95
     },
-    ...mapGetters(['clientInfo'])
+    ...mapGetters(['clientInfo','i18n'])
   },
   watch: {
     clientInfo() {
@@ -156,6 +157,9 @@ export default {
     this.fetchKeysData('*')
   },
   methods: {
+    lang(){
+      return this.i18n.mainPage.content.dataPage
+    },
     /**
      *
      */

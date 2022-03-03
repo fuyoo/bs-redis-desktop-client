@@ -1,7 +1,8 @@
 <template>
-  <el-dialog width="360px" title="添加新key" v-model="visible" :close-on-click-modal="false">
+  <el-dialog width="360px" :title="lang().title" v-model="visible" :close-on-click-modal="false">
     <el-form ref="form" label-width="80px" :model="form">
-      <el-form-item prop="t" label="类型" :rules="{required:true,message:'请选择类型'}">
+      <el-form-item prop="t" :label="lang().form.type"
+                    :rules="{required:true,message:lang().ruleMessage.type}">
         <el-select clearable style="width: 100%" v-model="form.t">
           <el-option label="string" value="string"></el-option>
           <el-option label="list" value="list"></el-option>
@@ -10,31 +11,34 @@
           <el-option label="zset" value="zset"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item prop="key" label="key" :rules="{required:true,message:'请输入key'}">
-        <el-input clearable v-model="form.key" placeholder="请输入key"></el-input>
+      <el-form-item prop="key" :label="lang().form.key" :rules="{required:true,message:lang().ruleMessage.key}">
+        <el-input clearable v-model="form.key" :placeholder="lang().form.key"></el-input>
       </el-form-item>
-      <el-form-item prop="field" label="字段" :rules="{required:true,message:'请输入字段'}" v-if="form.t === 'hash'">
-        <el-input clearable v-model="form.field" placeholder="请输入字段"></el-input>
+      <el-form-item prop="field" :label="lang().form.field"
+                    :rules="{required:true,message:lang().ruleMessage.field}" v-if="form.t === 'hash'">
+        <el-input clearable v-model="form.field" :placeholder="lang().form.field"></el-input>
       </el-form-item>
-      <el-form-item prop="member" label="成员" :rules="{required:true,message:'请输入成员'}" v-if="form.t === 'zset'">
-        <el-input clearable v-model="form.member" placeholder="请输入成员"></el-input>
+      <el-form-item prop="member" :label="lang().form.member"
+                    :rules="{required:true,message:lang().ruleMessage.member}" v-if="form.t === 'zset'">
+        <el-input clearable v-model="form.member" :placeholder="lang().form.member"></el-input>
       </el-form-item>
-      <el-form-item prop="value" label="值" :rules="{required:true,message:'请输入值'}">
-        <el-input clearable v-model="form.value" placeholder="请输入值"></el-input>
+      <el-form-item prop="value" :label="lang().form.value"
+                    :rules="{required:true,message:lang().ruleMessage.value}">
+        <el-input clearable v-model="form.value" :placeholder="lang().form.value"></el-input>
       </el-form-item>
-      <el-form-item prop="time_type" label="时间类型" v-if="form.t === 'string'">
+      <el-form-item prop="time_type" :label="lang().form.timeType" v-if="form.t === 'string'">
         <el-select clearable v-model="form.timeType" style="width: 100%">
-          <el-option label="秒" value="ttl"></el-option>
-          <el-option label="毫秒" value="pttl"></el-option>
+          <el-option :label="lang().form.timeTypeOption.s" value="ttl"></el-option>
+          <el-option :label="lang().form.timeTypeOption.ms" value="pttl"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item prop="expire" label="过期时间"
+      <el-form-item prop="expire" :label="lang().form.expire"
                     v-if="form.t === 'string'">
-        <el-input v-model="form.expire" clearable placeholder="默认不过期"></el-input>
+        <el-input v-model="form.expire" clearable :placeholder="lang().form.expirePlaceHolder"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitFn">提交</el-button>
-        <el-button type="danger" @click="visible = false">取消</el-button>
+        <el-button type="primary" @click="submitFn">{{ lang().form.button.submit }}</el-button>
+        <el-button type="danger" @click="visible = false">{{lang().form.button.cancel}}</el-button>
       </el-form-item>
     </el-form>
   </el-dialog>
@@ -42,6 +46,7 @@
 
 <script>
 import {invoke} from '@tauri-apps/api/tauri';
+import {mapGetters} from "vuex";
 
 export default {
   name: 'newkey',
@@ -52,7 +57,13 @@ export default {
       form: {}
     }
   },
+  computed: {
+    ...mapGetters(['i18n'])
+  },
   methods: {
+    lang() {
+      return this.i18n.mainPage.content.dataPage.dialog
+    },
     initFormData() {
       this.form = {
         t: 'string',
@@ -68,7 +79,7 @@ export default {
       this.initFormData()
       this.key = key
       this.visible = true
-      this.$nextTick(()=>{
+      this.$nextTick(() => {
         this.$refs.form.clearValidate()
       })
     },
