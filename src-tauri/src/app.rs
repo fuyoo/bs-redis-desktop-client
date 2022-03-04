@@ -115,9 +115,9 @@ pub fn create_try() -> SystemTray {
 /// 系统菜单
 #[cfg(not(target_os = "windows"))]
 pub fn create_app_menu() -> Menu {
-    let quit = CustomMenuItem::new("set".to_string(), "设置");
-    let close = CustomMenuItem::new("exit".to_string(), "退出");
-    let submenu = Submenu::new("软件", Menu::new().add_item(quit).add_item(close));
+    let quit = CustomMenuItem::new("set".to_string(), "set");
+    let close = CustomMenuItem::new("exit".to_string(), "exit");
+    let submenu = Submenu::new("system", Menu::new().add_item(quit).add_item(close));
     let menu = Menu::new()
         .add_native_item(MenuItem::Copy)
         .add_submenu(submenu);
@@ -247,6 +247,7 @@ fn send_wake_up() {
         res.send_to(&data, "127.0.0.1:24254").await.unwrap();
     });
 }
+
 #[cfg(target_os = "windows")]
 fn open_reg_key() -> std::io::Result<()> {
     // first find current user reg table

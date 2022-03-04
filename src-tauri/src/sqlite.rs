@@ -43,7 +43,8 @@ pub fn init_table() {
                     id text primary key,
                     auto_refresh bool not null default false,
                     auto_refresh_time number not null default 3,
-                    pubsub bool not null default true
+                    pubsub bool not null default true,
+                    lang text not null default zh
                 )",
             [],
         )?;
@@ -174,11 +175,12 @@ pub async fn update_sys_info(
     auto_refresh: bool,
     auto_refresh_time: isize,
     pubsub: bool,
+    lang: String,
 ) -> Response<bool> {
     let res = exec(|conn| {
         let res = conn.execute(
-            "update sys_info set auto_refresh=?1,auto_refresh_time=?2,pubsub=?3 where id=?4",
-            params![auto_refresh, auto_refresh_time, pubsub, id],
+            "update sys_info set auto_refresh=?1,auto_refresh_time=?2,pubsub=?3,lang=?4 where id=?5",
+            params![auto_refresh, auto_refresh_time, pubsub,lang, id],
         )?;
         if res == 0 {
             return Err(anyhow!("操作失败！"));
@@ -203,6 +205,7 @@ pub struct SysInfo {
     #[serde(rename = "autoRefreshTime")]
     pub auto_refresh_time: isize,
     pub pubsub: bool,
+    pub lang: String
 }
 /// 查询系统信息
 #[command]
@@ -214,6 +217,7 @@ pub async fn query_sys_info() -> Response<Option<SysInfo>> {
                 auto_refresh: row.get("auto_refresh")?,
                 auto_refresh_time: row.get("auto_refresh_time")?,
                 pubsub: row.get("pubsub")?,
+                lang: row.get("lang")?,
             })
         })?;
         Ok(res)
