@@ -390,7 +390,7 @@ export default {
       this.$refs.ttl.show(this.key)
     },
     delFn() {
-      this.$confirm('确定要删除吗？')
+      this.$confirm(this.i18n.mainPage.content.dataPage.deleteKeyConfirmMsg)
           .then(() => {
             invoke('del_key', {key: this.key})
                 .then(res => {

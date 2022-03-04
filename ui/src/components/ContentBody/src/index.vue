@@ -57,7 +57,8 @@ export default {
     getSysInfo() {
       request('query_sys_info')
           .then(res => {
-            const {pubsub} = res.data
+            const {pubsub, lang} = res.data
+            this.$store.dispatch("updateLanguage", lang)
             this.openPubSub = pubsub
             if (pubsub === false) {
               if (this.tab === 'PubSub') {

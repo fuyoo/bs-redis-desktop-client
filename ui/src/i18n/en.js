@@ -89,9 +89,82 @@ export default {
                     },
                 },
                 renameDialog: {
-                    title: "Rename Record"
+                    title: "Rename Record",
+                    form: {
+                        key: "key",
+                        newKey: "new key",
+                        submit: "Submit",
+                        cancel: "Cancel"
+                    },
+                    formRuleMsg: {
+                        key: "Old Key is Required",
+                        newKey: "New Key is Required",
+                    }
+                },
+                ttl: {
+                    title: "Set expire time",
+                    form: {
+                        key: "Key",
+                        timeType: "Type",
+                        timeTypeOption: {
+                            s: "Second",
+                            ms: "Millisecond"
+                        },
+                        expire: "expire",
+                        expirePlaceHolder: "-1 cancel expiration",
+                        submit: "Submit",
+                        cancel: "Cancel"
+                    },
+                    formRuleMsg: {
+                        key: "key is required",
+                        timeType: "timeType is required",
+                        expire: "expire is required"
+                    }
+                },
+                deleteKeyConfirmMsg: "Are you sure to delete this key?"
+            },
+            pubSub: {
+                add: "New Subscribe",
+                refresh: "Refresh List",
+                publish: "Publish",
+                subList: "Subscribe List",
+                emptyResult: "Result Empty",
+                subResult: "Subscribe Result",
+                filterPlaceholder: "filter condition",
+                button: {
+                    submit: "Submit",
+                    cancel: "Cancel"
+                },
+                addDialog: {
+                    title: "Add Subscribe",
+                    form: {
+                        name: "channel name",
+                    },
+                    formRuleMsg: {
+                        name: "channel name is required"
+                    }
+                },
+                publishDialog: {
+                    title: "Publish",
+                    form: {
+                        channel: "Channel",
+                        data: "Data"
+                    },
+                    formRuleMsg: {
+                        channel: "channel name is required",
+                        data: "data is required"
+                    }
                 }
             }
         }
+    },
+    setPage: {
+        autoRefresh: "Auto refresh",
+        autoRefreshTime: "Refresh time",
+        autoRefreshTimePlaceholder: "three seconds is default",
+        pubSub: "Pub/Sub",
+        lang: "Language",
+        save: "Save",
+        cancel: "Cancel"
     }
 }

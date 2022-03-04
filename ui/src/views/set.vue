@@ -1,18 +1,25 @@
 <template>
   <el-scrollbar style="height: 100vh">
-    <el-form class="form" ref="form" :model="form" label-width="80px">
-      <el-form-item label="自动刷新">
+    <el-form class="form" ref="form" :model="form" label-width="120px">
+      <el-form-item :label="i18n.setPage.autoRefresh">
         <el-switch v-model="form.autoRefresh"></el-switch>
       </el-form-item>
-      <el-form-item label="刷新时间" v-if="form.autoRefresh">
-        <el-input type="number" v-model="form.autoRefreshTime" placeholder="默认3秒刷新一次"></el-input>
+      <el-form-item :label="i18n.setPage.autoRefreshTime" v-if="form.autoRefresh">
+        <el-input type="number" v-model="form.autoRefreshTime"
+                  :placeholder="i18n.setPage.autoRefreshTimePlaceholder"></el-input>
       </el-form-item>
-      <el-form-item label="Pub/Sub">
+      <el-form-item :label="i18n.setPage.pubSub">
         <el-switch v-model="form.pubsub"></el-switch>
       </el-form-item>
+      <el-form-item :label="i18n.setPage.lang">
+        <el-select v-model="form.lang">
+          <el-option label="简体中文" value="zh"></el-option>
+          <el-option label="English" value="en"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">保存</el-button>
-        <el-button @click="cancelFn">取消</el-button>
+        <el-button type="primary" @click="onSubmit">{{ i18n.setPage.save }}</el-button>
+        <el-button @click="cancelFn">{{ i18n.setPage.cancel }}</el-button>
       </el-form-item>
     </el-form>
   </el-scrollbar>
@@ -21,6 +28,7 @@
 <script>
 import {request} from ':/tools/invoke';
 import {getCurrent} from '@tauri-apps/api/window';
+import {mapGetters} from "vuex";
 
 export default {
   name: 'set',
@@ -28,6 +36,9 @@ export default {
     return {
       form: {},
     }
+  },
+  computed: {
+    ...mapGetters(['i18n'])
   },
   created() {
     getCurrent().show()
@@ -43,7 +54,7 @@ export default {
           })
     },
     onSubmit() {
-      this.form.autoRefreshTime = Number( this.form.autoRefreshTime)
+      this.form.autoRefreshTime = Number(this.form.autoRefreshTime)
       request('update_sys_info', this.form)
           .then(res => {
             this.alert.success(res.msg)
@@ -56,8 +67,16 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+.el-message {
+  min-width: 200px;
+}
+</style>
+<style scoped lang="scss">
+
+
 .form {
   padding: 20px;
+
 }
 </style>

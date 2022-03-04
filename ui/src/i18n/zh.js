@@ -76,22 +76,96 @@ export default {
                         expire: "过期时间",
                         expirePlaceHolder: "默认为永不过期",
                         button: {
-                            submit:"提交",
-                            cancel:"取消"
+                            submit: "提交",
+                            cancel: "取消"
                         }
                     },
                     ruleMessage: {
-                        type:"类型不能为空",
-                        key:"键不能为空",
-                        value:"值不能为空",
-                        member:"member不能为空",
-                        field:"字段不能为空",
+                        type: "类型不能为空",
+                        key: "键不能为空",
+                        value: "值不能为空",
+                        member: "member不能为空",
+                        field: "字段不能为空",
                     },
                 },
                 renameDialog: {
-                    title: "修改记录"
+                    title: "修改记录",
+                    form: {
+                        key: "key",
+                        newKey: "新key",
+                        submit: "提交",
+                        cancel: "取消"
+                    },
+                    formRuleMsg: {
+                        key: "旧key不能为空",
+                        newKey: "新Key不能为空",
+                    }
+                },
+                ttl: {
+                    title: "设置过期时间",
+                    form: {
+                        key: "Key",
+                        timeType: "时间类型",
+                        timeTypeOption: {
+                            s: "秒",
+                            ms: "毫秒"
+                        },
+                        expire: "时间",
+                        expirePlaceHolder: "-1 取消过期",
+                        submit: "提交",
+                        cancel: "取消"
+                    },
+                    formRuleMsg: {
+                        key: "key不能为空",
+                        timeType: "时间类型不能为空",
+                        expire: "过期时间不能为空"
+                    }
+                },
+                deleteKeyConfirmMsg: "确定要删除这个key吗?",
+            },
+            pubSub: {
+                add: "添加新订阅",
+                refresh: "刷新列表",
+                publish: "发布消息",
+                subList: "订阅列表",
+                emptyResult: "没有数据",
+                subResult: "订阅结果",
+                filterPlaceholder: "过滤条件",
+                button: {
+                    submit: "提交",
+                    cancel: "取消"
+                },
+                addDialog: {
+                    title: "添加新订阅",
+                    form: {
+                        name: "通道名称",
+                    },
+                    formRuleMsg: {
+                        name: "通道名称不能为空"
+                    }
+                },
+                publishDialog: {
+                    title: "发布消息",
+                    form: {
+                        channel: "通道名称",
+                        data: "数据"
+                    },
+                    formRuleMsg: {
+                        channel: "通道名称不能为空",
+                        data: "数据不能为空"
+                    }
                 }
             }
+
         }
+    },
+    setPage: {
+        autoRefresh: "自动刷新",
+        autoRefreshTime: "刷新时间",
+        autoRefreshTimePlaceholder: "默认3秒",
+        pubSub: "Pub/Sub",
+        lang: "语言",
+        save: "保存",
+        cancel: "取消"
     }
 }

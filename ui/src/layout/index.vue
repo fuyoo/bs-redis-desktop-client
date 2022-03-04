@@ -1,10 +1,29 @@
 <template>
-  <router-view></router-view>
+  <el-config-provider :locale="locale">
+    <router-view></router-view>
+  </el-config-provider>
 </template>
 
 <script>
+import zh from 'element-plus/lib/locale/lang/zh-cn'
+import en from "element-plus/lib/locale/lang/en"
+import {mapGetters} from "vuex"
+
 export default {
-  name: 'Layout'
+  name: 'Layout',
+  computed: {
+    ...mapGetters(["i18n", "lang"]),
+    locale() {
+      switch (this.lang) {
+        case "en":
+          return en
+        case "zh":
+          return zh
+        default:
+          return zh
+      }
+    }
+  },
 }
 </script>
 
@@ -15,7 +34,8 @@ body {
   padding: 0;
   overflow: hidden;
 }
-body::before{
+
+body::before {
   content: "";
   position: fixed;
   left: 0;

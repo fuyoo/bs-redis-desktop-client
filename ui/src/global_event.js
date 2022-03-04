@@ -4,6 +4,13 @@ import {getCurrent, WebviewWindow} from '@tauri-apps/api/window';
 import {request} from ':/tools/invoke';
 import set from '::/set';
 
+!(async () => {
+    await request('query_sys_info')
+        .then(async res => {
+            const {lang} = res.data
+            await store.dispatch("updateLanguage", lang)
+        })
+})()
 !(async () => await listen('pubsub', async evt => {
     const {address, channel, port} = evt.payload
     let add0 = t => t > 10 ? '' + t : '0' + t;
@@ -37,9 +44,9 @@ import set from '::/set';
     let current = getCurrent()
     current.setAlwaysOnTop(true)
     current.show()
-    setTimeout(()=>{
+    setTimeout(() => {
         current.setAlwaysOnTop(false)
-    },50)
+    }, 50)
 }))()
 
-!(async  ()=> await request("listen_single"))()
+!(async () => await request("listen_single"))()

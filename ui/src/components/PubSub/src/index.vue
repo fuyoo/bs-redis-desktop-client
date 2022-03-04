@@ -4,18 +4,18 @@
       <div style="width: 10px"></div>
       <el-button type="primary" @click="newListenerFn">
         <icon name="add-line"></icon>
-        新增订阅
+        {{ lang.add }}
       </el-button>
       <el-button type="primary" @click="getChannelList">
         <icon name="refresh-line"></icon>
-        刷新列表
+        {{ lang.refresh }}
       </el-button>
-      <el-button type="primary" @click="publishDataFn">发布数据</el-button>
+      <el-button type="primary" @click="publishDataFn">{{ lang.publish }}</el-button>
     </div>
     <div class="listener">
       <div class="ls-title">
         <icon name="list-check" style="margin-right: 3px"></icon>
-        订阅列表
+        {{ lang.subList }}
       </div>
       <el-scrollbar class="ls-scroller" height="100%" v-if="channelList.length > 0">
         <div class="ls-item" :class="{running:item.stop === 'false'}" v-for="item in channelList">
@@ -24,13 +24,16 @@
           <span class="l-stop" @click="close(item.key)"><icon name="stop-mini-fill"></icon></span>
         </div>
       </el-scrollbar>
-      <el-empty description="暂无订阅列表" v-else></el-empty>
+      <el-empty :description="lang.emptyResult" v-else></el-empty>
     </div>
     <div class="results">
       <div class="filter">
-        <span><icon name="reserved-line" style="margin-right: 3px"></icon>订阅结果</span>
+        <span><icon name="reserved-line" style="margin-right: 3px"></icon>{{
+            lang.subResult
+          }}</span>
         <div class="filter-input">
-          <input class="input" @change="filterChangeFn" type="text" v-model="filterData" placeholder="过滤条件"/>
+          <input class="input" @change="filterChangeFn" type="text" v-model="filterData"
+                 :placeholder="lang.filterPlaceholder"/>
           <span class="s-icon" @click="searchFn">
             <icon name="filter--line"></icon>
           </span>
@@ -54,31 +57,46 @@
             </div>
           </div>
         </div>
-        <el-empty description="暂无订阅数据" v-else></el-empty>
+        <el-empty :description="lang.emptyResult" v-else></el-empty>
       </el-scrollbar>
     </div>
-    <el-dialog title="新增订阅通道" v-model="newListener" :close-on-click-modal="false" width="380px">
-      <el-form ref="form" label-width="80px" :model="form">
-        <el-form-item prop="name" :rules="{required:true,message:'通道名称不能为空',trigger:'blur'}" label="通道名称">
-          <el-input type="form" placeholder="请输入通道名称" v-model="form.name"></el-input>
+    <el-dialog :title="lang.addDialog.title" v-model="newListener" :close-on-click-modal="false" width="380px">
+      <el-form ref="form" label-width="120px" :model="form">
+        <el-form-item prop="name" :rules="{required:true,message:lang.addDialog.formRuleMsg.name,trigger:'blur'}"
+                      :label="lang.addDialog.form.name">
+          <el-input type="form" :placeholder="lang.addDialog.form.name" v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="newListenerLoading" @click="okFn">提交</el-button>
-          <el-button type="primary" :loading="newListenerLoading" @click="newListener = false">取消</el-button>
+          <el-button type="primary" :loading="newListenerLoading" @click="okFn">{{ lang.button.submit }}</el-button>
+          <el-button type="primary" :loading="newListenerLoading" @click="newListener = false">{{
+              lang.button.cancel
+            }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
-    <el-dialog title="发布消息" v-model="publishMsg" :close-on-click-modal="false" width="380px">
+    <el-dialog :title="lang.publishDialog.title" v-model="publishMsg" :close-on-click-modal="false" width="380px">
       <el-form ref="pubForm" label-width="80px" :model="publishForm">
-        <el-form-item prop="channel" :rules="{required:true,message:'通道名称不能为空',trigger:'blur'}" label="通道名称">
-          <el-input placeholder="请输入通道名称" v-model="publishForm.channel"></el-input>
+        <el-form-item prop="channel"
+                      :rules="{required:true,message:lang.publishDialog.formRuleMsg.channel,trigger:'blur'}"
+                      :label="lang.publishDialog.form.channel">
+          <el-input :placeholder="lang.publishDialog.form.channel" v-model="publishForm.channel"></el-input>
         </el-form-item>
-        <el-form-item prop="data" :rules="{required:true,message:'数据不能为空',trigger:'blur'}" label="数据">
-          <el-input type="form" placeholder="请输入通道名称" v-model="publishForm.data"></el-input>
+        <el-form-item prop="data"
+                      :rules="{required:true,message:lang.publishDialog.formRuleMsg.data,trigger:'blur'}"
+                      :label="lang.publishDialog.form.data">
+          <el-input type="form" :placeholder="lang.publishDialog.form.data"
+                    v-model="publishForm.data"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="pubLoading" @click="pubOkFn">提交</el-button>
-          <el-button type="primary" :loading="pubLoading" @click="publishMsg = false">取消</el-button>
+          <el-button type="primary" :loading="pubLoading" @click="pubOkFn">{{
+              lang.button.submit
+            }}
+          </el-button>
+          <el-button type="primary" :loading="pubLoading" @click="publishMsg = false">{{
+              lang.button.cancel
+            }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -95,6 +113,7 @@ export default {
   components: {
     JsonViewer
   },
+
   data() {
     return {
       channelList: [],
@@ -131,7 +150,11 @@ export default {
       })
       return res
     },
-    ...mapGetters(['pubsub'])
+    ...mapGetters(['pubsub', "i18n"]),
+    lang() {
+      console.log(this.i18n.mainPage.content.pubSub)
+      return this.i18n.mainPage.content.pubSub
+    }
   },
   mounted() {
     this.getChannelList()

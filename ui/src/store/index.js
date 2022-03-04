@@ -10,7 +10,8 @@ const store = createStore({
             menuShow: true,
             clientInfo: {},
             pubsub: [],
-            i18n: i18n("en")
+            i18n: i18n("en"),
+            lang: "en"
         }
     },
     getters: {
@@ -18,7 +19,8 @@ const store = createStore({
         menuShow: state => state.menuShow,
         connectionList: state => state.connectionList,
         pubsub: state => state.pubsub,
-        i18n: state => state.i18n
+        i18n: state => state.i18n,
+        lang: state => state.lang
     },
     mutations: {
         updatePubSub(state, payload) {
@@ -35,13 +37,13 @@ const store = createStore({
             }
             if (len >= 10) {
                 state.pubsub.push({
-                    key:channel,
+                    key: channel,
                     ...data
                 })
-                state.pubsub.splice(start,1)
+                state.pubsub.splice(start, 1)
             } else {
                 state.pubsub.push({
-                    key:channel,
+                    key: channel,
                     ...data
                 })
             }
@@ -54,6 +56,17 @@ const store = createStore({
         },
         updateClientInfo(state, data) {
             state.clientInfo = data
+        },
+        updateLanguage(state, data) {
+            switch (data) {
+                case "en":
+                    state.i18n = i18n("en");
+                    state.lang = "en"
+                    break;
+                default:
+                    state.lang = "zh"
+                    state.i18n = i18n("zh");
+            }
         }
     },
     actions: {
@@ -81,6 +94,9 @@ const store = createStore({
         },
         setClientInfo({commit}, data) {
             commit('updateClientInfo', data)
+        },
+        async updateLanguage({commit}, lang) {
+            commit("updateLanguage", lang)
         }
     }
 })
