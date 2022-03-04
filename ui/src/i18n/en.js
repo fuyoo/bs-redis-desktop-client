@@ -121,7 +121,49 @@ export default {
                         expire: "expire is required"
                     }
                 },
-                deleteKeyConfirmMsg: "Are you sure to delete this key?"
+                deleteKeyConfirmMsg: "Are you sure to delete this key?",
+                string: {
+                    title: "Query Result",
+                    format: "Format",
+                    formatPlaceholder: "Format Type"
+                },
+                hash: {
+                    title: "Query Result",
+                    queryPlaceHolder: "query expression",
+                    q: "query",
+                    r: "reset",
+                    a: "add",
+                    tableHeader: ["field", "value", "action"],
+                    tableAction: ["modify", "delete", "detail"],
+                    pager: {
+                        size: "page size",
+                        next: "next",
+                        end: "ended",
+                        reset: "reset flag"
+                    },
+                    dialog: {
+                        modifyTitle: "Modify",
+                        addTitle: "Add",
+                        button: ["submit", "cancel"],
+                        form: {
+                            field: "Field",
+                            value: "Value"
+                        },
+                        ruleMsg: {
+                            field: "field is required",
+                            value: "value is required"
+                        }
+                    },
+                },
+                list: {
+                    title: "Query Result",
+                    button: ["add", "cut"],
+                    tableHeader: ["data", "action"],
+                    tableAction: ["modify", "delete", "detail"],
+                    add:{
+
+                    }
+                }
             },
             pubSub: {
                 add: "New Subscribe",

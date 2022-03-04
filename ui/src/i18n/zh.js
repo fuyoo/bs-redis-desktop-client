@@ -122,6 +122,48 @@ export default {
                     }
                 },
                 deleteKeyConfirmMsg: "确定要删除这个key吗?",
+                string: {
+                    title: "查询结果",
+                    format: "格式化",
+                    formatPlaceholder: "格式化类型"
+                },
+                hash: {
+                    title: "查询结果",
+                    queryPlaceHolder:"请输入查询表达式",
+                    q: "查询",
+                    r: "重置",
+                    a: "添加",
+                    tableHeader: ["字段", "值", "操作"],
+                    tableAction: ["修改", "删除", "详情"],
+                    pager: {
+                        size: "每一页条数",
+                        next: "下一页",
+                        end: "已经是最后一页了",
+                        reset: "重置游标"
+                    },
+                    dialog: {
+                        modifyTitle: "修改",
+                        addTitle: "添加",
+                        button: ["提交", "取消"],
+                        form: {
+                            field: "字段",
+                            value: "值"
+                        },
+                        ruleMsg: {
+                            field: "字段不能为空",
+                            value: "值不能为空"
+                        }
+                    },
+                },
+                list: {
+                    title: "查询结果",
+                    button: ["添加", "裁剪"],
+                    tableHeader: ["数据", "裁剪"],
+                    tableAction: ["修改", "删除", "详情"],
+                    add:{
+
+                    }
+                }
             },
             pubSub: {
                 add: "添加新订阅",

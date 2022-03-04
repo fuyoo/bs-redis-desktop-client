@@ -1,9 +1,9 @@
 <template>
   <div class="string">
     <div class="key-data-title">
-      <span><span class="highlight">{{ k }}</span> 查询结果</span>
-      <div>格式化：
-        <el-select style="width: 100px" v-model="dataType" placeholder="格式化方式">
+      <span><span class="highlight">{{ k }}</span> {{ lang.title }}</span>
+      <div>{{ lang.format }}：
+        <el-select style="width: 100px" v-model="dataType" :placeholder="lang.formatPlaceholder">
           <el-option label="string" value="string"></el-option>
           <el-option label="json" value="json"></el-option>
           <el-option label="blob" value="blob"></el-option>
@@ -27,6 +27,7 @@
 <script>
 import {invoke} from '@tauri-apps/api/tauri';
 import {JsonViewer} from ":/components/JsonViewer";
+import {mapGetters} from "vuex";
 
 export default {
   name: 'string',
@@ -67,6 +68,10 @@ export default {
         }
       }
       return res.join('')
+    },
+    ...mapGetters(['i18n']),
+    lang() {
+      return this.i18n.mainPage.content.dataPage.string
     }
   },
   watch: {

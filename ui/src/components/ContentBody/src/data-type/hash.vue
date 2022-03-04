@@ -1,12 +1,12 @@
 <template>
   <div class="hash">
     <div class="key-data-title">
-      <span><span class="highlight">{{ k }}</span> 查询结果</span>
+      <span><span class="highlight">{{ k }}</span> {{ lang.title }}</span>
       <div style="display: flex">
-        <el-input v-model="pattern" placeholder="请输入查询表达式" style="margin-right: 8px;width: 140px"/>
-        <el-button @click="searchFn" type="primary">查询</el-button>
-        <el-button @click="clearFn" type="primary" :disabled="!pattern">清除</el-button>
-        <el-button @click="newFn" type="primary">新增</el-button>
+        <el-input v-model="pattern" :placeholder="lang.queryPlaceHolder" style="margin-right: 8px;width: 140px"/>
+        <el-button @click="searchFn" type="primary">{{ lang.q }}</el-button>
+        <el-button @click="clearFn" type="primary" :disabled="!pattern">{{ lang.r }}</el-button>
+        <el-button @click="newFn" type="primary">{{ lang.a }}</el-button>
       </div>
     </div>
     <div class="key-data-scroller" style="position: relative">
@@ -17,21 +17,21 @@
               <span>{{ scope.$index }}</span>
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="key" label="字段"></el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="value" label="值"></el-table-column>
-          <el-table-column width="140px" label="操作">
+          <el-table-column :show-overflow-tooltip="true" prop="key" :label="lang.tableHeader[0]"></el-table-column>
+          <el-table-column :show-overflow-tooltip="true" prop="value" :label="lang.tableHeader[1]"></el-table-column>
+          <el-table-column width="180px" :label="lang.tableHeader[2]">
             <template #default="{row}">
-              <el-button type="text" @click="modifyFn(row)">修改</el-button>
+              <el-button type="text" @click="modifyFn(row)">{{ lang.tableAction[0] }}</el-button>
               <el-divider direction="vertical"></el-divider>
-              <el-button type="text" @click="deleteFn(row.key)">删除</el-button>
+              <el-button type="text" @click="deleteFn(row.key)">{{ lang.tableAction[1] }}</el-button>
               <el-divider direction="vertical"></el-divider>
-              <el-button type="text" @click="lookFn(row.value)">查看</el-button>
+              <el-button type="text" @click="lookFn(row.value)">{{ lang.tableAction[2] }}</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
       <div style="position: absolute;left: 8px;bottom: 15px">
-        <span style="padding-right: 8px;color: gray">每页条数</span>
+        <span style="padding-right: 8px;color: gray">{{ lang.pager.size }}</span>
         <el-select v-model="pager.count" style="width: 80px;margin-right: 8px">
           <el-option label="20" :value="20"></el-option>
           <el-option label="50" :value="50"></el-option>
@@ -41,39 +41,47 @@
           <el-option label="1000" :value="1000"></el-option>
         </el-select>
         <el-button type="primary" size="mini" :loading="dataLoading" :disabled="isEnd" @click="scanFn">{{
-            isEnd ? '已到最后一页' : '下一页'
+            isEnd ? lang.pager.end : lang.pager.next
           }}
         </el-button>
         <el-button type="primary" size="mini" :loading="dataLoading" v-if="pager.cursor !== 0 || isEnd"
-                   @click="resetFn">重置游标
+                   @click="resetFn">{{ lang.pager.reset }}
         </el-button>
       </div>
     </div>
-    <el-dialog :close-on-click-modal="false" title="修改" v-model="modifyVisible" width="380px">
+
+    <el-dialog :close-on-click-modal="false" :title="lang.dialog.modifyTitle" v-model="modifyVisible" width="380px">
       <el-form label-width="80px" :model="modifyFormData" ref="modifyForm">
-        <el-form-item label="字段" prop="field" :rules="{required:true,message:'字段不能为空',trigger:'blur'}">
+        <el-form-item :label="lang.dialog.form.field" prop="field"
+                      :rules="{required:true,message:lang.dialog.ruleMsg.field,trigger:'blur'}">
           <el-input readonly="readonly" v-model="modifyFormData.field"/>
         </el-form-item>
-        <el-form-item prop="value" label="新值" :rules="{required: true,message:'新值不能为空',trigger:'blur'}">
-          <el-input v-model="modifyFormData.value" placeholder="请输入新值"></el-input>
+        <el-form-item prop="value" :label="lang.dialog.form.value"
+                      :rules="{required: true,message:lang.dialog.ruleMsg.value,trigger:'blur'}">
+          <el-input v-model="modifyFormData.value" :placeholder="lang.dialog.form.field"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="modifyOkFn" :loading="modifyLoading">确定</el-button>
-          <el-button type="danger" :loading="modifyLoading" @click="modifyVisible = false">取消</el-button>
+          <el-button type="primary" @click="modifyOkFn" :loading="modifyLoading">{{ lang.dialog.button[0] }}</el-button>
+          <el-button type="danger" :loading="modifyLoading" @click="modifyVisible = false">{{ lang.dialog.button[1] }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
-    <el-dialog :close-on-click-modal="false" title="新增" v-model="addVisible" width="380px">
+
+    <el-dialog :close-on-click-modal="false" :title="lang.dialog.addTitle" v-model="addVisible" width="380px">
       <el-form label-width="80px" :model="addFormData" ref="addForm">
-        <el-form-item label="字段" prop="field" :rules="{required:true,message:'字段不能为空',trigger:'blur'}">
-          <el-input placeholder="请输入字段" v-model="addFormData.field"/>
+        <el-form-item :label="lang.dialog.form.field" prop="field"
+                      :rules="{required:true,message:lang.dialog.ruleMsg.field,trigger:'blur'}">
+          <el-input :placeholder="lang.dialog.form.field" v-model="addFormData.field"/>
         </el-form-item>
-        <el-form-item prop="value" label="值" :rules="{required: true,message:'值不能为空',trigger:'blur'}">
-          <el-input v-model="addFormData.value" placeholder="请输入值"></el-input>
+        <el-form-item prop="value" :label="lang.dialog.form.value"
+                      :rules="{required: true,message:lang.dialog.ruleMsg.value,trigger:'blur'}">
+          <el-input v-model="addFormData.value" :placeholder="lang.dialog.form.value"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="newOkFn" :loading="addLoading">确定</el-button>
-          <el-button type="danger" :loading="addLoading" @click="addVisible = false">取消</el-button>
+          <el-button type="primary" @click="newOkFn" :loading="addLoading">{{ lang.dialog.button[0] }}</el-button>
+          <el-button type="danger" :loading="addLoading" @click="addVisible = false">{{ lang.dialog.button[1] }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -83,6 +91,7 @@
 <script>
 import {request} from ':/tools/invoke';
 import {WebviewWindow} from '@tauri-apps/api/window';
+import {mapGetters} from "vuex";
 
 export default {
   name: 'hash',
@@ -110,6 +119,12 @@ export default {
       addFormData: {},
       addVisible: false,
       addLoading: false
+    }
+  },
+  computed: {
+    ...mapGetters(['i18n']),
+    lang() {
+      return this.i18n.mainPage.content.dataPage.hash
     }
   },
   created() {
