@@ -44,6 +44,7 @@ export default {
             dataPage: {
                 notConnectText: "没有连接",
                 searchPlaceHolder: "请输入查询表达式(*a*)",
+                loadAllKey: "所有",
                 databaseList: {
                     title: "数据库",
                     emptyTreeText: "no data"
