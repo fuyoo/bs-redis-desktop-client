@@ -115,13 +115,24 @@ pub fn create_try() -> SystemTray {
 /// 系统菜单
 #[cfg(not(target_os = "windows"))]
 pub fn create_app_menu() -> Menu {
-    let quit = CustomMenuItem::new("set".to_string(), "set");
-    let close = CustomMenuItem::new("exit".to_string(), "exit");
-    let submenu = Submenu::new("system", Menu::new().add_item(quit).add_item(close));
-    let menu = Menu::new()
-        .add_native_item(MenuItem::Copy)
-        .add_submenu(submenu);
-    menu
+    let submenu_gear = Submenu::new(
+        "Gear",
+        Menu::new()
+            .add_native_item(MenuItem::Copy)
+            .add_native_item(MenuItem::Paste)
+            .add_native_item(MenuItem::Separator)
+            .add_native_item(MenuItem::Zoom)
+            .add_native_item(MenuItem::Separator)
+            .add_native_item(MenuItem::Hide)
+            .add_native_item(MenuItem::CloseWindow)
+            .add_native_item(MenuItem::Quit),
+    );
+
+    let set =CustomMenuItem::new("set".to_string(), "Set");
+    let submenu_customer = Submenu::new("System", Menu::new().add_item(set));
+    Menu::new()
+        .add_submenu(submenu_gear)
+        .add_submenu(submenu_customer)
 }
 
 /// 系统菜单
