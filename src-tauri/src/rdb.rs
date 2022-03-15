@@ -226,11 +226,12 @@ pub async fn get_redis_info() -> Response<String> {
 
 /// 获取redis的所有key
 #[command]
-pub async fn get_redis_keys(query: String) -> Response<Vec<String>> {
+pub async fn get_redis_keys(query: String, size: String) -> Response<Vec<String>> {
+    // println!("query: {}, sieze: {}", query, size);
     let res = get_connection(|conn| {
         let mut cursor = format!("-1");
         let mut arr = vec![];
-        while cursor != "0" {
+        'outer: while cursor != "0" {
             if cursor == "-1" {
                 cursor = format!("0");
             }
@@ -252,7 +253,14 @@ pub async fn get_redis_keys(query: String) -> Response<Vec<String>> {
                                 for item in res {
                                     match item {
                                         Value::Data(data) => {
-                                            arr.push(String::from_utf8(data).unwrap_or(format!("")))
+                                            arr.push(
+                                                String::from_utf8(data).unwrap_or(format!("")),
+                                            );
+
+                                            let size = size.parse::<usize>().unwrap_or(0);
+                                            if size > 0 && arr.len() >= size {
+                                                break 'outer;
+                                            }
                                         }
                                         _ => {}
                                     }

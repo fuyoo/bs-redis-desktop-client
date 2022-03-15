@@ -7,6 +7,9 @@
         <button class="s-btn" @click="filterKeyFn">
           <icon name="search-line"></icon>
         </button>
+        <el-button size="mini" type="primary" @click="loadAllKey">
+            {{lang().loadAllKey}}
+        </el-button>
       </div>
       <div class="keys" v-loading="keysLoading">
         <div style="line-height: 30px;font-size: 14px;margin-left: -5px">
@@ -154,7 +157,7 @@ export default {
     this.getSysInfo()
   },
   mounted() {
-    this.fetchKeysData('*')
+    this.fetchKeysData('*', '500')
   },
   methods: {
     lang(){
@@ -183,7 +186,7 @@ export default {
         return
       }
       refreshTimer = setTimeout(() => {
-        this.fetchKeysData(this.query || '*')
+        this.fetchKeysData(this.query || '*', '500')
             .finally(() => {
               this.autoRefreshKeyList()
             })
@@ -265,10 +268,10 @@ export default {
     /**
      * 获取key数据
      */
-    fetchKeysData(query) {
+    fetchKeysData(query, size=500) {
       return new Promise(resolve => {
         this.keysLoading = true
-        invoke('get_redis_keys', {query})
+        invoke('get_redis_keys', {query, size: size.toString()})
             .then(res => {
               let space = []
               let keys = []
@@ -313,6 +316,15 @@ export default {
         return this.fetchKeysData('*')
       }
       this.fetchKeysData(this.query)
+    },
+    /**
+     * 加载所有 key
+     */
+    loadAllKey() {
+      if (!this.query) {
+        return this.fetchKeysData('*', 0)
+      }
+      this.fetchKeysData(this.query, 0)
     },
     /**
      * 初始化key列表拖动调整宽度功能

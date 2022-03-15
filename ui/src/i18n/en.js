@@ -44,6 +44,7 @@ export default {
             dataPage: {
                 notConnectText: "No have any connection",
                 searchPlaceHolder: "query expression(*a*)",
+                loadAllKey: "All",
                 databaseList: {
                     title: "database",
                     emptyTreeText: "no data"
