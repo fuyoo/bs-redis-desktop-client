@@ -118,10 +118,15 @@ pub fn create_app_menu() -> Menu {
     let submenu_gear = Submenu::new(
         "Gear",
         Menu::new()
+            .add_native_item(MenuItem::SelectAll)
             .add_native_item(MenuItem::Copy)
             .add_native_item(MenuItem::Paste)
+            .add_native_item(MenuItem::Redo)
+            .add_native_item(MenuItem::Undo)
             .add_native_item(MenuItem::Separator)
+            .add_native_item(MenuItem::Minimize)
             .add_native_item(MenuItem::Zoom)
+            .add_native_item(MenuItem::EnterFullScreen)
             .add_native_item(MenuItem::Separator)
             .add_native_item(MenuItem::Hide)
             .add_native_item(MenuItem::CloseWindow)
