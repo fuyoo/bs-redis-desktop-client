@@ -133,7 +133,7 @@ pub fn create_app_menu() -> Menu {
             .add_native_item(MenuItem::Quit),
     );
 
-    let set =CustomMenuItem::new("set".to_string(), "Set");
+    let set =CustomMenuItem::new("set".to_string(), "Setting");
     let submenu_customer = Submenu::new("System", Menu::new().add_item(set));
     Menu::new()
         .add_submenu(submenu_gear)
