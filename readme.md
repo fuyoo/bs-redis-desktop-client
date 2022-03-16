@@ -43,23 +43,15 @@ English|[中文](./readme_cn.md)
 - app icon：at `ui` dir  execute `yarn tauri icon "image absoute path"` or `npm run tauri icon "image absoute path"`
 
 
-## 软件预览
+## Software Interface
 
-**software home**
-![1](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/1.png)
+![1](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/en_0.png)
 
-**redis base info**
-![2](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/2.png)
+![2](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/en_1.png)
 
-**key details**
-![3](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/3.png)
+![3](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/en_2.png)
 
-**redis config details**
-
-![4](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/4.png)
-
-**Pub/Sub Debugger**
-![5](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/5.png)
+![4](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/en_3.png)
 
 ## if you are interested for this project please make a PR! thanks a lot!
 
