@@ -30,7 +30,10 @@ export default {
                 TestSuccessMsg: "连接成功",
                 ErrorMsg: "操作失败",
                 TestErrMsg: "连接测试失败"
-            }
+            },
+            deleteAsk: {
+                title: "⚠️ 警告",
+                content: "你确定要删除这个连接吗？"}
         },
         content: {
             tabBar: {

@@ -30,7 +30,10 @@ export default {
                 TestSuccessMsg: "Test Successfully",
                 ErrorMsg: "Action Fail",
                 TestErrMsg: "Connection Test Fail",
-            }
+            },
+            deleteAsk: {
+                title: "⚠️ Warning",
+                content: "are you sure to remove this connection?"}
         },
         content: {
             tabBar: {
