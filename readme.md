@@ -43,7 +43,7 @@ English|[中文](./readme_cn.md)
 - app icon：at `ui` dir  execute `yarn tauri icon "image absoute path"` or `npm run tauri icon "image absoute path"`
 
 
-## Software Interface
+## Screenshots
 
 ![1](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/en_0.png)
 
