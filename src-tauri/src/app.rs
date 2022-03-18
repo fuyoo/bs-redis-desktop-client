@@ -4,6 +4,8 @@
  */
 use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
+#[cfg(not(target_os = "windows"))]
+use std::io::{Read, Write};
 #[cfg(target_os = "windows")]
 use std::ptr::null;
 use std::{
@@ -11,8 +13,6 @@ use std::{
     path::{Path, PathBuf},
     result::Result::Ok,
 };
-#[cfg(not(target_os = "windows"))]
-use std::io::{Read, Write};
 use tauri::{
     command, AppHandle, CustomMenuItem, Event, Manager, Menu, SystemTray, SystemTrayEvent, Window,
     WindowMenuEvent, Wry,
@@ -24,16 +24,16 @@ use tauri::{MenuItem, Submenu};
 use tauri::{SystemTrayMenu, SystemTrayMenuItem};
 use tokio::net::UdpSocket;
 #[cfg(target_os = "windows")]
+use windows::Win32::UI::WindowsAndMessaging::{MessageBoxW, MB_OK};
+#[cfg(target_os = "windows")]
 use windows::Win32::{
     Foundation::{GetLastError, WIN32_ERROR},
-    System::Threading::{OpenMutexW, CreateMutexW},
+    System::Threading::{CreateMutexW, OpenMutexW},
 };
 #[cfg(target_os = "windows")]
 use winreg::enums::*;
 #[cfg(target_os = "windows")]
 use winreg::RegKey;
-#[cfg(target_os = "windows")]
-use windows::Win32::UI::WindowsAndMessaging::{MessageBoxW, MB_OK};
 lazy_static! {
     pub static ref APP: Mutex<App> = Mutex::new(App::new());
 }
@@ -109,7 +109,14 @@ pub fn create_try() -> SystemTray {
 /// 创建任务栏图标
 #[cfg(not(target_os = "windows"))]
 pub fn create_try() -> SystemTray {
-    SystemTray::new()
+    use tauri::{SystemTrayMenu, SystemTrayMenuItem};
+
+    SystemTray::new().with_menu(
+        SystemTrayMenu::new()
+            .add_item(CustomMenuItem::new("open_window", "Show"))
+            .add_native_item(SystemTrayMenuItem::Separator)
+            .add_item(CustomMenuItem::new("quit", "Quit").accelerator("CmdOrControl+Q")),
+    )
 }
 
 /// 系统菜单
@@ -133,7 +140,7 @@ pub fn create_app_menu() -> Menu {
             .add_native_item(MenuItem::Quit),
     );
 
-    let set =CustomMenuItem::new("set".to_string(), "Setting");
+    let set = CustomMenuItem::new("set".to_string(), "Setting");
     let submenu_customer = Submenu::new("System", Menu::new().add_item(set));
     Menu::new()
         .add_submenu(submenu_gear)
@@ -148,9 +155,9 @@ pub fn create_app_menu() -> Menu {
 
 pub fn handle_event_app_menu_event(event: WindowMenuEvent<Wry>) {
     match event.menu_item_id() {
-        "exit" => {
-            std::process::exit(0);
-        }
+        // "exit" => {
+        //     std::process::exit(0);
+        // }
         "set" => {
             event.window().emit("set", "").unwrap();
         }
@@ -164,21 +171,14 @@ pub fn handle_event_app_menu_event(event: WindowMenuEvent<Wry>) {
 pub fn handle_system_tray_event(app: &AppHandle<Wry>, e: SystemTrayEvent) {
     match e {
         SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
-            "quit" => {
-                std::process::exit(0);
-            }
-            "set" => {
-                app.get_window("main").unwrap().emit("set", "").unwrap();
+            "open_window" => {
+                let window = app.get_window("main").unwrap();
+                window.unminimize().unwrap();
+                window.show().unwrap();
+                window.set_focus().unwrap();
             }
             _ => {}
         },
-        SystemTrayEvent::LeftClick { .. } => {
-            if let Some(window) = app.get_window("main") {
-                window.show().unwrap();
-                window.set_focus().unwrap();
-                info!("handle_system_tray_event at here?");
-            }
-        }
         _ => {}
     }
 }
@@ -268,7 +268,9 @@ fn send_wake_up() {
 fn open_reg_key() -> std::io::Result<()> {
     // first find current user reg table
     let current_key = RegKey::predef(HKEY_CURRENT_USER);
-    let wv2 = current_key.open_subkey("Software\\Microsoft\\EdgeUpdate\\Clients\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}");
+    let wv2 = current_key.open_subkey(
+        "Software\\Microsoft\\EdgeUpdate\\Clients\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}",
+    );
     if let Ok(key) = wv2 {
         let res: std::io::Result<String> = key.get_value("pv");
         if let Ok(_) = res {
@@ -287,8 +289,17 @@ fn open_reg_key() -> std::io::Result<()> {
 pub fn webview2_is_installed() {
     if let Err(_) = open_reg_key() {
         unsafe {
-            MessageBoxW(None, "WebView2运行时未找到，点击确定按钮去安装吧！", "出错啦！", MB_OK);
-            let _ = tauri::api::shell::open("https://developer.microsoft.com/zh-cn/microsoft-edge/webview2/#download-section".to_string(), None);
+            MessageBoxW(
+                None,
+                "WebView2运行时未找到，点击确定按钮去安装吧！",
+                "出错啦！",
+                MB_OK,
+            );
+            let _ = tauri::api::shell::open(
+                "https://developer.microsoft.com/zh-cn/microsoft-edge/webview2/#download-section"
+                    .to_string(),
+                None,
+            );
             std::process::exit(0);
         }
     };
