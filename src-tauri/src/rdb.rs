@@ -231,15 +231,13 @@ pub async fn get_redis_keys(query: String, size: String) -> Response<Vec<String>
         let mut arr = vec![];
 
         let res = get_connection(|conn| {
-            let res = cmd("keys").arg(query).query::<Value>(conn)?;
+            let res = conn.keys(query.as_str())?;
             match res {
                 Value::Bulk(res) => {
                     for item in res {
                         match item {
                             Value::Data(data) => {
-                                arr.push(
-                                    String::from_utf8(data).unwrap_or(format!("")),
-                                );
+                                arr.push(String::from_utf8(data).unwrap_or(format!("")));
                             }
                             _ => {}
                         }
