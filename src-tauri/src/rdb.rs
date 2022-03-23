@@ -265,6 +265,10 @@ pub async fn get_redis_keys(query: String, size: String) -> Response<Vec<String>
                                         _ => {}
                                     }
                                 }
+
+                                if !query.contains("*") {
+                                    break 'outer;
+                                }
                             }
                             _ => {}
                         }
