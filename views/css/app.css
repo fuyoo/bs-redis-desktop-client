@@ -1,0 +1,54 @@
+html,body,.app {
+    margin: 0;
+    padding: 0;
+    width: 1*;
+    height: 1*;
+    background: transparent;
+    flow: horizontal-flow;
+}
+.sidebar {
+    width: 70dip;
+    height: 1*;
+    flow: vertical;
+    horizontal-align: center;
+    vertical-align: top;
+}
+
+.sidebar .icon {
+    margin-top: 60dip;
+    margin-bottom: 30dip;
+}
+
+.sidebar .tab {
+    margin-bottom: 30dip;
+    color: #333;
+    cursor: pointer;
+}
+.sidebar .active {
+    color: #1ABC9C;
+}
+
+.content{
+    width: 1*;
+    height: 1*;
+    overflow: auto;
+    background: #fff;
+    flow: horizontal-flow;
+}
+.database {
+    width: 240dip;
+    height: 1*;
+    border-right: 1px solid #ddd;
+    padding-top: 20dip;
+    flow: vertical;
+    horizontal-align: center;
+    vertical-align: top;
+}
+.context {
+    width: 1*;
+    height: 1*;
+    overflow: auto;
+}
+.btn{
+    outline: none !important;
+}
