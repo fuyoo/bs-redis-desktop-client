@@ -1,3 +1,4 @@
+@import "framework.css";
 html,body,.app {
     margin: 0;
     padding: 0;
@@ -5,6 +6,7 @@ html,body,.app {
     height: 1*;
     background: transparent;
     flow: horizontal-flow;
+    border-top: 1dip solid var(--van-border-color);
 }
 .sidebar {
     width: 70dip;
@@ -12,6 +14,7 @@ html,body,.app {
     flow: vertical;
     horizontal-align: center;
     vertical-align: top;
+    border-right: 1dip solid var(--van-border-color);
 }
 
 .sidebar .icon {
@@ -25,7 +28,7 @@ html,body,.app {
     cursor: pointer;
 }
 .sidebar .active {
-    color: #1ABC9C;
+    color: var(--van-primary-color);
 }
 
 .content{
@@ -38,7 +41,7 @@ html,body,.app {
 .database {
     width: 240dip;
     height: 1*;
-    border-right: 1px solid #ddd;
+    border-right: 1px solid #eee;
     padding-top: 20dip;
     flow: vertical;
     horizontal-align: center;
@@ -49,6 +52,6 @@ html,body,.app {
     height: 1*;
     overflow: auto;
 }
-.btn{
-    outline: none !important;
+.nav-menu{
+    padding:0 var(--van-padding-sm) ;
 }

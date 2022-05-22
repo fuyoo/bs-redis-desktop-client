@@ -23,7 +23,11 @@ async fn main() -> Result<(), Error> {
         frame.set_options(sciter::window::Options::DebugMode(true)).map_err(|e| anyhow!("{:?}",e))?;
     }
     frame.archive_handler(resource).map_err(|e| anyhow!("{:?}",e))?;
+    #[cfg(not(target_os = "windows"))]
     frame.load_file("this://app/index.html");
+    #[cfg(target_os = "windows")]
+    frame.load_file("this://app/index_win.html");
+
     frame.run_app();
     Ok(())
 }

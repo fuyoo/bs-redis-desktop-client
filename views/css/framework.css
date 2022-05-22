@@ -1,0 +1,124 @@
+:root {
+    --van-black: #000;
+    --van-white: #fff;
+    --van-gray-1: #f7f8fa;
+    --van-gray-2: #f2f3f5;
+    --van-gray-3: #ebedf0;
+    --van-gray-4: #dcdee0;
+    --van-gray-5: #c8c9cc;
+    --van-gray-6: #969799;
+    --van-gray-7: #646566;
+    --van-gray-8: #323233;
+    --van-red: #ee0a24;
+    --van-blue: #1989fa;
+    --van-orange: #ff976a;
+    --van-orange-dark: #ed6a0c;
+    --van-orange-light: #fffbe8;
+    --van-green: #07c160;
+    --van-gradient-red: linear-gradient(to right, #ff6034, #ee0a24);
+    --van-gradient-orange: linear-gradient(to right, #ffd01e, #ff8917);
+    --van-primary-color: var(--van-blue);
+    --van-success-color: var(--van-green);
+    --van-danger-color: var(--van-red);
+    --van-warning-color: var(--van-orange);
+    --van-text-color: var(--van-gray-8);
+    --van-text-color-2: var(--van-gray-6);
+    --van-text-color-3: var(--van-gray-5);
+    --van-text-link-color: #576b95;
+    --van-active-color: var(--van-gray-2);
+    --van-active-opacity: .6;
+    --van-disabled-opacity: .5;
+    --van-background-color: var(--van-gray-1);
+    --van-background-color-light: var(--van-white);
+    --van-padding-base: 4dip;
+    --van-padding-xs: 8dip;
+    --van-padding-sm: 12dip;
+    --van-padding-md: 16dip;
+    --van-padding-lg: 24dip;
+    --van-padding-xl: 32dip;
+    --van-font-size-xs: 10dip;
+    --van-font-size-sm: 12dip;
+    --van-font-size-md: 14dip;
+    --van-font-size-lg: 16dip;
+    --van-font-weight-bold: 500;
+    --van-line-height-xs: 14dip;
+    --van-line-height-sm: 18dip;
+    --van-line-height-md: 20dip;
+    --van-line-height-lg: 22dip;
+    --van-animation-duration-base: .3s;
+    --van-animation-duration-fast: .2s;
+    --van-animation-timing-function-enter: ease-out;
+    --van-animation-timing-function-leave: ease-in;
+    --van-border-color: var(--van-gray-3);
+    --van-border-width-base: 1dip;
+    --van-border-radius-sm: 2dip;
+    --van-border-radius-md: 4dip;
+    --van-border-radius-lg: 8dip;
+    --van-border-radius-max: 999dip;
+}
+
+@mixin btn(color) {
+    behavior: button;
+    font-size: var(--van-font-size-sm);
+    padding: var(--van-padding-base) var(--van-padding-sm);
+    color: color;
+    display: inline-block;
+    border-radius: var(--van-border-radius-sm);
+    cursor: pointer;
+}
+
+@set btn-primary {
+    :root {
+        @btn(var(--van-active-color));
+        background: var(--van-primary-color);
+        border: var(--van-border-width-base)  solid var(--van-primary-color);
+    }
+    :root:active {
+        opacity: 0.8;
+    }
+}
+@set btn-success{
+    :root {
+        @btn(var(--van-active-color));
+        background: var(--van-success-color);
+        border: var(--van-border-width-base) solid var(--van-success-color);
+    }
+    :root:active {
+        opacity: 0.8;
+    }
+}
+@set btn-default{
+    :root {
+        @btn(var(--van-text-color));
+        background: var(--van-white);
+        border: var(--van-border-width-base)  solid var( --van-gray-5);
+    }
+    :root:active {
+        opacity: 0.8;
+    }
+}
+
+@set btn-danger {
+    :root {
+        @btn(var(--van-active-color));
+        background: var(--van-danger-color);
+        border: var(--van-border-width-base)  solid var( --van-danger-color);
+    }
+    :root:active {
+        opacity: 0.8;
+    }
+}
+
+/*warning*/
+@set btn-warning {
+    :root {
+        @btn(var(--van-active-color));
+        background: var(--van-warning-color);
+        border: var(--van-border-width-base)  solid var( --van-warning-color);
+    }
+    :root:active {
+        opacity: 0.8;
+    }
+}
+
+
