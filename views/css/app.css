@@ -57,6 +57,7 @@ html {
 
 }
 .add-connection{
+    background: var(--van-background-color);
     padding: var(--van-padding-sm);
     border-bottom: var(--van-border-width-base) solid var(--van-border-color);
 }
