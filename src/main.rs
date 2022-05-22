@@ -29,7 +29,7 @@ fn create_main() -> Result<(),Error> {
     do_request_services(reciver);
     window.event_handler(Evt{sender});
     #[cfg(not(target_os = "windows"))]
-    frame.load_file("this://app/index.html");
+    window.load_file("this://app/index.html");
     #[cfg(target_os = "windows")]
     window.load_file("this://app/index_win.html");
     window.run_app();
