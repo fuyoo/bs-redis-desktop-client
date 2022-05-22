@@ -9,7 +9,7 @@ edition = "2021"
 sciter-rs = "*"
 tokio = { version = "1", features = ["full"] }
 anyhow = "1"
-
+flume = "0.10.12"
 
 [build-dependencies]
 embed-resource="*"

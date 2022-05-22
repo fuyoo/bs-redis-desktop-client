@@ -1,12 +1,18 @@
+import * as env from '@env'
+console.log(env.PLATFORM)
 export default class Database extends Element{
+    ["on click at #add-btn"](evt,ele) {
+        Window.this.xcall("fetch","/create","{}",(res)=>{
+          console.log(res)
+        })
+    }
     render(){
-       return (
-           <div class="nav-menu">
-               <a styleset="#btn-primary" style="display:block;text-align:center">添加</a>
-               <a styleset="#btn-success">asdf</a>
-               <a styleset="#btn-default">asdf</a>
-               <a styleset="#btn-danger">asdf</a>
-               <a styleset="#btn-warning">asdf</a>
+        return (
+           <div class="nav-bar">
+               <div class="add-connection" id="add-btn">
+                   <a styleset="#btn-primary" class="block text-center">添加</a>
+               </div>
+
            </div>
        )
     }

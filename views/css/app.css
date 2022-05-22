@@ -6,6 +6,8 @@ html,body,.app {
     height: 1*;
     background: transparent;
     flow: horizontal-flow;
+}
+html {
     border-top: 1dip solid var(--van-border-color);
 }
 .sidebar {
@@ -41,8 +43,7 @@ html,body,.app {
 .database {
     width: 240dip;
     height: 1*;
-    border-right: 1px solid #eee;
-    padding-top: 20dip;
+    border-right: 1dip solid #eee;
     flow: vertical;
     horizontal-align: center;
     vertical-align: top;
@@ -52,6 +53,10 @@ html,body,.app {
     height: 1*;
     overflow: auto;
 }
-.nav-menu{
-    padding:0 var(--van-padding-sm) ;
+.nav-bar{
+
+}
+.add-connection{
+    padding: var(--van-padding-sm);
+    border-bottom: var(--van-border-width-base) solid var(--van-border-color);
 }

@@ -35,7 +35,6 @@ class App extends Element{
     ["on click at #set"](evt,ele) {
         this.componentUpdate({tab:1})
         this.render()
-        console.log(this.tab)
     }
     render() {
         let content = this.renderContent()
