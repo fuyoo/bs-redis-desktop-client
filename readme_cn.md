@@ -6,6 +6,8 @@
 
 > BS redis桌面客户端由Rust和Tauri提供动力，体积非常小，界面美观，运行速度非常快！
 
+## 分支sciter基于sciter
+
 ## 为什么有这个工具?
 
 * 太多的工具基于electron，太大太重。
