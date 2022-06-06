@@ -56,7 +56,10 @@
     --van-border-radius-lg: 8dip;
     --van-border-radius-max: 999dip;
 }
-
+html,body{
+    margin: 0;
+    padding: 0;
+}
 @mixin btn(color) {
     behavior: button;
     font-size: var(--van-font-size-sm);

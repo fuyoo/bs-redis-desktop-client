@@ -10,7 +10,7 @@ export default class Database extends Element {
         // })
         add_connection_dialog()
             .then(res => {
-                console.log(res)
+                console.log(JSON.stringify(res))
             })
     }
 
@@ -22,8 +22,8 @@ export default class Database extends Element {
 
         let top = PLATFORM === "OSX" ? "20dip" : "12dip"
         return (<div class="nav-bar">
-            <div class="add-connection" id="add-btn" style={{"paddingTop": top}}>
-                <a styleset="#btn-primary" class="block text-center">添加</a>
+            <div class="add-connection"  style={{"paddingTop": top}}>
+                <a styleset="#btn-primary" id="add-btn" class="block text-center">添加</a>
             </div>
             <div class="connection-list">
                 <div style={"height:1200dip"}></div>

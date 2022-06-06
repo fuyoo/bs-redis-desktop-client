@@ -2,15 +2,21 @@
 <html lang="cn">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>添加</title>
+    <link rel="stylesheet" href="../css/framework.css">
 </head>
 <body>
-  <h1>connection dialog</h1>
-  <button id="close">close</button>
-<script type="module">
+  <form class="form">
+
+  </form>
+  <a id="close" styleset="#btn-primary">close</a>
+    <script type="module">
     document.querySelector("#close").onclick = function () {
-        Window.this.close({data:"success"})
+       // Window.this.close({data:"success"})
+    Window.this.parent.xcall("fetch", "/create", "{}", (res) => {
+            console.log(res)
+        })
     }
-</script>
+    </script>
 </body>
 </html>
