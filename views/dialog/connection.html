@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  <h1>connection dialog</h1>
+  <button id="close">close</button>
+<script type="module">
+    document.querySelector("#close").onclick = function () {
+        Window.this.close({data:"success"})
+    }
+</script>
+</body>
+</html>

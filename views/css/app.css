@@ -1,5 +1,6 @@
 @import "framework.css";
-html,body,.app {
+
+html, body, .app {
     margin: 0;
     padding: 0;
     width: 1*;
@@ -7,57 +8,75 @@ html,body,.app {
     background: transparent;
     flow: horizontal-flow;
 }
+
 html {
-    border-top: 1dip solid var(--van-border-color);
+    /*border-top: 1dip solid var(--van-border-color);*/
 }
+
 .sidebar {
-    width: 70dip;
+    width: 70 dip;
     height: 1*;
     flow: vertical;
     horizontal-align: center;
     vertical-align: top;
-    border-right: 1dip solid var(--van-border-color);
+    border-right: 1 dip solid var(--van-border-color);
 }
 
 .sidebar .icon {
-    margin-top: 60dip;
-    margin-bottom: 30dip;
+    margin-top: 60 dip;
+    margin-bottom: 30 dip;
 }
 
 .sidebar .tab {
-    margin-bottom: 30dip;
+    margin-bottom: 30 dip;
     color: #333;
     cursor: pointer;
 }
+
 .sidebar .active {
     color: var(--van-primary-color);
 }
 
-.content{
+.content {
     width: 1*;
     height: 1*;
     overflow: auto;
     background: #fff;
     flow: horizontal-flow;
 }
+
 .database {
-    width: 240dip;
+    width: 240 dip;
     height: 1*;
-    border-right: 1dip solid #eee;
+    border-right: 1 dip solid #eee;
     flow: vertical;
     horizontal-align: center;
     vertical-align: top;
 }
+
 .context {
     width: 1*;
     height: 1*;
     overflow: auto;
 }
-.nav-bar{
 
+.nav-bar {
+    flow: vertical;
+    vertical-align: top;
+    width: 1*;
+    height: 1*;
+    border-right: var(--van-border-width-base) solid var(--van-border-color);
 }
-.add-connection{
+
+.add-connection {
     background: var(--van-background-color);
     padding: var(--van-padding-sm);
     border-bottom: var(--van-border-width-base) solid var(--van-border-color);
+}
+
+.nav-bar .connection-list {
+    height: 1*;
+    flow: vertical-flow;
+    vertical-align: top;
+    overflow: auto;
 }

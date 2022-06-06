@@ -28,10 +28,11 @@ fn create_main() -> Result<(),Error> {
     let (sender,reciver) = flume::unbounded();
     do_request_services(reciver);
     window.event_handler(Evt{sender});
-    #[cfg(not(target_os = "windows"))]
-    window.load_file("this://app/index.html");
-    #[cfg(target_os = "windows")]
-    window.load_file("this://app/index_win.html");
+    if cfg!(target_os = "windows") {
+        window.load_file("this://app/index_win.html");
+    } else {
+        window.load_file("this://app/index.html");
+    }
     window.run_app();
     Ok(())
 }
