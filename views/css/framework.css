@@ -55,6 +55,7 @@
     --van-border-radius-md: 4dip;
     --van-border-radius-lg: 8dip;
     --van-border-radius-max: 999dip;
+    --scroll: scroll-indicator;
 }
 html,body{
     margin: 0;

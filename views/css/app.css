@@ -14,21 +14,21 @@ html {
 }
 
 .sidebar {
-    width: 70 dip;
+    width: 70dip;
     height: 1*;
     flow: vertical;
     horizontal-align: center;
     vertical-align: top;
-    border-right: 1 dip solid var(--van-border-color);
+    border-right: 1dip solid var(--van-border-color);
 }
 
 .sidebar .icon {
-    margin-top: 60 dip;
-    margin-bottom: 30 dip;
+    margin-top: 60dip;
+    margin-bottom: 30dip;
 }
 
 .sidebar .tab {
-    margin-bottom: 30 dip;
+    margin-bottom: 30dip;
     color: #333;
     cursor: pointer;
 }
@@ -46,9 +46,9 @@ html {
 }
 
 .database {
-    width: 240 dip;
+    width: 240dip;
     height: 1*;
-    border-right: 1 dip solid #eee;
+    border-right: 1dip solid #eee;
     flow: vertical;
     horizontal-align: center;
     vertical-align: top;
@@ -78,5 +78,5 @@ html {
     height: 1*;
     flow: vertical-flow;
     vertical-align: top;
-    overflow: auto;
+    overflow: var(--scroll);
 }
