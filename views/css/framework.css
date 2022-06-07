@@ -61,6 +61,10 @@ html,body{
     margin: 0;
     padding: 0;
 }
+html {
+    border-top: 1dip solid var(--van-border-color);
+}
+
 @mixin btn(color) {
     behavior: button;
     font-size: var(--van-font-size-sm);

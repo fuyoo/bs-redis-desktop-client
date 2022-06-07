@@ -9,10 +9,6 @@ html, body, .app {
     flow: horizontal-flow;
 }
 
-html {
-    /*border-top: 1dip solid var(--van-border-color);*/
-}
-
 .sidebar {
     width: 70dip;
     height: 1*;
@@ -65,7 +61,6 @@ html {
     vertical-align: top;
     width: 1*;
     height: 1*;
-    border-right: var(--van-border-width-base) solid var(--van-border-color);
 }
 
 .add-connection {

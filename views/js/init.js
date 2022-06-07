@@ -8,7 +8,7 @@ move_to_center()
 // fit macos
 function top_border() {
     if (PLATFORM == 'OSX') {
-        document.style.border = "none"
+        document.style.borderTop = "none"
     }
 }
 

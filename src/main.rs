@@ -43,6 +43,8 @@ fn create_main() -> Result<(), Error> {
         sciter::SCRIPT_RUNTIME_FEATURES::ALLOW_SYSINFO as u8        // Enables `Sciter.machineName()`.  Required for opening file dialog (`view.selectFile()`)
             | sciter::SCRIPT_RUNTIME_FEATURES::ALLOW_FILE_IO as u8    // Enables opening file dialog (`view.selectFile()`)
     )).map_err(|e| anyhow!("{:?}",e))?;
+    #[cfg(debug_assertions)]
+    sciter::set_options(sciter::RuntimeOptions::DebugMode(true)).map_err(|_|{anyhow!("unknown error")})?;
     let resource = include_bytes!("resource.rc");
     let mut window = sciter::WindowBuilder::main_window()
         .with_size((1024, 600))
