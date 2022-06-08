@@ -1,12 +1,10 @@
-use std::path::PathBuf;
-use anyhow::Result;
-use log::info;
 use crate::app::app;
+use anyhow::Result;
+use std::path::PathBuf;
+use rusqlite::Connection;
 
-pub fn init() -> Result<()> {
-    let db = PathBuf::from(&app().lock().app_data_dir).join("data.db");
-    info!("{:?}",db);
-    let conn = rusqlite::Connection::open(db)?;
+pub async fn init() -> Result<()> {
+    let conn = create_connection().await?;
     conn.execute(
         "create table if not exists connections (
                 id              TEXT PRIMARY KEY,
@@ -30,4 +28,10 @@ pub fn init() -> Result<()> {
         [],
     )?;
     Ok(())
+}
+
+pub async fn create_connection() -> Result<Connection> {
+    let db = PathBuf::from(&app().lock().app_data_dir).join("data.db");
+    let conn = rusqlite::Connection::open(db)?;
+    Ok(conn)
 }

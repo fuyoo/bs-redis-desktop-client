@@ -6,17 +6,24 @@
     <link rel="stylesheet" href="../css/framework.css">
 </head>
 <body>
-  <form class="form">
+<form class="form">
 
-  </form>
-  <a id="close" styleset="#btn-primary">close</a>
-    <script type="module">
+</form>
+<a id="close" styleset="#btn-primary">close</a>
+<script type="module">
     document.querySelector("#close").onclick = function () {
-       // Window.this.close({data:"success"})
-    Window.this.parent.xcall("fetch", "/create", "{}", (res) => {
+        // Window.this.close({data:"success"})
+        let data = {
+            name:"name",
+            username: "fuyoo",
+            password: "",
+            address: "127.0.0.1",
+            port: "6379"
+        }
+        Window.this.parent.xcall("fetch", "/create", JSON.stringify(data), (res) => {
             console.log(res)
         })
     }
-    </script>
+</script>
 </body>
 </html>

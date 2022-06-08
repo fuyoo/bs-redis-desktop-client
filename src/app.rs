@@ -4,7 +4,8 @@ use anyhow::{anyhow, Error, Result};
 use flume::{Receiver, RecvError};
 use once_cell::sync::OnceCell;
 use parking_lot::Mutex;
-use sciter::{make_args, Window};
+use sciter::{make_args, Value, Window};
+use serde::Serialize;
 use std::fs::DirBuilder;
 use std::path::PathBuf;
 use std::ptr::null;
@@ -18,7 +19,7 @@ use windows::Win32::{
 /// create
 pub fn app() -> &'static Mutex<App> {
     static INSTANCE: OnceCell<Mutex<App>> = OnceCell::new();
-    INSTANCE.get_or_init(|| Mutex::new(App::new()))
+    INSTANCE.get_or_init(|| Mutex::new(App::default()))
 }
 
 /// app globe data
@@ -27,19 +28,21 @@ pub struct App {
     pub app_data_dir: PathBuf,
 }
 
-impl App {
-    pub fn new() -> Self {
+impl Default for App {
+    fn default() -> Self {
         App {
             app_data_dir: PathBuf::new(),
         }
     }
+}
+impl App {
     pub fn set_app_data_dir(&mut self, dir: PathBuf) {
         self.app_data_dir = dir
     }
 }
 
 /// create main window
-pub fn create_main() -> Result<(), Error> {
+pub async fn create_main() -> Result<(), Error> {
     sciter::set_options(sciter::RuntimeOptions::ScriptFeatures(
         sciter::SCRIPT_RUNTIME_FEATURES::ALLOW_SYSINFO as u8        // Enables `Sciter.machineName()`.  Required for opening file dialog (`view.selectFile()`)
             | sciter::SCRIPT_RUNTIME_FEATURES::ALLOW_FILE_IO as u8, // Enables opening file dialog (`view.selectFile()`)
@@ -72,7 +75,7 @@ pub fn create_main() -> Result<(), Error> {
         window.load_file("this://app/index.html");
     }
     init_app_directory(&window)?;
-    sqlite::init()?;
+    sqlite::init().await?;
     // start event-loop
     window.run_app();
     Ok(())
@@ -137,4 +140,19 @@ pub fn make_sure_single_case() {
 #[cfg(not(target_os = "windows"))]
 pub fn make_sure_single_case() {
     todo!();
+}
+
+pub fn generate_response(cb: Value) -> Result<String> {}
+
+#[derive(Debug, Serialize)]
+struct Response<T: ?Sized> {
+    pub code: usize,
+    pub data: Option<T>,
+    pub msg: String,
+}
+
+impl<T> Response<T> {
+    pub fn ok(code: usize, data: String, msg: &str) -> String {
+        "a".to_string()
+    }
 }

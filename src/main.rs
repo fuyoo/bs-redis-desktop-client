@@ -19,7 +19,7 @@ use crate::app::make_sure_single_case;
 
 #[tokio::main]
 async fn main() {
-    match run() {
+    match run().await {
         Err(e) => match open_log_file() {
             Ok(mut file) => {
                 let _ = file.write_all(format!("{}\n", e).as_bytes());
@@ -30,9 +30,9 @@ async fn main() {
     }
 }
 
-fn run() -> Result<()> {
+async fn run() -> Result<()> {
     logger::init()?;
     make_sure_single_case();
-    app::create_main()?;
+    app::create_main().await?;
     Ok(())
 }
