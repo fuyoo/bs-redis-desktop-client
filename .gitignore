@@ -4,3 +4,4 @@
 target
 .pack.iss
 src/resource.rc
+log
