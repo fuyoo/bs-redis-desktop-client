@@ -8,6 +8,7 @@ mod events;
 mod logger;
 mod routes;
 mod sqlite;
+mod response;
 
 extern crate sciter;
 

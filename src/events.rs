@@ -2,7 +2,7 @@ use sciter::{dispatch_script_call, EventHandler, Value};
 use flume::Sender;
 
 /// action struct
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub struct Action {
     pub path: String,
     pub data: String,

@@ -4,17 +4,18 @@ use anyhow::{anyhow, Error, Result};
 use flume::{Receiver, RecvError};
 use once_cell::sync::OnceCell;
 use parking_lot::Mutex;
-use sciter::{make_args, Value, Window};
-use serde::Serialize;
+use sciter::{make_args, Window};
 use std::fs::DirBuilder;
 use std::path::PathBuf;
+use serde_json::Value;
+#[cfg(target_os = "windows")]
 use std::ptr::null;
-
 #[cfg(target_os = "windows")]
 use windows::Win32::{
     Foundation::{GetLastError, WIN32_ERROR},
     System::Threading::{CreateMutexW, OpenMutexW},
 };
+use crate::response::{Body, Response};
 
 /// create
 pub fn app() -> &'static Mutex<App> {
@@ -35,6 +36,7 @@ impl Default for App {
         }
     }
 }
+
 impl App {
     pub fn set_app_data_dir(&mut self, dir: PathBuf) {
         self.app_data_dir = dir
@@ -47,7 +49,7 @@ pub async fn create_main() -> Result<(), Error> {
         sciter::SCRIPT_RUNTIME_FEATURES::ALLOW_SYSINFO as u8        // Enables `Sciter.machineName()`.  Required for opening file dialog (`view.selectFile()`)
             | sciter::SCRIPT_RUNTIME_FEATURES::ALLOW_FILE_IO as u8, // Enables opening file dialog (`view.selectFile()`)
     ))
-    .map_err(|e| anyhow!("{:?}", e))?;
+        .map_err(|e| anyhow!("{:?}", e))?;
     // at rust side, open the sciter debug mode
     #[cfg(debug_assertions)]
     sciter::set_options(sciter::RuntimeOptions::DebugMode(true))
@@ -81,6 +83,7 @@ pub async fn create_main() -> Result<(), Error> {
     Ok(())
 }
 
+/// init app directory
 fn init_app_directory(window: &Window) -> Result<()> {
     let val = window
         .get_host()
@@ -101,18 +104,27 @@ fn init_app_directory(window: &Window) -> Result<()> {
     Ok(())
 }
 
+/// init consume data service
 fn do_request_services(receiver: Receiver<Action>) {
     tokio::spawn(async move {
         loop {
             match receiver.recv_async().await {
-                Ok(action) => match routes::dispatch(action).await {
-                    Ok(_) => {}
-                    Err(err) => error!("{}", err),
-                },
+                Ok(action) => {
+                    let act = action.clone();
+                    match routes::dispatch(act).await {
+                        Err(err) => {
+                            error!("{}", &err);
+                            if let Ok(data) = Response::<Option<&str>>::new(500, None, &format!("{}", err)).into_response() {
+                                let _ = action.cb.call(None, &make_args!(data), None);
+                            };
+                        }
+                        _ => {}
+                    }
+                }
                 Err(e) => match e {
                     RecvError::Disconnected => {
                         error!("do_request_services channel disconnected");
-                        std::process::exit(0);
+                        break;
                     }
                 },
             }
@@ -120,7 +132,7 @@ fn do_request_services(receiver: Receiver<Action>) {
     });
 }
 
-/// make sure single case
+/// make sure app running at single-case
 #[cfg(target_os = "windows")]
 pub fn make_sure_single_case() {
     unsafe {
@@ -136,23 +148,21 @@ pub fn make_sure_single_case() {
     }
 }
 
-/// make sure single case
+/// make sure app running at single-case
 #[cfg(not(target_os = "windows"))]
 pub fn make_sure_single_case() {
-    todo!();
+    //todo: unix system should be complete
 }
 
-pub fn generate_response(cb: Value) -> Result<String> {}
-
-#[derive(Debug, Serialize)]
-struct Response<T: ?Sized> {
-    pub code: usize,
-    pub data: Option<T>,
-    pub msg: String,
-}
-
-impl<T> Response<T> {
-    pub fn ok(code: usize, data: String, msg: &str) -> String {
-        "a".to_string()
+/// get serde_json value
+pub fn get_params<'a>(k: &'a str, required: bool, params: &'a Value) -> Result<&'a str> {
+    if let Some(a) = params[k].as_str() {
+        Ok(a)
+    } else {
+        if required {
+            return Err(anyhow!("{} is required", &k));
+        } else {
+            Ok("")
+        }
     }
 }
