@@ -1,0 +1,18 @@
+.form {
+    padding: 15dip;
+}
+.form-item{
+    flow:  horizontal-flow;
+    margin-bottom: 8dip;
+}
+.label{
+    width: 80dip;
+    text-align: right;
+    margin-right: 8dip;
+}
+.input{
+    width: 1*;
+}
+.input input {
+    width: 1*;
+}

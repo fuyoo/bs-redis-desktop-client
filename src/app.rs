@@ -1,21 +1,23 @@
 use crate::logger::error;
+use crate::response::{Body, Response};
 use crate::{routes, sqlite, Action, Evt};
 use anyhow::{anyhow, Error, Result};
 use flume::{Receiver, RecvError};
 use once_cell::sync::OnceCell;
 use parking_lot::Mutex;
 use sciter::{make_args, Window};
+use serde_json::Value;
 use std::fs::DirBuilder;
 use std::path::PathBuf;
-use serde_json::Value;
 #[cfg(target_os = "windows")]
 use std::ptr::null;
 #[cfg(target_os = "windows")]
 use windows::Win32::{
     Foundation::{GetLastError, WIN32_ERROR},
     System::Threading::{CreateMutexW, OpenMutexW},
+    UI::WindowsAndMessaging::{MessageBoxW, MB_OK},
+    Globalization::GetUserDefaultUILanguage
 };
-use crate::response::{Body, Response};
 
 /// create
 pub fn app() -> &'static Mutex<App> {
@@ -49,7 +51,7 @@ pub async fn create_main() -> Result<(), Error> {
         sciter::SCRIPT_RUNTIME_FEATURES::ALLOW_SYSINFO as u8        // Enables `Sciter.machineName()`.  Required for opening file dialog (`view.selectFile()`)
             | sciter::SCRIPT_RUNTIME_FEATURES::ALLOW_FILE_IO as u8, // Enables opening file dialog (`view.selectFile()`)
     ))
-        .map_err(|e| anyhow!("{:?}", e))?;
+    .map_err(|e| anyhow!("{:?}", e))?;
     // at rust side, open the sciter debug mode
     #[cfg(debug_assertions)]
     sciter::set_options(sciter::RuntimeOptions::DebugMode(true))
@@ -114,7 +116,10 @@ fn do_request_services(receiver: Receiver<Action>) {
                     match routes::dispatch(act).await {
                         Err(err) => {
                             error!("{}", &err);
-                            if let Ok(data) = Response::<Option<&str>>::new(500, None, &format!("{}", err)).into_response() {
+                            if let Ok(data) =
+                                Response::<Option<&str>>::new(500, None, &format!("{}", err))
+                                    .into_response()
+                            {
                                 let _ = action.cb.call(None, &make_args!(data), None);
                             };
                         }
@@ -139,10 +144,22 @@ pub fn make_sure_single_case() {
         let _ = OpenMutexW(0, true, "bs.echosocket.com@fuyoo");
         let WIN32_ERROR(code) = GetLastError();
         if code == 2 {
-            // 创建锁
+            // generate lock
             let _ = CreateMutexW(null(), true, "bs.echosocket.com@fuyoo");
         } else {
-            error!("app is running, please do not run again");
+            // get local language
+            let lang = GetUserDefaultUILanguage();
+            // Adapt to Chinese and english
+            if lang == 2052u16 {
+                MessageBoxW(None, "Rd 正在运行中, 请不要重复运行！", "提示", MB_OK);
+            } else {
+                MessageBoxW(
+                    None,
+                    "Rd is Running, Please do not run it again!",
+                    "Tips",
+                    MB_OK,
+                );
+            }
             std::process::exit(0);
         }
     }

@@ -1,7 +1,7 @@
 import {devicePixels} from '@sciter'
-import {PLATFORM,path} from '@env'
+import {PLATFORM, path} from '@env'
 
-
+Window.this.minSize = [600, 300]
 
 
 window.get_env_path = (t) => {

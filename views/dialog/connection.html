@@ -4,26 +4,11 @@
     <meta charset="UTF-8">
     <title>添加</title>
     <link rel="stylesheet" href="../css/framework.css">
+    <link rel="stylesheet" href="../css/connection.css">
 </head>
 <body>
-<form class="form">
+<div id="body"></div>
 
-</form>
-<a id="close" styleset="#btn-primary">close</a>
-<script type="module">
-    document.querySelector("#close").onclick = function () {
-        // Window.this.close({data:"success"})
-        let data = {
-            name:"name",
-            username: "fuyoo",
-            password: "",
-            address: "127.0.0.1",
-            port: "6379"
-        }
-        Window.this.parent.xcall("fetch", "/create", JSON.stringify(data), (res) => {
-            console.log(res)
-        })
-    }
-</script>
+<script type="module" src="../js/connection.js" />
 </body>
 </html>
