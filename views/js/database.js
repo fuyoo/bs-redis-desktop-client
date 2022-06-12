@@ -1,6 +1,6 @@
 import {PLATFORM} from '@env'
 import {add_connection_dialog} from "./dialog";
-
+const view = Window.this
 export default class Database extends Element {
     mode = 1;
 
@@ -17,7 +17,11 @@ export default class Database extends Element {
     connectedUI() {
 
     }
-
+    componentDidMount() {
+        view.xcall("fetch", "/connection/list","a",res => {
+            console.log(res)
+        })
+    }
     databaseListUI() {
 
         let top = PLATFORM === "OSX" ? "20dip" : "12dip"

@@ -1,11 +1,10 @@
-use std::collections::HashMap;
 use crate::app::get_params;
 use crate::response::{Body, Response};
 use crate::sqlite::create_connection;
-use anyhow::{Result};
+use anyhow::Result;
 use futures::future::Either;
 use rusqlite::params;
-
+use serde::{Deserialize, Serialize};
 pub async fn create(data: &str) -> Result<impl Body> {
     let params: serde_json::Value = serde_json::from_str(data)?;
     let name = get_params("name", true, &params)?;
@@ -16,25 +15,40 @@ pub async fn create(data: &str) -> Result<impl Body> {
     let id = uuid::Uuid::new_v4().to_string();
     let conn = create_connection().await?;
     let res = conn.execute(
-        "insert into connections(id,name,address,port,username,password) values(?1,?2,?3,?4,?5,?6)",
-        params![&id,name,ip,port,username,password],
+        "insert into connections(id,name,ip,port,username,password) values(?1,?2,?3,?4,?5,?6)",
+        params![&id, name, ip, port, username, password],
     )?;
     if res > 0 {
-        let mut map = HashMap::new();
-        map.insert("a", "b");
-        map.insert("b", "b");
-        map.insert("c", "b");
-        Ok(Response::ok(Some(map), None))
+        Ok(Response::ok(Some(true), None))
     } else {
-        Ok(Response::fail(None, Some("666")))
+        Ok(Response::fail(None::<bool>, Some("666")))
     }
 }
-
-pub async fn search(data: &str) -> Result<Either<Response<i32>, Response<&str>>> {
-    if data == "a" {
-        Ok(Either::Left(Response::new(310, 666, "")))
-    } else {
-        Ok(Either::Right(Response::new(310, "666", "")))
-    }
+#[derive(Serialize, Deserialize)]
+pub struct Row {
+    id: String,
+    name: String,
+    ip: String,
+    port: String,
+    username: String,
+    password: String,
 }
-
+pub async fn list() -> Result<Response<Vec<Row>>> {
+    let conn = create_connection().await?;
+    let mut stmt = conn.prepare("select * from connections")?;
+    let rows = stmt.query_map([], |row| {
+        Ok(Row {
+            id: row.get("id")?,
+            name: row.get("name")?,
+            ip: row.get("ip")?,
+            port: row.get("port")?,
+            username: row.get("username")?,
+            password: row.get("password")?,
+        })
+    })?;
+    let mut datas = vec![];
+    for item in rows {
+        datas.push(item?);
+    }
+    Ok(Response::new(200, datas, ""))
+}
