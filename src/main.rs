@@ -3,12 +3,13 @@
     windows_subsystem = "windows"
 )]
 
-mod app;
+pub mod app;
 mod events;
 mod logger;
 mod routes;
 mod sqlite;
 mod response;
+pub mod rdb;
 
 extern crate sciter;
 

@@ -11,7 +11,7 @@ export function custom_dialog(config) {
     })
 }
 
-export function add_connection_dialog() {
+export function connection_dialog(parameters) {
     let [x,y,w,h] = getSize();
     let left = x + w / 2 - 200 / 2
     let top = y + h / 2 - 160 / 2
@@ -23,7 +23,8 @@ export function add_connection_dialog() {
         height:280,
         x: left,
         y: top,
-        url: "this://app/dialog/connection.html"
+        url: "this://app/dialog/connection.html",
+        parameters
     })
 }
 

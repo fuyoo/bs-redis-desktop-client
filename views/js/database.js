@@ -1,38 +1,104 @@
 import {PLATFORM} from '@env'
-import {add_connection_dialog} from "./dialog";
-const view = Window.this
+import {connection_dialog, view} from "./dialog";
+import {request} from "./util";
+
+
 export default class Database extends Element {
     mode = 1;
+    connectionList = [];
+
+    componentDidMount() {
+        this.onGlobalEvent("fetch-connections", this.getConnectionList)
+        this.getConnectionList()
+    }
 
     ["on click at #add-btn"](evt, ele) {
-        // Window.this.xcall("fetch", "/create", "{}", (res) => {
-        //     console.log(res)
-        // })
-        add_connection_dialog()
+        connection_dialog()
             .then(res => {
-                console.log(JSON.stringify(res))
+                if (res) {
+                    this.getConnectionList()
+                }
             })
     }
 
-    connectedUI() {
+    ["on click at #add-btn"](evt, ele) {
+        connection_dialog()
+            .then(res => {
+                if (res) {
+                    this.getConnectionList()
+                }
+            })
+    }
 
+    ["on click at .connection-name"](){
+        this.mode = 2
+        this.componentUpdate()
     }
-    componentDidMount() {
-        view.xcall("fetch", "/connection/list","a",res => {
-            console.log(res)
-        })
+
+    connectionListUI() {
+        if (this.connectionList.length === 0) {
+            return  <div class="empty">无数据</div>
+        }
+        return <div class="connection-list">
+            {
+                this.connectionList.map(item => {
+                    return <div class="connection-item">
+                        <div class="connection-info">
+                            <img src="../icons/client.svg" width="14dip" height="14dip"/>
+                            <span class="connection-name">{item.name}</span>
+                        </div>
+                        <div class="connection-action">
+                            <img src="../icons/delete.svg" width="18dip" height="18dip"
+                                 onClick={() => this.deleteConnection(item.id)}/>
+                            <img src="../icons/edit.svg" width="18dip" height="18dip"
+                                 onClick={() => this.editConnection(item)}/>
+                        </div>
+                    </div>
+                })
+            }
+        </div>
     }
+
+    deleteConnection(id) {
+        request("/connection/delete", id)
+            .then(res => {
+                if (res.code == 200) {
+                    this.getConnectionList()
+                } else {
+                    view.modal(<error>{res.msg}</error>)
+                }
+            })
+    }
+
+    getConnectionList() {
+        request("/connection/list")
+            .then(res => {
+                this.connectionList = res.data
+                this.componentUpdate()
+            })
+    }
+
+    editConnection(params) {
+        connection_dialog(params)
+            .then(res => {
+                if (res) {
+                    this.getConnectionList()
+                }
+            })
+    }
+
     databaseListUI() {
-
         let top = PLATFORM === "OSX" ? "20dip" : "12dip"
         return (<div class="nav-bar">
-            <div class="add-connection"  style={{"paddingTop": top}}>
+            <div class="add-connection" style={{"paddingTop": top}}>
                 <a styleset="#btn-primary" id="add-btn" class="block text-center">添加</a>
             </div>
-            <div class="connection-list">
-                <div style={"height:1200dip"}></div>
-            </div>
+            {this.connectionListUI()}
         </div>)
+    }
+
+    connectedUI() {
+        return (<div>connected!</div>)
     }
 
     render() {

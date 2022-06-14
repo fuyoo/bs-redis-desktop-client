@@ -39,13 +39,12 @@ impl<T> Body for Response<T>
 
 impl Body for () {
     fn into_response(self) -> Result<String> {
-        Ok("".to_string())
+        Ok(serde_json::to_string(&Response::ok("", None))?)
     }
 }
 
 impl<T> Response<T>
-    where T: serde::ser::Serialize,
-{
+    where T: serde::ser::Serialize, {
     pub fn new(code: usize, data: T, msg: &str) -> Self {
         Response {
             code,

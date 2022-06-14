@@ -1,8 +1,18 @@
 use crate::app::app;
 use anyhow::Result;
 use std::path::PathBuf;
-use log::info;
 use rusqlite::Connection;
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
+pub struct ConnectionsTable {
+    pub id: String,
+    pub name: String,
+    pub ip: String,
+    pub port: String,
+    pub username: String,
+    pub password: String,
+}
 
 pub async fn init() -> Result<()> {
     let conn = create_connection().await?;
@@ -28,12 +38,12 @@ pub async fn init() -> Result<()> {
                 )",
         [],
     )?;
+    let _ = conn.close();
     Ok(())
 }
 
 pub async fn create_connection() -> Result<Connection> {
-    info!("{:?}",&app().lock().app_data_dir);
     let db = PathBuf::from(&app().lock().app_data_dir).join("data.db");
-    let conn = rusqlite::Connection::open(db)?;
+    let conn = Connection::open(db)?;
     Ok(conn)
 }

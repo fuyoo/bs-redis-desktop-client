@@ -68,10 +68,61 @@ html, body, .app {
     padding: var(--van-padding-sm);
     border-bottom: var(--van-border-width-base) solid var(--van-border-color);
 }
-
-.nav-bar .connection-list {
+.empty{
+    width: 1*;
     height: 1*;
-    flow: vertical-flow;
+    padding: 8dip;
+}
+.nav-bar .connection-list {
+    width: 1*;
+    height: 1*;
+    flow: vertical;
     vertical-align: top;
     overflow: var(--scroll);
+}
+
+.nav-bar .connection-list .connection-item {
+    width: 240dip;
+    flow: horizontal;
+    padding: 8dip 0;
+    border-bottom: var(--van-border-width-base) solid var(--van-border-color);
+}
+.connection-item:hover{
+    background-color: var(--van-background-color);
+}
+.connection-info, .connection-action {
+    flow: horizontal;
+    vertical-align: middle;
+}
+
+.connection-info {
+    width: 1*;
+    flow: horizontal;
+    padding-left: 8dip;
+}
+
+.connection-info .connection-name {
+    width: 1*;
+    height: 14dip;
+    line-height: 14dip;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 4dip;
+}
+
+.connection-action {
+    horizontal-align: center;
+    width: 40dip;
+    color: var(--van-primary-color);
+    padding-right: 8dip;
+}
+.connection-action img {
+    cursor: pointer;
+}
+.connection-action img:hover{
+    opacity: 0.7;
+}
+.connection-action img:active{
+    opacity: 1;
 }

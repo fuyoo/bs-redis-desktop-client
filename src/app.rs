@@ -5,7 +5,7 @@ use anyhow::{anyhow, Error, Result};
 use flume::{Receiver, RecvError};
 use once_cell::sync::OnceCell;
 use parking_lot::Mutex;
-use sciter::{make_args, Window};
+use sciter::{Element, make_args, Window};
 use serde_json::Value;
 use std::fs::DirBuilder;
 use std::path::PathBuf;
@@ -16,7 +16,7 @@ use windows::Win32::{
     Foundation::{GetLastError, WIN32_ERROR},
     System::Threading::{CreateMutexW, OpenMutexW},
     UI::WindowsAndMessaging::{MessageBoxW, MB_OK},
-    Globalization::GetUserDefaultUILanguage
+    Globalization::GetUserDefaultUILanguage,
 };
 
 /// create
@@ -51,7 +51,7 @@ pub async fn create_main() -> Result<(), Error> {
         sciter::SCRIPT_RUNTIME_FEATURES::ALLOW_SYSINFO as u8        // Enables `Sciter.machineName()`.  Required for opening file dialog (`view.selectFile()`)
             | sciter::SCRIPT_RUNTIME_FEATURES::ALLOW_FILE_IO as u8, // Enables opening file dialog (`view.selectFile()`)
     ))
-    .map_err(|e| anyhow!("{:?}", e))?;
+        .map_err(|e| anyhow!("{:?}", e))?;
     // at rust side, open the sciter debug mode
     #[cfg(debug_assertions)]
     sciter::set_options(sciter::RuntimeOptions::DebugMode(true))
@@ -78,8 +78,13 @@ pub async fn create_main() -> Result<(), Error> {
     } else {
         window.load_file("this://app/index.html");
     }
+    // init app directory
     init_app_directory(&window)?;
+    // init sqlite
     sqlite::init().await?;
+    // broadcast global inited event
+    window.get_host().get_root().unwrap_or(Element::create("html")?)
+        .broadcast_event("fetch-connections", true, None)?;
     // start event-loop
     window.run_app();
     Ok(())
@@ -117,8 +122,8 @@ fn do_request_services(receiver: Receiver<Action>) {
                         Err(err) => {
                             error!("{}", &err);
                             if let Ok(data) =
-                                Response::<Option<&str>>::new(500, None, &format!("{}", err))
-                                    .into_response()
+                            Response::<Option<&str>>::new(500, None, &format!("{}", err))
+                                .into_response()
                             {
                                 let _ = action.cb.call(None, &make_args!(data), None);
                             };
