@@ -2,7 +2,7 @@ use crate::response::{Body, Response};
 use crate::sqlite::{ConnectionsTable, create_connection};
 use anyhow::{Result};
 use rusqlite::params;
-use crate::rdb::{active_client, ActiveClient};
+use crate::rdb::{ActiveClient};
 
 pub async fn create(data: &str) -> Result<impl Body> {
     let params: ConnectionsTable = serde_json::from_str(data)?;

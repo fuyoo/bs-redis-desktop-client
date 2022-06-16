@@ -14,6 +14,7 @@ pub struct Response<T> {
     pub msg: String,
 }
 
+
 impl<A, B> Body for Either<A, B>
     where A: serde::ser::Serialize,
           B: serde::ser::Serialize,
@@ -27,6 +28,12 @@ impl<A, B> Body for Either<A, B>
                 Ok(serde_json::to_string(&data)?)
             }
         }
+    }
+}
+
+impl Body for String {
+    fn into_response(self) -> Result<String> {
+        Ok(serde_json::to_string(&Response::ok(self, None))?)
     }
 }
 

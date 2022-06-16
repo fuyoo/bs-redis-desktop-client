@@ -30,14 +30,24 @@ export default class Database extends Element {
             })
     }
 
-    ["on click at .connection-name"](){
+    ["on click at .connection-name"]() {
+        request("/rdb/info", "*")
+            .then(res => {
+                console.log(JSON.stringify(res.data.split("\r\n").map(item => {
+                        let a = item.split(":")
+                        let tmp = {}
+                        tmp[a[0]] = a[1]
+                        return tmp
+                    }
+                )))
+            })
         this.mode = 2
         this.componentUpdate()
     }
 
     connectionListUI() {
         if (this.connectionList.length === 0) {
-            return  <div class="empty">无数据</div>
+            return <div class="empty">无数据</div>
         }
         return <div class="connection-list">
             {

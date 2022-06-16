@@ -10,6 +10,7 @@ mod routes;
 mod sqlite;
 mod response;
 pub mod rdb;
+pub mod utils;
 
 extern crate sciter;
 

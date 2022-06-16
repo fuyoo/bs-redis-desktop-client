@@ -4,6 +4,7 @@ use crate::Action;
 use crate::response::{Body, Response};
 
 mod connection;
+mod rdb_connection;
 
 
 pub async fn dispatch(action: Action) -> Result<(), Error> {
@@ -13,6 +14,7 @@ pub async fn dispatch(action: Action) -> Result<(), Error> {
         "/connection/delete" => connection::delete(&action.data).await?.into_response()?,
         "/connection/update" => connection::update(&action.data).await?.into_response()?,
         "/connection/test" => connection::test_connection(&action.data).await?.into_response()?,
+        "/rdb/info" => rdb_connection::info(&action.data).await?.into_response()?,
         _ => Response::<Option<&str>>::new(404, None, "not found!").into_response()?
     };
     action.cb.call(None, &make_args!(res), None)?;

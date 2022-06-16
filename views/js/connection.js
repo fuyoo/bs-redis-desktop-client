@@ -120,7 +120,6 @@ class App extends Element {
     }
     ["on click at #test"](evt, ele) {
         view.parent.xcall("fetch", "/connection/test", JSON.stringify(this.formData), res => {
-
             res = JSON.parse(res)
             if (res.code == 200) {
                 view.modal(<info>{res.msg}</info>)
