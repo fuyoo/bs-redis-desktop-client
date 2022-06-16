@@ -13,7 +13,6 @@
 * 添加对应系统的二进制文件目录到系统PATH (bin.win, bin.osx, bin.lnx)。
 * 确保库文件位于系统环境（windows是sciter.dll、macos是libsciter.dylib、linux是libsciter gtk.so），
 * 确保sciter打资源打包工具packfolder在PATH系统环境目录中。
-* 确保packfolder可执行文件文件位于系统环境变量中；
 * Linux下如果libgtk-3-dev尚未安装，则需要安装GTK 3开发工具才能继续：`sudo apt get install libgtk-3-dev`
 * 编译并运行项目执行命令：cargo run
 
