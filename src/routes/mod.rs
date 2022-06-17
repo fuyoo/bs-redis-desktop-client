@@ -14,7 +14,10 @@ pub async fn dispatch(action: Action) -> Result<(), Error> {
         "/connection/delete" => connection::delete(&action.data).await?.into_response()?,
         "/connection/update" => connection::update(&action.data).await?.into_response()?,
         "/connection/test" => connection::test_connection(&action.data).await?.into_response()?,
+        "/rdb/connect" => rdb_connection::change_active_client(&action.data).await?.into_response()?,
+        "/rdb/change_db" => rdb_connection::change_active_client_db(&action.data).await?.into_response()?,
         "/rdb/info" => rdb_connection::info(&action.data).await?.into_response()?,
+        "/rdb/cfg" => rdb_connection::cfg(&action.data).await?.into_response()?,
         _ => Response::<Option<&str>>::new(404, None, "not found!").into_response()?
     };
     action.cb.call(None, &make_args!(res), None)?;

@@ -68,11 +68,13 @@ html, body, .app {
     padding: var(--van-padding-sm);
     border-bottom: var(--van-border-width-base) solid var(--van-border-color);
 }
-.empty{
+
+.empty {
     width: 1*;
     height: 1*;
     padding: 8dip;
 }
+
 .nav-bar .connection-list {
     width: 1*;
     height: 1*;
@@ -83,13 +85,17 @@ html, body, .app {
 
 .nav-bar .connection-list .connection-item {
     width: 240dip;
+    height: 30dip;
     flow: horizontal;
-    padding: 8dip 0;
+    vertical-align: middle;
+    padding: 0;
     border-bottom: var(--van-border-width-base) solid var(--van-border-color);
 }
-.connection-item:hover{
+
+.connection-item:hover {
     background-color: var(--van-background-color);
 }
+
 .connection-info, .connection-action {
     flow: horizontal;
     vertical-align: middle;
@@ -97,8 +103,10 @@ html, body, .app {
 
 .connection-info {
     width: 1*;
+    height: 1*;
     flow: horizontal;
     padding-left: 8dip;
+    vertical-align: middle;
 }
 
 .connection-info .connection-name {
@@ -117,12 +125,24 @@ html, body, .app {
     color: var(--van-primary-color);
     padding-right: 8dip;
 }
+
 .connection-action img {
     cursor: pointer;
 }
-.connection-action img:hover{
+
+.connection-action img:hover {
     opacity: 0.7;
 }
-.connection-action img:active{
+
+.connection-action img:active {
     opacity: 1;
+}
+
+.database-list li img{
+    vertical-align: middle;
+}
+.database-list li {
+    flow: horizontal;
+    horizontal-align: start;
+    vertical-align: middle;
 }

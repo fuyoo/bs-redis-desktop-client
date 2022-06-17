@@ -4,12 +4,12 @@ export function getSize() {
     return view.box("xywh", "border", "desktop")
 }
 
-export function request(path, data, stringify) {
+export function request(path, data, serialize) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             try {
-                if (stringify === true) {
-                    data = JSON.parse(data)
+                if (serialize === true) {
+                    data = JSON.stringify(data)
                 }
                 view.xcall("fetch", path, !!data ? data : "", res => {
                     try {

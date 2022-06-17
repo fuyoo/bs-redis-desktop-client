@@ -1,11 +1,14 @@
 import {PLATFORM} from '@env'
-import {connection_dialog, view} from "./dialog";
+import {connection_dialog, custom_dialog, view} from "./dialog";
 import {request} from "./util";
 
 
 export default class Database extends Element {
     mode = 1;
     connectionList = [];
+    activeConnectionInfo = {};
+    databases = 0;
+    activeServerInfo = {}
 
     componentDidMount() {
         this.onGlobalEvent("fetch-connections", this.getConnectionList)
@@ -30,19 +33,39 @@ export default class Database extends Element {
             })
     }
 
-    ["on click at .connection-name"]() {
+
+    getActiveConnectionInfo() {
         request("/rdb/info", "*")
             .then(res => {
-                console.log(JSON.stringify(res.data.split("\r\n").map(item => {
+                console.log(JSON.stringify(res.data.conn_info))
+                this.activeConnectionInfo = res.data.conn_info;
+                res.data.info.split("\r\n").map(item => {
                         let a = item.split(":")
-                        let tmp = {}
-                        tmp[a[0]] = a[1]
-                        return tmp
+                        if (a[0]) {
+                            this.activeServerInfo[a[0]] = a[1]
+                        }
                     }
-                )))
+                )
+                this.mode = 2
             })
-        this.mode = 2
-        this.componentUpdate()
+            .then(() => {
+                request("/rdb/cfg", "databases")
+                    .then(res => {
+                        this.databases = res.data.databases
+                        this.componentUpdate()
+                    })
+            })
+    }
+
+    connectServer(data) {
+        request("/rdb/connect", data, true)
+            .then(async res => {
+                if (res.code == 200) {
+                    this.getActiveConnectionInfo()
+                } else {
+                    await custom_dialog(<error>{res.msg}</error>)
+                }
+            })
     }
 
     connectionListUI() {
@@ -53,7 +76,7 @@ export default class Database extends Element {
             {
                 this.connectionList.map(item => {
                     return <div class="connection-item">
-                        <div class="connection-info">
+                        <div class="connection-info" onClick={() => this.connectServer(item)}>
                             <img src="../icons/client.svg" width="14dip" height="14dip"/>
                             <span class="connection-name">{item.name}</span>
                         </div>
@@ -69,7 +92,11 @@ export default class Database extends Element {
         </div>
     }
 
-    deleteConnection(id) {
+    async deleteConnection(id) {
+        let res = await custom_dialog(<info>are you sure to delete this record?</info>)
+        if (res !== "ok") {
+            return
+        }
         request("/connection/delete", id)
             .then(res => {
                 if (res.code == 200) {
@@ -108,7 +135,31 @@ export default class Database extends Element {
     }
 
     connectedUI() {
-        return (<div>connected!</div>)
+        return (<div>
+            <div class="database-info">
+                <div>name: {this.activeConnectionInfo.name}</div>
+                <div>ip:port: {this.activeConnectionInfo.ip}:{this.activeConnectionInfo.port}</div>
+                <div>server version: {this.activeServerInfo['redis_version']}</div>
+            </div>
+            <div class="database-action">
+                <a styleset="#btn-danger" onClick={() => {
+                    this.mode = 1
+                    this.componentUpdate()
+                }}>断开</a>
+            </div>
+            <ul class="database-list">
+                {(() => {
+                    let li = [];
+                    for (let i = 0; i < this.databases; i++) {
+                        li.push(<li>
+                            <img src="../icons/database.svg" width="16dip" height="16dip"/>
+                            <span>{i}</span>
+                        </li>)
+                    }
+                    return li
+                })()}
+            </ul>
+        </div>)
     }
 
     render() {

@@ -1,6 +1,7 @@
 use anyhow::Result;
 use futures::future::Either;
 use serde::Serialize;
+use std::collections::HashMap;
 
 pub trait Body {
     fn into_response(self) -> Result<String>;
@@ -14,19 +15,15 @@ pub struct Response<T> {
     pub msg: String,
 }
 
-
 impl<A, B> Body for Either<A, B>
-    where A: serde::ser::Serialize,
-          B: serde::ser::Serialize,
+where
+    A: serde::ser::Serialize,
+    B: serde::ser::Serialize,
 {
     fn into_response(self) -> Result<String> {
         match self {
-            Either::Left(data) => {
-                Ok(serde_json::to_string(&data)?)
-            }
-            Either::Right(data) => {
-                Ok(serde_json::to_string(&data)?)
-            }
+            Either::Left(data) => Ok(serde_json::to_string(&data)?),
+            Either::Right(data) => Ok(serde_json::to_string(&data)?),
         }
     }
 }
@@ -38,7 +35,9 @@ impl Body for String {
 }
 
 impl<T> Body for Response<T>
-    where T: serde::ser::Serialize, {
+where
+    T: serde::ser::Serialize,
+{
     fn into_response(self) -> Result<String> {
         Ok(serde_json::to_string(&self)?)
     }
@@ -50,8 +49,16 @@ impl Body for () {
     }
 }
 
+impl Body for bool {
+    fn into_response(self) -> Result<String> {
+        Ok(serde_json::to_string(&Response::ok(self, None))?)
+    }
+}
+
 impl<T> Response<T>
-    where T: serde::ser::Serialize, {
+where
+    T: serde::ser::Serialize,
+{
     pub fn new(code: usize, data: T, msg: &str) -> Self {
         Response {
             code,
@@ -77,3 +84,21 @@ impl<T> Response<T>
     }
 }
 
+impl<T> Body for Vec<T>
+where
+    T: serde::ser::Serialize,
+{
+    fn into_response(self) -> Result<String> {
+        Ok(serde_json::to_string(&Response::ok(self, None))?)
+    }
+}
+
+impl<K, V> Body for HashMap<K, V>
+where
+    K: serde::ser::Serialize + Eq + std::hash::Hash,
+    V: serde::ser::Serialize + Eq + std::hash::Hash,
+{
+    fn into_response(self) -> Result<String> {
+        Ok(serde_json::to_string(&Response::ok(self, None))?)
+    }
+}

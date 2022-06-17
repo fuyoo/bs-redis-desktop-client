@@ -4,7 +4,7 @@ use std::path::PathBuf;
 use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize,Debug)]
 pub struct ConnectionsTable {
     pub id: String,
     pub name: String,

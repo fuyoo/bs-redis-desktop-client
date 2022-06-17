@@ -1,8 +1,8 @@
+use crate::rdb::ActiveClient;
 use crate::response::{Body, Response};
-use crate::sqlite::{ConnectionsTable, create_connection};
-use anyhow::{Result};
+use crate::sqlite::{create_connection, ConnectionsTable};
+use anyhow::Result;
 use rusqlite::params;
-use crate::rdb::{ActiveClient};
 
 pub async fn create(data: &str) -> Result<impl Body> {
     let params: ConnectionsTable = serde_json::from_str(data)?;
@@ -10,7 +10,14 @@ pub async fn create(data: &str) -> Result<impl Body> {
     let conn = create_connection().await?;
     let res = conn.execute(
         "insert into connections(id,name,ip,port,username,password) values(?1,?2,?3,?4,?5,?6)",
-        params![id, params.name, params.ip, params.port, params.username, params.password],
+        params![
+            id,
+            params.name,
+            params.ip,
+            params.port,
+            params.username,
+            params.password
+        ],
     )?;
     if res > 0 {
         Ok(Response::ok(Some(true), None))
@@ -53,7 +60,16 @@ pub async fn update(data: &str) -> Result<Response<bool>> {
     let conn = create_connection().await?;
     if conn.execute(
         "update connections set name=?1,ip=?2,port=?3,username=?4,password=?5 where id = ?6",
-        params![params.name,params.ip,params.port,params.username,params.password,params.id])? > 0 {
+        params![
+            params.name,
+            params.ip,
+            params.port,
+            params.username,
+            params.password,
+            params.id
+        ],
+    )? > 0
+    {
         Ok(Response::ok(true, None))
     } else {
         Ok(Response::fail(false, None))
@@ -61,11 +77,14 @@ pub async fn update(data: &str) -> Result<Response<bool>> {
 }
 
 pub async fn test_connection(data: &str) -> Result<Response<bool>> {
-    let conninfo: ConnectionsTable = serde_json::from_str(data)?;
-    let inf = ActiveClient::default().set_ip(conninfo.ip)
-        .set_password(conninfo.password)
-        .set_port(conninfo.port.parse::<usize>()?)
-        .set_username(conninfo.username);
+    let info: ConnectionsTable = serde_json::from_str(data)?;
+    let inf = ActiveClient::default()
+        .set_ip(info.ip)
+        .set_password(info.password)
+        .set_port(info.port.parse()?)
+        .set_username(info.username)
+        .generate();
+    println!("{:#?}", inf);
     let client = redis::Client::open(inf)?;
     let _ = client.get_tokio_connection().await?;
     Ok(Response::ok(true, Some("连接成功")))
