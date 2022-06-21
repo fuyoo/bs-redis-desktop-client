@@ -16,6 +16,8 @@ extern crate rusqlite;
 #[macro_use]
 extern crate anyhow;
 
+use tauri::Manager;
+
 
 fn main() {
     if cfg!(debug_assertions) {
@@ -26,7 +28,7 @@ fn main() {
     let _app = tauri::Builder::default()
         .setup(|_app| {
             #[cfg(target_os = "windows")]
-            app::webview2_is_installed();
+            app::webview2_is_installed(_app.app_handle().clone());
             if !app::init_app_dir() {
                 panic!("工作目录初始化失败！");
             }

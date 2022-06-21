@@ -50,7 +50,7 @@ export default {
     getSysInfo() {
       request('query_sys_info')
           .then(res => {
-            this.form = res.data
+            this.form = res.data || {id:"1"}
           })
     },
     onSubmit() {

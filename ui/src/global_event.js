@@ -7,8 +7,7 @@ import set from '::/set';
 !(async () => {
     await request('query_sys_info')
         .then(async res => {
-            const {lang} = res.data
-            await store.dispatch("updateLanguage", lang)
+            await store.dispatch("updateLanguage", res.data.lang || 'cn')
         })
 })()
 !(async () => await listen('pubsub', async evt => {

@@ -148,11 +148,8 @@ pub fn create_app_menu() -> Menu {
 
 pub fn handle_event_app_menu_event(event: WindowMenuEvent<Wry>) {
     match event.menu_item_id() {
-        // "exit" => {
-        //     std::process::exit(0);
-        // }
         "set" => {
-            event.window().emit("set", "").unwrap();
+           let _ = event.window().emit_all("set","");
         }
         _ => {
             print!("at handle_event_app_menu_event")
@@ -163,7 +160,16 @@ pub fn handle_event_app_menu_event(event: WindowMenuEvent<Wry>) {
 /// 任务栏图标点击事件
 pub fn handle_system_tray_event(app: &AppHandle<Wry>, e: SystemTrayEvent) {
     match e {
+        SystemTrayEvent::LeftClick {..} => {
+            let window = app.get_window("main").unwrap();
+            window.unminimize().unwrap();
+            window.show().unwrap();
+            window.set_focus().unwrap();
+        },
         SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
+            "set" => {
+                let _res  = app.emit_all("set","");
+            }
             "open_window" => {
                 let window = app.get_window("main").unwrap();
                 window.unminimize().unwrap();
@@ -290,7 +296,7 @@ fn open_reg_key() -> std::io::Result<()> {
 
 //windows下检查是否安装了WebView2
 #[cfg(target_os = "windows")]
-pub fn webview2_is_installed() {
+pub fn webview2_is_installed(scope: AppHandle) {
     if let Err(_) = open_reg_key() {
         unsafe {
             MessageBoxW(
@@ -299,9 +305,9 @@ pub fn webview2_is_installed() {
                 "出错啦！",
                 MB_OK,
             );
-            let _ = tauri::api::shell::open(
-                "https://developer.microsoft.com/zh-cn/microsoft-edge/webview2/#download-section"
-                    .to_string(),
+            let _ = tauri::scope::ShellScope::open(
+                &scope.shell_scope(),
+                "https://developer.microsoft.com/zh-cn/microsoft-edge/webview2/#download-section",
                 None,
             );
             std::process::exit(0);

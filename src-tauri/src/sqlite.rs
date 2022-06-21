@@ -49,9 +49,9 @@ pub fn init_table() {
             [],
         )?;
         // 查询初始化数据是否存在
-        let res: rusqlite::Result<String> =
-            conn.query_row("select * from sys_info where id = '1'", [], |row| {
-                row.get(0)
+        let res =
+            conn.query_row("select * from sys_info where id = '1'", [], |_| {
+                Ok(true)
             });
         // 报错代表初始化数据不存在
         match res {
