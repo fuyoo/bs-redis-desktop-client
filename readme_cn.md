@@ -31,7 +31,7 @@
 
 - 安装 nodejs 和 rust
 - 安装tauri-cli工具
-  `cargo install tauri-cli --version ^1.0.0-beta`
+  `cargo install tauri-cli --version ^1.0.0`
 - 到ui目录执行
   `yarn install` 或者 `npm install` 安装依赖，
 

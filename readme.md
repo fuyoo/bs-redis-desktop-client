@@ -30,7 +30,7 @@ English|[中文](./readme_cn.md)
 
 - install `nodejs` and `rust`
 - install `tauri-cli` tools
-  `cargo install tauri-cli --version ^1.0.0-beta`
+  `cargo install tauri-cli --version ^1.0.0`
 - cd `ui` and execute the following command
   `yarn install` or `npm install` install the dependence
 

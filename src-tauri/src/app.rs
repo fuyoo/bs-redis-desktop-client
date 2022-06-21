@@ -8,11 +8,7 @@ use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 #[cfg(target_os = "windows")]
 use std::ptr::null;
-use std::{
-    fs::create_dir_all,
-    path::{Path, PathBuf},
-    result::Result::Ok,
-};
+use std::{fs::create_dir_all, path::{Path, PathBuf}, process, result::Result::Ok};
 use tauri::{command, AppHandle, CustomMenuItem, Manager, Menu, SystemTray, SystemTrayEvent, Window, WindowMenuEvent, Wry, RunEvent, WindowEvent};
 
 #[cfg(not(target_os = "windows"))]
@@ -174,6 +170,9 @@ pub fn handle_system_tray_event(app: &AppHandle<Wry>, e: SystemTrayEvent) {
                 window.show().unwrap();
                 window.set_focus().unwrap();
             }
+            "quit" => {
+                process::exit(0)
+            }
             _ => {}
         },
         _ => {}
@@ -185,7 +184,7 @@ pub fn handle_app_event(_app_handle: &AppHandle<Wry>, event: RunEvent) {
     match event {
         RunEvent::Exit => {}
         RunEvent::ExitRequested { .. } => {}
-        RunEvent::WindowEvent { label, event,.. } => {
+        RunEvent::WindowEvent { label, event, .. } => {
             match event {
                 WindowEvent::CloseRequested { api, .. } => {
                     if label == "main" {
