@@ -21,7 +21,7 @@ fn main() {
     if cfg!(debug_assertions) {
         env_logger::init();
     }
-
+    fix_path_env::fix().expect("path error!");
     app::lock_single();
     let _app = tauri::Builder::default()
         .setup(|_app| {

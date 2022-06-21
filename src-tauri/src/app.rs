@@ -13,10 +13,7 @@ use std::{
     path::{Path, PathBuf},
     result::Result::Ok,
 };
-use tauri::{
-    command, AppHandle, CustomMenuItem, Event, Manager, Menu, SystemTray, SystemTrayEvent, Window,
-    WindowMenuEvent, Wry,
-};
+use tauri::{command, AppHandle, CustomMenuItem, Manager, Menu, SystemTray, SystemTrayEvent, Window, WindowMenuEvent, Wry, RunEvent, WindowEvent};
 
 #[cfg(not(target_os = "windows"))]
 use tauri::{MenuItem, Submenu};
@@ -184,16 +181,24 @@ pub fn handle_system_tray_event(app: &AppHandle<Wry>, e: SystemTrayEvent) {
 }
 
 /// 监听app事件
-pub fn handle_app_event(app_handle: &AppHandle<Wry>, event: Event) {
+pub fn handle_app_event(_app_handle: &AppHandle<Wry>, event: RunEvent) {
     match event {
-        Event::CloseRequested { label, api, .. } => {
-            if label == "main" {
-                let app_handle = app_handle.clone();
-                app_handle.get_window(&label).unwrap().hide().unwrap();
-                // use the exposed close api, and prevent the event loop to close
-                api.prevent_close();
+        RunEvent::Exit => {}
+        RunEvent::ExitRequested { .. } => {}
+        RunEvent::WindowEvent { label, event,.. } => {
+            match event {
+                WindowEvent::CloseRequested { api, .. } => {
+                    if label == "main" {
+                        let _ = _app_handle.get_window("main").unwrap().hide();
+                        api.prevent_close()
+                    }
+                }
+                _ => {}
             }
         }
+        RunEvent::Ready => {}
+        RunEvent::Resumed => {}
+        RunEvent::MainEventsCleared => {}
         _ => {}
     }
 }
