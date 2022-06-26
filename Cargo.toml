@@ -2,6 +2,7 @@
 name = "rd"
 version = "0.1.0"
 edition = "2021"
+description = "The Best Surprise Redis Desktop Client"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -31,4 +32,10 @@ windows = { version = "0.24.0", features = [
 ] }
 
 [target.'cfg(windows)'.build-dependencies]
-embed-resource = "*"
+winres = "0.1.12"
+
+[package.metadata.winres]
+OriginalFilename = "rd.exe"
+LegalCopyright = "Copyright fuyoo © 2022"
+ProductName = "rd"
+FileDescription = "The Best Surprise Redis Desktop Client"

@@ -12,7 +12,11 @@ fn main() {
 
 #[cfg(target_os = "windows")]
 fn main() {
-    embed_resource::compile("windows_platform_resource/build.rc");
+    let mut res = winres::WindowsResource::new();
+    res.set_icon("windows_platform_resource/icon.ico")
+        .set_manifest_file("windows_platform_resource/dpi-aware.mainfest");
+    res.compile().unwrap();
+    //embed_resource::compile("windows_platform_resource/build.rc");
     Command::new("packfolder")
         .arg("views")
         .arg("src/resource.rc")
