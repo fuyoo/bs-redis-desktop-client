@@ -2,7 +2,7 @@ use crate::rdb::{active_client, ActiveClient};
 use crate::response::{Body, Response};
 use crate::sqlite::ConnectionsTable;
 use anyhow::Result;
-use redis::{cmd, AsyncCommands, Client};
+use redis::{cmd, Client};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 pub async fn change_active_client(data: &str) -> Result<impl Body> {
