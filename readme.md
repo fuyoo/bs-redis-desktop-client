@@ -5,7 +5,7 @@ English|[中文](./readme_cn.md)
 
 > The BS redis desktop client is powered by Rust and Tauri, with very small weight, beautiful interface and faster running speed!
 
-## branch sciter is based on sciter framework,more info see sciter branch.
+## branch sciter is based on sciter framework,more info see sciter branch. （最近赶项目，没怎么动bs，请见谅！）
 
 ## why have this tool?
 
