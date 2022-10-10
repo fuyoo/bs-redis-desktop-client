@@ -1,7 +1,7 @@
 # BS Redis Desktop Client
 English|[中文](./readme_cn.md)
 
-> BS Redis Desktop Client rust + tauri
+> BS Redis Desktop Client tauri
 
 > The BS redis desktop client is powered by Rust and Tauri, with very small weight, beautiful interface and faster running speed!
 
@@ -24,13 +24,13 @@ English|[中文](./readme_cn.md)
 ### Directory tree
 
 + `/src-tauri` is rust + [tauri](https://tauri.studio/) tauri project
-+ `/ui` is based on [vue3](https://v3.vuejs.org/) + [element-plus](https://element-plus.org/zh-CN/) fornt end project
++ 
 
 ### Init environment
 
 - install `nodejs` and `rust`
 - install `tauri-cli` tools
-  `cargo install tauri-cli --version ^1.0.0`
+  `cargo install tauri-cli`
 - cd `ui` and execute the following command
   `yarn install` or `npm install` install the dependence
 

@@ -1,13 +1,13 @@
 {
   "package": {
-    "productName": "BS Redis Desktop Client",
+    "productName": "BS RDC",
     "version": "1.1.2"
   },
   "build": {
-    "distDir": "../ui/dist",
-    "devPath": "http://127.0.0.1:9000",
+    "distDir": "../bs-frontend/dist",
+    "devPath": "http://127.0.0.1:6580",
     "beforeDevCommand": "",
-    "beforeBuildCommand": "cd ui && npm run build"
+    "beforeBuildCommand": "cd bs-frontend && pnpm build"
   },
   "tauri": {
     "systemTray": {
@@ -17,7 +17,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.echosocket.bs",
+      "identifier": "link.xsa.bs",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
