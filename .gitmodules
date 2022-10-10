@@ -1,0 +1,3 @@
+[submodule "bs-frontend"]
+	path = bs-frontend
+	url = https://github.com/fuyoo/bs-frontend.git
