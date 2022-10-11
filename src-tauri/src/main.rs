@@ -4,6 +4,7 @@ windows_subsystem = "windows"
 )]
 extern crate log;
 extern crate anyhow;
+use window_shadows::set_shadow;
 
 use tauri::{AppHandle, Manager, RunEvent, WindowEvent, Wry};
 
@@ -13,7 +14,10 @@ fn main() {
     }
     fix_path_env::fix().expect("path error!");
     let _app = tauri::Builder::default()
-        .setup(|_app| {
+        .plugin(tauri_plugin_window_state::Builder::default().build())
+        .setup(|app| {
+            let window = app.get_window("main").unwrap();
+            set_shadow(&window, true).expect("Unsupported platform!");
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![])

@@ -7,7 +7,7 @@
     "distDir": "../bs-frontend/dist",
     "devPath": "http://127.0.0.1:6580",
     "beforeDevCommand": "",
-    "beforeBuildCommand": "cd bs-frontend && pnpm build"
+    "beforeBuildCommand": ""
   },
   "tauri": {
     "systemTray": {
@@ -59,9 +59,10 @@
         "width": 1024,
         "height": 620,
         "center": true,
-        "visible": true,
+        "visible": false,
         "resizable": true,
-        "fullscreen": false
+        "fullscreen": false,
+        "decorations": false
       }
     ],
     "security": {
