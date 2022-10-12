@@ -27,7 +27,7 @@ English | [中文](./readme_cn.md)
 - install `tauri-cli` tools, execute `cargo install tauri-cli`
 
 ### Debugger
-1. clone the `bs-frontend` repo 
+1. clone the `bs-frontend` repo [bs-frontend](https://github.com/fuyoo/bs-frontend.git) and read the readme.md to run it.  
 2. at this project directory execute `cargo tauri dev` 
 
 ### build
