@@ -42,7 +42,7 @@ English | [中文](./readme_cn.md)
 - change app icon：at this project directory execute `cargo tauri icon "image absoute path"`
 
 
-## Screenshots
+## Tag#1.1.1 Screenshots, new version is developing
 
 ![1](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/en_0.png)
 
