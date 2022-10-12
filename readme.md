@@ -1,18 +1,13 @@
-# BS Redis Desktop Client
-English|[中文](./readme_cn.md)
+# BS Redis Desktop Client n
+English | [中文](./readme_cn.md)
 
 > BS Redis Desktop Client tauri
 
 > The BS redis desktop client is powered by Rust and Tauri, with very small weight, beautiful interface and faster running speed!
 
-## branch sciter is based on sciter framework,more info see sciter branch. （最近赶项目，没怎么动bs，请见谅！）
+## this project is rebuilding, if you need the old resource please check tag#1.1.1
 
-## why have this tool?
-
-* more tools based on electron，too heavy and large。
-* rdm so ugly for me。
-* rust and tauri fast and minimal samll。
-* html make me crate a pretty interface。
+## branch sciter is based on sciter framework,more info see sciter branch. 
 
 ## Software download and communication
 
@@ -23,26 +18,28 @@ English|[中文](./readme_cn.md)
 
 ### Directory tree
 
-+ `/src-tauri` is rust + [tauri](https://tauri.studio/) tauri project
-+ 
++ `/src-tauri` is  [tauri](https://tauri.studio/) tauri project
++ `bs-frontend` is the project frontend and it's a git submodule, just pack a gui resource
 
 ### Init environment
 
 - install `nodejs` and `rust`
-- install `tauri-cli` tools
-  `cargo install tauri-cli`
-- cd `ui` and execute the following command
-  `yarn install` or `npm install` install the dependence
+- install `tauri-cli` tools, execute `cargo install tauri-cli`
 
 ### Debugger
+1. clone the `bs-frontend` repo 
+2. at this project directory execute `cargo tauri dev` 
 
-- at `ui` directory execute `yarn dev` or `npm run dev` run front end
-- at other terminal exceute `cargo tauri dev` run tauri 
+### build
+1. update git submodule execute `git submodule update`.
+2. cd `bs-frontemd` execute `pnpm i` or `npm i` install all dependencies.
+3. execute `pnpm build` or `npm run build`,package the frontend resource.
+4. at the project root directory execute `cargo tauri build -- --release`.
+5. end.
 
 ### Other
 
-- packake：at `src-tauri` dir execute `cargo tauri build`
-- app icon：at `ui` dir  execute `yarn tauri icon "image absoute path"` or `npm run tauri icon "image absoute path"`
+- change app icon：at this project directory execute `cargo tauri icon "image absoute path"`
 
 
 ## Screenshots
