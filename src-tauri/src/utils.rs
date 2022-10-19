@@ -1,4 +1,4 @@
-
+use anyhow::Result;
 #[cfg(target_os = "windows")]
 use windows::{
     Win32::{
@@ -51,4 +51,8 @@ pub fn make_sure_single_case() {
 #[cfg(not(target_os = "windows"))]
 pub fn make_sure_single_case() {
     //todo: unix system should be complete
+}
+
+pub fn init_sqlite() -> Result<()>{
+    Ok(())
 }
