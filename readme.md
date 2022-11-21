@@ -11,7 +11,7 @@ English | [中文](./readme_cn.md)
 
 ## Software download and communication
 
-* Software download：[Home Page](http://bs.echosocket.com)
+* Software download：[Home Page](http://bs.xsa.link)
 * Communication： QQ GROUP：877290961
 
 ## Devlopment
