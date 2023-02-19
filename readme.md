@@ -31,10 +31,10 @@ English | [中文](./readme_cn.md)
 2. at this project directory execute `cargo tauri dev` 
 
 ### build
-1. update git submodule execute `git submodule init && git submodule update`.
+1. update git submodule execute `git submodule init && git submodule update or cd bs-frontend executd git pull origin main `.
 2. cd `bs-frontemd` execute `pnpm i` or `npm i` install all dependencies.
 3. execute `pnpm build` or `npm run build`,package the frontend resource.
-4. at the project root directory execute `cargo tauri build -- --release`.
+4. at the project root directory execute `cargo tauri build`.
 5. end.
 
 ### Other

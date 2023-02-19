@@ -1,16 +1,11 @@
 use anyhow::Result;
-use window_shadows::set_shadow;
-use tauri::{Manager, RunEvent};
+use tauri::{RunEvent};
 use crate::utils::init_sqlite;
 
 pub fn main() -> Result<()> {
     let _app = tauri::Builder::default()
         .plugin(tauri_plugin_window_state::Builder::default().build())
-        .setup(|app| {
-            #[cfg(target_os = "windows")]
-            if let Some(window) = app.get_window("main") {
-                let _ = set_shadow(&window, true);
-            };
+        .setup(|_app| {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![])
@@ -20,7 +15,7 @@ pub fn main() -> Result<()> {
         match _ev {
             RunEvent::Ready => {
                 let _ = init_sqlite();
-                println!("system is ready!");
+                println!("app is ready!");
             }
             _ => {}
         }

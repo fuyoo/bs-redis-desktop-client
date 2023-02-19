@@ -58,11 +58,7 @@
         "title": "BS Redis Desktop Client",
         "width": 1024,
         "height": 620,
-        "center": true,
-        "visible": false,
-        "resizable": true,
-        "fullscreen": false,
-        "decorations": false
+        "visible": false
       }
     ],
     "security": {
