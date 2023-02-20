@@ -1,4 +1,6 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
+use sqlx::{Connection, SqliteConnection};
+use tauri::api::path;
 #[cfg(target_os = "windows")]
 use windows::{
     Win32::{
@@ -52,7 +54,86 @@ pub fn make_sure_single_case() {
 pub fn make_sure_single_case() {
     //todo: unix system should be complete
 }
-
-pub fn init_sqlite() -> Result<()>{
+/// init sqlite
+pub fn init_sqlite() -> Result<()> {
+    let data = path::app_config_dir(&Default::default());
+    if let Some(data) = data {
+        // app config dir
+        let p = data.join("link.xsa.bs");
+        // dir not exits
+        if p.exists() == false {
+            // create
+            std::fs::DirBuilder::new().recursive(true).create(&p)?;
+        }
+        // check sqlite is init
+        let inited = p.join(".inited");
+        // if inited
+        if inited.exists() == true {
+            // return
+            return Ok(());
+        }
+        // create sqlite database file
+        let d = p.join(".data.db");
+        // file not exists
+        if d.exists() == false {
+            // create
+            std::fs::File::create(&d)?;
+        }
+        // to string
+        let filepath = d.display().to_string();
+        // connect and init sqlite tables
+        let sp: Result<()> = tokio::runtime::Runtime::new()?.block_on(async move {
+            init_sqlite_tables(&filepath).await?;
+            Ok(())
+        });
+        // do error logic
+        return match sp {
+            Ok(_) => {
+                // save inited status
+                std::fs::File::create(&inited)?;
+                Ok(())
+            }
+            Err(e) => {
+                Err(anyhow::anyhow!("{}",e))
+            }
+        };
+    }
     Ok(())
+}
+
+/// get sqlite connection instance
+pub async fn get_connection() -> Result<SqliteConnection> {
+    let data = path::app_config_dir(&Default::default());
+    if let Some(data) = data {
+        // app config dir
+        let p = data.join("link.xsa.bs");
+        // get sqlite database file
+        let d = p.join(".data.db");
+        Ok(SqliteConnection::connect(&d.display().to_string()).await?)
+    } else {
+        Err(anyhow!("get database path fail!"))
+    }
+}
+
+/// 初始化sqlite表
+async fn init_sqlite_tables(db_path: &str) -> Result<()> {
+    let mut conn = SqliteConnection::connect(db_path).await?;
+    sqlx::query(
+        "CREATE TABLE IF NOT EXISTS connections (
+                id              TEXT PRIMARY KEY,
+                name            TEXT NOT NULL,
+                address              TEXT NOT NULL,
+                port            TEXT DEFAULT '6379',
+                username        TEXT DEFAULT '',
+                password             TEXT DEFAULT ''
+        )"
+    )
+        .execute(&mut conn)
+        .await?;
+    Ok(())
+}
+
+/// extract str to type<T>
+pub fn extract<T: serde::de::DeserializeOwned>(data: &str) -> Result<T> {
+    Ok(serde_json::from_str::<T>(data)?)
 }

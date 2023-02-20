@@ -3,8 +3,11 @@ all(not(debug_assertions), target_os = "windows"),
 windows_subsystem = "windows"
 )]
 
-mod utils;
+pub mod utils;
 mod desktop;
+pub mod response;
+pub mod routes;
+pub mod models;
 
 extern crate log;
 extern crate anyhow;
