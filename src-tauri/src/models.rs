@@ -4,12 +4,12 @@ use sqlx::sqlite::SqliteRow;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Connections {
-    pub id: String,
+    pub id: Option<String>,
     pub name: String,
     pub address: String,
-    pub port: String,
-    pub username: String,
-    pub password: String,
+    pub port: Option<String>,
+    pub username: Option<String>,
+    pub password: Option<String>,
 }
 
 impl Connections {

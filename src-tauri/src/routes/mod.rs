@@ -1,4 +1,5 @@
 pub mod connections;
+
 use serde::{Deserialize, Serialize};
 use tauri::command;
 use anyhow::Result;
@@ -15,8 +16,9 @@ async fn dispatch(path: &str, payload: &str) -> Result<String> {
     // register routes
     match path {
         "/connection/list" => connections::get_connections_list(&payload).await,
+        "/connection/add" => connections::add_connection(&payload).await,
         _ => {
-            Response::<Option<bool>>::new(404, None, "not found!").into_response()
+            Response::<Option<bool>>::new(404, None, format!("request path {} not found!", path).as_str()).into_response()
         }
     }
 }
