@@ -5,6 +5,7 @@ use serde::Serialize;
 pub trait Body {
     fn into_response(self) -> Result<String>;
 }
+
 /// generate the unified response data
 #[derive(Debug, Serialize)]
 pub struct Response<T> {
@@ -56,7 +57,7 @@ impl<T> Response<T>
         Response {
             code: 200,
             data,
-            msg: msg.unwrap_or("操作成功").to_string(),
+            msg: msg.unwrap_or("ok").to_string(),
         }
     }
 
@@ -64,7 +65,7 @@ impl<T> Response<T>
         Response {
             code: 300,
             data,
-            msg: msg.unwrap_or("操作失败").to_string(),
+            msg: msg.unwrap_or("fail").to_string(),
         }
     }
 }
