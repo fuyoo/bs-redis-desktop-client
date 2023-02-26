@@ -29,7 +29,7 @@
       "externalBin": [],
       "copyright": "© fuyoo 2021-2023 保留所有权利",
       "category": "DeveloperTool",
-      "shortDescription": "",
+      "shortDescription": "Redis GUI Tools",
       "longDescription": "",
       "deb": {
         "depends": []
@@ -55,11 +55,13 @@
     },
     "windows": [
       {
-        "title": "BS Redis Desktop Client",
+        "title": "BS",
         "width": 1024,
         "height": 620,
         "visible": false,
-        "titleBarStyle": "Transparent"
+        "titleBarStyle": "Transparent",
+        "minWidth": 640,
+        "minHeight": 480
       }
     ],
     "security": {
