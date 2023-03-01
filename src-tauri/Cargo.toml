@@ -27,7 +27,8 @@ redis = "0.22.2"
 anyhow = "1.0.44"
 tokio = { version = "1", features = ["full"] }
 libc = "0.2.106"
-sqlx = { version = "0.6", features = [ "runtime-tokio-rustls",'sqlite' ] }
+sqlx = { version = "0.6", features = ["runtime-tokio-rustls", 'sqlite'] }
+ssh_jumper = "0.4.0"
 [dependencies.fix-path-env]
 git = "https://github.com/tauri-apps/fix-path-env-rs"
 #tag = "fix-path-env-v0.1.0"

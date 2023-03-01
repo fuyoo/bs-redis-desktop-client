@@ -1,3 +1,4 @@
+#![feature(let_chains)]
 #![cfg_attr(
 all(not(debug_assertions), target_os = "windows"),
 windows_subsystem = "windows"
@@ -8,6 +9,7 @@ mod desktop;
 pub mod response;
 pub mod routes;
 pub mod models;
+pub mod structs;
 
 extern crate log;
 extern crate anyhow;

@@ -1,15 +1,27 @@
 use anyhow::{anyhow, Result};
+use std::{
+    borrow::Cow,
+    net::{IpAddr, Ipv4Addr},
+};
+
+use crate::structs::{AuthType, SshJumpTaskInfo};
 use sqlx::{Connection, SqliteConnection};
+use ssh_jumper::{
+    model::{HostAddress, HostSocketParams, JumpHostAuthParams, SshTunnelParams},
+    SshJumper,
+};
+use std::{net::TcpListener, path::PathBuf};
 use tauri::api::path;
+use tokio::{sync::oneshot, task::JoinHandle as TokioJoinHandle};
 #[cfg(target_os = "windows")]
 use windows::{
+    w,
     Win32::{
         Foundation::{GetLastError, WIN32_ERROR},
         Globalization::GetUserDefaultUILanguage,
         System::Threading::{CreateMutexW, OpenMutexW, SYNCHRONIZATION_ACCESS_RIGHTS},
         UI::WindowsAndMessaging::{MessageBoxW, MB_OK},
     },
-    w,
 };
 
 /// make sure app running at single-case
@@ -54,6 +66,7 @@ pub fn make_sure_single_case() {
 pub fn make_sure_single_case() {
     //todo: unix system should be complete
 }
+
 /// init sqlite
 pub fn init_sqlite() -> Result<()> {
     let data = path::app_config_dir(&Default::default());
@@ -93,9 +106,7 @@ pub fn init_sqlite() -> Result<()> {
                 std::fs::File::create(&inited)?;
                 Ok(())
             }
-            Err(e) => {
-                Err(anyhow::anyhow!("{}",e))
-            }
+            Err(e) => Err(anyhow::anyhow!("{}", e)),
         };
     }
     Ok(())
@@ -115,7 +126,7 @@ pub async fn get_connection() -> Result<SqliteConnection> {
     }
 }
 
-/// 初始化sqlite表
+/// init sqlite tables
 async fn init_sqlite_tables(db_path: &str) -> Result<()> {
     let mut conn = SqliteConnection::connect(db_path).await?;
     sqlx::query(
@@ -126,14 +137,67 @@ async fn init_sqlite_tables(db_path: &str) -> Result<()> {
                 port            TEXT DEFAULT '6379',
                 username        TEXT DEFAULT '',
                 password             TEXT DEFAULT ''
-        )"
+        )",
     )
-        .execute(&mut conn)
-        .await?;
+    .execute(&mut conn)
+    .await?;
     Ok(())
 }
 
 /// extract str to type<T>
 pub fn extract<T: serde::de::DeserializeOwned>(data: &str) -> Result<T> {
     Ok(serde_json::from_str::<T>(data)?)
+}
+/// create proxy
+pub fn create_proxy(info: SshJumpTaskInfo) -> Result<(oneshot::Receiver<bool>, u16)> {
+    let (tx, tr) = oneshot::channel();
+    let local_port = get_idle_port()?;
+    let _: TokioJoinHandle<Result<()>> = tokio::spawn(async move {
+        // parse address
+        let addr = info
+            .host
+            .parse::<IpAddr>()
+            .unwrap_or(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)));
+        let jump_host = HostAddress::IpAddr(addr);
+        // generate jump host
+        let res = match info.auth {
+            AuthType::Password(pwd) => Some(JumpHostAuthParams::password(
+                Cow::from(info.user),
+                Cow::from(pwd),
+            )),
+            AuthType::PublicKey(key_path) => Some(JumpHostAuthParams::key_pair(
+                Cow::from(info.user),
+                Cow::from(PathBuf::from(key_path)),
+                None,
+            )),
+            AuthType::Unknown => None,
+        };
+        // condition
+        if let Some(res) = res {
+            let target_socket = HostSocketParams {
+                address: jump_host.clone(),
+                port: info.port as u16,
+            };
+            // start proxy
+            let ssh_params = SshTunnelParams::new(jump_host, res, target_socket)
+                // Optional: OS will allocate a port if this is left out
+                .with_local_port(local_port);
+            let (_, r) = SshJumper::open_tunnel(&ssh_params).await?;
+            // we not care this result, ignore it!
+            let _ = tx.send(true);
+            // listen
+            let _ = r.await;
+        } else {
+            // we not care this result, ignore it!
+            let _ = tx.send(false);
+        };
+        Ok(())
+    });
+
+    Ok((tr, local_port))
+}
+
+pub fn get_idle_port() -> Result<u16> {
+    // input a port 0,mean's tell the kernel give us an idle port!;
+    Ok(TcpListener::bind(("127.0.0.1", 0))?.local_addr()?.port())
 }
