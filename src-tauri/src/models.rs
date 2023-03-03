@@ -7,9 +7,25 @@ pub struct Connections {
     pub id: Option<String>,
     pub name: String,
     pub address: String,
-    pub port: Option<String>,
+    pub port: Option<i32>,
     pub username: Option<String>,
     pub password: Option<String>,
+    pub cluster: Option<bool>,
+    pub nodes: Option<String>,
+    pub proxy: Option<bool>,
+    #[serde(rename="proxyKeyType")]
+    pub proxy_key_type: Option<i32>,
+    #[serde(rename="proxyUsername")]
+    pub proxy_username: Option<String>,
+    #[serde(rename="proxyAddress")]
+    pub proxy_address: Option<String>,
+    #[serde(rename="proxyPort")]
+    pub proxy_port: Option<i32>,
+    #[serde(rename="proxyPassword")]
+    pub proxy_password: Option<String>,
+    #[serde(rename="proxyFilePath")]
+    pub proxy_file_path: Option<String>,
+
 }
 
 impl Connections {
@@ -21,6 +37,15 @@ impl Connections {
             port: row.get("port"),
             username: row.get("username"),
             password: row.get("password"),
+            cluster: None,
+            nodes: None,
+            proxy: None,
+            proxy_key_type: None,
+            proxy_username: None,
+            proxy_address: None,
+            proxy_port: None,
+            proxy_password: None,
+            proxy_file_path: None,
         }
     }
     pub async fn delete(id: &str) -> Result<bool> {

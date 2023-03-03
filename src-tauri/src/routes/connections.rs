@@ -13,6 +13,7 @@ pub async fn get_connections_list(_payload: &str) -> Result<String> {
 }
 
 pub async fn update_connection(payload: &str) -> Result<String> {
+    println!("{}",payload);
     let data = extract::<Connections>(payload)?;
     let id = data.id.clone();
     if data.insert_or_update().await? {
@@ -23,6 +24,7 @@ pub async fn update_connection(payload: &str) -> Result<String> {
 }
 
 pub async fn add_connection(payload: &str) -> Result<String> {
+    println!("{}",payload);
     let mut data = extract::<Connections>(payload)?;
     let id = nanoid!();
     data.id = Some(id.clone());

@@ -131,12 +131,21 @@ async fn init_sqlite_tables(db_path: &str) -> Result<()> {
     let mut conn = SqliteConnection::connect(db_path).await?;
     sqlx::query(
         "CREATE TABLE IF NOT EXISTS connections (
-                id              TEXT PRIMARY KEY,
-                name            TEXT NOT NULL,
-                address              TEXT NOT NULL,
-                port            TEXT DEFAULT '6379',
-                username        TEXT DEFAULT '',
-                password             TEXT DEFAULT ''
+                id              TEXT    primary key not null,
+                name            TEXT    not null,
+                address         TEXT    default '',
+                port            INTEGER default 6379,
+                username        TEXT    default '',
+                password        TEXT    default '',
+                cluster         INT     default 0,
+                nodes           TEXT    default '',
+                proxy           INT     default 0,
+                proxy_key_type  INT     default 0,
+                proxy_username  TEXT    default '',
+                proxy_address   TEXT    default '',
+                proxy_port      INTEGER default 6379,
+                proxy_password  TEXT    default '',
+                proxy_file_path TEXT    default ''
         )",
     )
     .execute(&mut conn)
