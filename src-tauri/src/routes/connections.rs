@@ -1,7 +1,6 @@
 use crate::{
     models::Connections,
     response::{Body, Response},
-    structs::{AuthType, SshJumpTaskInfo},
     utils::{create_proxy, extract},
 };
 use anyhow::Result;

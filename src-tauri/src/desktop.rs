@@ -14,6 +14,7 @@ pub fn main() -> Result<()> {
         RunEvent::Ready => {
             println!("app is ready!");
         }
+        RunEvent::ExitRequested { api,.. } => api.prevent_exit(),
         _ => {}
     });
     Ok(())
