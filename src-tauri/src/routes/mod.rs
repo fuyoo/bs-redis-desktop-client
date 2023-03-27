@@ -40,3 +40,7 @@ pub async fn routes(path: String, payload: String) -> Result<String, String> {
         }
     };
 }
+#[command]
+pub async fn exit() {
+    std::process::exit(0)
+}
