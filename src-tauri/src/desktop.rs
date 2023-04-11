@@ -14,16 +14,16 @@ pub fn main() -> Result<()> {
         RunEvent::Ready => {
             println!("app is ready!");
         }
-        RunEvent::WindowEvent { event, .. } => match event {
-            WindowEvent::CloseRequested { api, .. } => {
-                // prevent close for clear opened tab tabs
-                api.prevent_close();
-                if let Some(win) = &_handle.get_window("main") {
-                    let _ = win.emit("clear", ());
-                }
-            }
-            _ => {}
-        },
+        // RunEvent::WindowEvent { event, .. } => match event {
+        //     WindowEvent::CloseRequested { api, .. } => {
+        //         // prevent close for clear opened tab tabs
+        //         api.prevent_close();
+        //         if let Some(win) = &_handle.get_window("main") {
+        //             let _ = win.emit("clear", ());
+        //         }
+        //     }
+        //     _ => {}
+        // },
         _ => {}
     });
     Ok(())
