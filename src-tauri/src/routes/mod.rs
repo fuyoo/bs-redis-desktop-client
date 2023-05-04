@@ -21,6 +21,7 @@ async fn dispatch(path: &str, payload: &str) -> Result<String> {
         "/connection/add" => connections::add_connection(&payload).await,
         "/connection/delete" => connections::delete_connection(&payload).await,
         "/connection/edit" => connections::update_connection(&payload).await,
+        "/connection/test" => connections::test_connection(&payload).await,
         _ => Response::<Option<bool>>::new(
             404,
             None,

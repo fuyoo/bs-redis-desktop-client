@@ -11,6 +11,8 @@ use ssh_jumper::{
     SshJumper,
 };
 use std::{net::TcpListener, path::PathBuf};
+use log::{debug, info};
+use redis::Client;
 use tauri::api::path;
 use tokio::{sync::oneshot, task::JoinHandle as TokioJoinHandle};
 #[cfg(target_os = "windows")]
@@ -23,6 +25,7 @@ use windows::{
         UI::WindowsAndMessaging::{MessageBoxW, MB_OK},
     },
 };
+use crate::models::Connections;
 
 /// make sure app running at single-case
 #[cfg(target_os = "windows")]
@@ -94,6 +97,7 @@ pub fn init_sqlite() -> Result<()> {
         }
         // to string
         let filepath = d.display().to_string();
+        debug!("sqlite pat");
         // connect and init sqlite tables
         let sp: Result<()> = tokio::runtime::Runtime::new()?.block_on(async move {
             init_sqlite_tables(&filepath).await?;
@@ -148,8 +152,8 @@ async fn init_sqlite_tables(db_path: &str) -> Result<()> {
                 proxy_file_path TEXT    default ''
         )",
     )
-    .execute(&mut conn)
-    .await?;
+        .execute(&mut conn)
+        .await?;
     Ok(())
 }
 
@@ -157,6 +161,7 @@ async fn init_sqlite_tables(db_path: &str) -> Result<()> {
 pub fn extract<T: serde::de::DeserializeOwned>(data: &str) -> Result<T> {
     Ok(serde_json::from_str::<T>(data)?)
 }
+
 /// create proxy
 pub fn create_proxy(info: SshJumpTaskInfo) -> Result<(oneshot::Receiver<bool>, u16)> {
     let (tx, tr) = oneshot::channel();
@@ -206,7 +211,20 @@ pub fn create_proxy(info: SshJumpTaskInfo) -> Result<(oneshot::Receiver<bool>, u
     Ok((tr, local_port))
 }
 
+/// get the idle port
 pub fn get_idle_port() -> Result<u16> {
     // input a port 0,mean's tell the kernel give us an idle port!;
     Ok(TcpListener::bind(("127.0.0.1", 0))?.local_addr()?.port())
+}
+
+pub async fn create_redis_client(params: &Connections) -> Result<Client> {
+    let client = Client::open("redis://127.0.0.1/")?;
+    Ok(client)
+}
+
+pub async fn create_cluster_redis_client(params: &Connections) -> Result<Client> {
+    let nodes = params.nodes.clone().unwrap().split(",").enumerate().map(|x| x.1.to_owned()).collect::<Vec<String>>();
+    info!("{:#?}",nodes);
+    let client = Client::open("redis://127.0.0.1/")?;
+    Ok(client)
 }
