@@ -56,8 +56,8 @@
     "windows": [
       {
         "title": "BS",
-        "width": 1024,
-        "height": 620,
+        "width": 860,
+        "height": 520,
         "visible": false,
         "titleBarStyle": "Transparent",
         "minWidth": 640,

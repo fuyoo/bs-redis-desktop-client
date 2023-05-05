@@ -1,4 +1,4 @@
-use crate::utils::get_connection;
+use crate::utils::{ get_connection, RdbConnection};
 use anyhow::Result;
 use log::debug;
 use serde::{Deserialize, Serialize};
@@ -29,6 +29,7 @@ pub struct Connections {
     pub proxy_file_path: Option<String>,
 
 }
+
 
 impl Connections {
     pub fn bind(row: &SqliteRow) -> Self {
@@ -102,7 +103,7 @@ impl Connections {
             .bind(self.proxy)
             .bind(self.proxy_key_type)
             .bind(self.proxy_username)
-            .bind(self.proxy_address,)
+            .bind(self.proxy_address)
             .bind(self.proxy_port)
             .bind(self.proxy_password)
             .bind(self.proxy_file_path)
@@ -119,5 +120,9 @@ impl Connections {
             .map(|row| Connections::bind(row))
             .collect::<Vec<Connections>>();
         Ok(rows)
+    }
+    pub async fn connect(&self, db: Option<i32>) -> Result<RdbConnection> {
+        let conn = RdbConnection::new(&self, db)?;
+        Ok(conn)
     }
 }

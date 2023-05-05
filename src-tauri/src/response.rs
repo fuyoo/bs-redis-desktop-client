@@ -2,6 +2,8 @@ use std::collections::HashMap;
 use anyhow::Result;
 use serde::Serialize;
 
+pub type ResponseResult = Result<String>;
+
 pub trait Body {
     fn into_response(self) -> Result<String>;
 }
@@ -15,7 +17,7 @@ pub struct Response<T> {
 }
 
 impl Body for String {
-    fn into_response(self) -> Result<String> {
+    fn into_response(self) -> ResponseResult {
         Ok(serde_json::to_string(&Response::ok(self, None))?)
     }
 }
@@ -24,19 +26,19 @@ impl<T> Body for Response<T>
     where
         T: serde::ser::Serialize,
 {
-    fn into_response(self) -> Result<String> {
+    fn into_response(self) -> ResponseResult {
         Ok(serde_json::to_string(&self)?)
     }
 }
 
 impl Body for () {
-    fn into_response(self) -> Result<String> {
+    fn into_response(self) -> ResponseResult {
         Ok(serde_json::to_string(&Response::ok("", None))?)
     }
 }
 
 impl Body for bool {
-    fn into_response(self) -> Result<String> {
+    fn into_response(self) -> ResponseResult {
         Ok(serde_json::to_string(&Response::ok(self, None))?)
     }
 }
@@ -74,7 +76,7 @@ impl<T> Body for Vec<T>
     where
         T: serde::ser::Serialize,
 {
-    fn into_response(self) -> Result<String> {
+    fn into_response(self) -> ResponseResult {
         Ok(serde_json::to_string(&Response::ok(self, None))?)
     }
 }
@@ -84,7 +86,7 @@ impl<K, V> Body for HashMap<K, V>
         K: serde::ser::Serialize + Eq + std::hash::Hash,
         V: serde::ser::Serialize + Eq + std::hash::Hash,
 {
-    fn into_response(self) -> Result<String> {
+    fn into_response(self) -> ResponseResult {
         Ok(serde_json::to_string(&Response::ok(self, None))?)
     }
 }

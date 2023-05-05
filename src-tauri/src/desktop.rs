@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-use tauri::{Manager, RunEvent, WindowEvent};
+use tauri::{ RunEvent };
 
 use crate::{routes, utils::init_sqlite};
 

@@ -23,7 +23,7 @@ nanoid = "0.4.0"
 parking_lot = "0.12.1"
 log = "0.4.0"
 env_logger = "0.10.0"
-redis = { version = "0.23.0", features = ["tokio-native-tls-comp"] }
+redis = { version = "0.23.0", features = ["tokio-native-tls-comp", "cluster-async"] }
 anyhow = "1.0.44"
 tokio = { version = "1", features = ["full"] }
 libc = "0.2.106"

@@ -1,21 +1,21 @@
 use crate::{
     models::Connections,
     response::{Body, Response},
-    utils::{create_proxy, extract},
+    utils::{extract},
 };
-use anyhow::Result;
+
 use nanoid::nanoid;
 use std::collections::HashMap;
 use log::debug;
-use crate::utils::{create_cluster_redis_client, create_redis_client};
+use crate::response::ResponseResult;
 
-pub async fn get_connections_list(_payload: &str) -> Result<String> {
+
+pub async fn get_connections_list(_payload: &str) -> ResponseResult {
     let res = Connections::get_all().await?;
-    debug!("{:#?}",res);
     Response::ok(res, None).into_response()
 }
 
-pub async fn update_connection(payload: &str) -> Result<String> {
+pub async fn update_connection(payload: &str) -> ResponseResult {
     println!("{}", payload);
     let data = extract::<Connections>(payload)?;
     let id = data.id.clone();
@@ -26,7 +26,7 @@ pub async fn update_connection(payload: &str) -> Result<String> {
     }
 }
 
-pub async fn add_connection(payload: &str) -> Result<String> {
+pub async fn add_connection(payload: &str) -> ResponseResult {
     debug!("{:?}", payload);
     let mut data = extract::<Connections>(payload)?;
     let id = nanoid!();
@@ -38,7 +38,7 @@ pub async fn add_connection(payload: &str) -> Result<String> {
     }
 }
 
-pub async fn delete_connection(payload: &str) -> Result<String> {
+pub async fn delete_connection(payload: &str) -> ResponseResult {
     let data = extract::<HashMap<String, String>>(payload)?;
     if let Some(id) = data.get("id") && Connections::delete(&id).await? {
         Response::ok(true, None).into_response()
@@ -47,18 +47,8 @@ pub async fn delete_connection(payload: &str) -> Result<String> {
     }
 }
 
-pub async fn test_connection(payload: &str) -> Result<String> {
-    let data = extract::<Connections>(payload)?;
+pub async fn test_connection(payload: &str) -> ResponseResult {
+    extract::<Connections>(payload)?.connect(None).await?;
 
-
-    let is_ok = if data.cluster.is_some() {
-        // todo: connect to cluster
-        create_cluster_redis_client(&data).await?;
-        true
-    } else {
-        create_redis_client(&data).await?;
-        true
-    };
-
-    Response::ok(is_ok, Some("ok")).into_response()
+    Response::ok("", Some("ok")).into_response()
 }

@@ -1,11 +1,13 @@
 pub mod connections;
+pub mod info;
 
 use anyhow::Result;
+use log::error;
 use serde::{Deserialize, Serialize};
 
 use tauri::command;
 
-use crate::response::{Body, Response};
+use crate::response::{Body, Response, ResponseResult};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Params {
@@ -14,7 +16,7 @@ pub struct Params {
 }
 
 // dispatch actions
-async fn dispatch(path: &str, payload: &str) -> Result<String> {
+async fn dispatch(path: &str, payload: &str) -> ResponseResult {
     // register routes
     match path {
         "/connection/list" => connections::get_connections_list(&payload).await,
@@ -22,12 +24,13 @@ async fn dispatch(path: &str, payload: &str) -> Result<String> {
         "/connection/delete" => connections::delete_connection(&payload).await,
         "/connection/edit" => connections::update_connection(&payload).await,
         "/connection/test" => connections::test_connection(&payload).await,
+        "/info/key" => info::key(&payload).await,
         _ => Response::<Option<bool>>::new(
             404,
             None,
             format!("request path {} not found!", path).as_str(),
         )
-        .into_response(),
+            .into_response(),
     }
 }
 
@@ -36,11 +39,21 @@ pub async fn routes(path: String, payload: String) -> Result<String, String> {
     return match dispatch(&path, &payload).await {
         Ok(res) => Ok(res),
         Err(err) => {
-            let res = r#""code":500,data:null,msg:""#;
-            Ok(format!("{}{}{}{}", "{", res, err.to_string(), "\"}"))
+            #[derive(Debug, Serialize)]
+            struct ErrMsg {
+                code: i32,
+                data: Option<bool>,
+                msg: String,
+            }
+            error!("{:?}", err.to_string());
+            let res = serde_json::to_string(&ErrMsg { code: 500, data: None::<bool>, msg: err.to_string() })
+                .unwrap_or(r#"{"code":500,"data":null,"msg":"system error！"}"#.to_owned());
+
+            Ok(res)
         }
     };
 }
+
 #[command]
 pub async fn exit() {
     std::process::exit(0)

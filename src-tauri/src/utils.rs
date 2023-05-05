@@ -11,8 +11,12 @@ use ssh_jumper::{
     SshJumper,
 };
 use std::{net::TcpListener, path::PathBuf};
-use log::{debug, info};
-use redis::Client;
+
+
+use log::{debug};
+use redis::{Client};
+use redis::cluster::{ClusterClient};
+use redis::cluster::ClusterConnection;
 use tauri::api::path;
 use tokio::{sync::oneshot, task::JoinHandle as TokioJoinHandle};
 #[cfg(target_os = "windows")]
@@ -217,14 +221,63 @@ pub fn get_idle_port() -> Result<u16> {
     Ok(TcpListener::bind(("127.0.0.1", 0))?.local_addr()?.port())
 }
 
-pub async fn create_redis_client(params: &Connections) -> Result<Client> {
-    let client = Client::open("redis://127.0.0.1/")?;
-    Ok(client)
+
+pub enum RdbConnection {
+    ClusterConnection(ClusterConnection),
+    SingleConnection(redis::Connection),
 }
 
-pub async fn create_cluster_redis_client(params: &Connections) -> Result<Client> {
-    let nodes = params.nodes.clone().unwrap().split(",").enumerate().map(|x| x.1.to_owned()).collect::<Vec<String>>();
-    info!("{:#?}",nodes);
-    let client = Client::open("redis://127.0.0.1/")?;
-    Ok(client)
+impl RdbConnection {
+    pub fn new(params: &Connections, database: Option<i32>) -> Result<Self> {
+        // check is the cluster connection
+        let is_cluster = if let Some(cluster) = params.cluster {
+            cluster
+        } else {
+            false
+        };
+        // is cluster
+        if is_cluster {
+            let conn = create_cluster_redis_client(params)?;
+            return Ok(RdbConnection::ClusterConnection(conn));
+        } else {
+            let conn = create_single_connection(&params, database)?;
+            Ok(RdbConnection::SingleConnection(conn))
+        }
+    }
+    pub fn run<T>(&mut self, cluster: fn(conn: &mut ClusterConnection) -> Result<T>, single: fn(conn: &mut redis::Connection) -> Result<T>) -> Result<T> {
+        match self {
+            RdbConnection::ClusterConnection(c) => {
+                cluster(c)
+            }
+            RdbConnection::SingleConnection(c) => {
+                single(c)
+            }
+        }
+    }
+}
+
+
+pub fn create_single_connection(params: &Connections, database: Option<i32>) -> Result<redis::Connection> {
+    // generate uri
+    let uri = format!(r#"redis://{}:{}@{}:{}/{}?timeout=10s"#,
+                      &params.username.clone().unwrap_or("".to_string()),
+                      &params.password.clone().unwrap_or("".to_string()),
+                      &params.address.clone(),
+                      &params.port.clone().unwrap_or(6379),
+                      &database.clone().unwrap_or(0)
+    );
+    debug!("connection uri: {:?}", uri);
+    // crate a client
+    let client = Client::open(uri)?;
+    // get a connection
+    let conn = client.get_connection()?;
+    // return
+    Ok(conn)
+}
+
+pub fn create_cluster_redis_client(params: &Connections) -> Result<ClusterConnection> {
+    let nodes = params.nodes.clone().unwrap_or("".to_string()).split(",").enumerate().map(|x| x.1.to_owned()).collect::<Vec<String>>();
+    debug!("cluster nodes: {:?}", nodes);
+    let client = ClusterClient::new(nodes)?;
+    Ok(client.get_connection()?)
 }
