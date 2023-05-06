@@ -24,6 +24,8 @@ async fn dispatch(path: &str, payload: &str) -> ResponseResult {
         "/connection/delete" => connections::delete_connection(&payload).await,
         "/connection/edit" => connections::update_connection(&payload).await,
         "/connection/test" => connections::test_connection(&payload).await,
+        "/connection/available" => connections::is_available(&payload).await,
+        "/info/database" => info::database(&payload).await,
         "/info/key" => info::key(&payload).await,
         _ => Response::<Option<bool>>::new(
             404,

@@ -1,14 +1,14 @@
 use crate::{
     models::Connections,
     response::{Body, Response},
-    utils::{extract},
+    utils::extract,
 };
 
-use nanoid::nanoid;
-use std::collections::HashMap;
-use log::debug;
 use crate::response::ResponseResult;
-
+use log::debug;
+use nanoid::nanoid;
+use redis::Value;
+use std::collections::HashMap;
 
 pub async fn get_connections_list(_payload: &str) -> ResponseResult {
     let res = Connections::get_all().await?;
@@ -47,8 +47,20 @@ pub async fn delete_connection(payload: &str) -> ResponseResult {
     }
 }
 
-pub async fn test_connection(payload: &str) -> ResponseResult {
-    extract::<Connections>(payload)?.connect(None).await?;
+pub async fn is_available(payload: &str) -> ResponseResult {
+    debug!("{:?}", payload);
+    let res = extract::<Connections>(payload)?
+        .connect::<Value>(None)
+        .await?
+        .has_available_connection()?;
+    Response::ok(res, Some("ok")).into_response()
+}
 
-    Response::ok("", Some("ok")).into_response()
+pub async fn test_connection(payload: &str) -> ResponseResult {
+    let res = extract::<Connections>(payload)?
+        .connect::<Value>(None)
+        .await?
+        .has_available_connection()?;
+
+    Response::ok(res, Some("ok")).into_response()
 }

@@ -1,4 +1,4 @@
-use crate::utils::{ get_connection, RdbConnection};
+use crate::utils::{get_connection, RdbClients};
 use anyhow::Result;
 use log::debug;
 use serde::{Deserialize, Serialize};
@@ -121,8 +121,8 @@ impl Connections {
             .collect::<Vec<Connections>>();
         Ok(rows)
     }
-    pub async fn connect(&self, db: Option<i32>) -> Result<RdbConnection> {
-        let conn = RdbConnection::new(&self, db)?;
-        Ok(conn)
+    pub async fn connect<T>(&self, db: Option<i32>) -> Result<RdbClients<T>> {
+        let c = RdbClients::new(&self, db)?;
+        Ok(c)
     }
 }

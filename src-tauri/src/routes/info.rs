@@ -1,9 +1,10 @@
+use crate::{
+    models::Connections,
+    response::{Body, Response, ResponseResult},
+    utils::extract,
+};
 use log::debug;
-use redis::{cmd, Commands, Value};
 use serde::{Deserialize, Serialize};
-use crate::models::Connections;
-use crate::response::{Body, Response, ResponseResult};
-use crate::utils::{extract};
 
 #[derive(Debug, Deserialize, Serialize)]
 struct Params {
@@ -15,17 +16,36 @@ struct Params {
 pub async fn key(payload: &str) -> ResponseResult {
     debug!("payload: {}", payload);
     let params = extract::<Params>(payload)?;
-    let mut conn = Connections::get(&params.id).await?.connect(params.db).await?;
-    let value = conn.run::<Value>(|mut conn| {
-        let res = cmd("get")
-            .query::<Value>(&mut conn)?;
-        Ok(res)
-    }, |mut conn| {
-        let res = cmd("get")
-            .query::<Value>(&mut conn)?;
-        Ok(res)
-    })?;
-
+    let key = params.key.clone();
+    let value = Connections::get(&params.id)
+        .await?
+        .connect::<(String, i64, i64)>(params.db)
+        .await?
+        .cluster_query(move |mut conn| {
+            let cluster_value = redis::pipe()
+                .cmd("type")
+                .arg(key.clone())
+                .cmd("pttl")
+                .arg(key.clone())
+                .cmd("memory")
+                .arg("usage")
+                .arg(key.clone())
+                .query(&mut conn)?;
+            Ok(cluster_value)
+        })
+        .single_query(move |mut conn| {
+            let cluster_value = redis::pipe()
+                .cmd("type")
+                .arg(&params.key)
+                .cmd("pttl")
+                .arg(&params.key)
+                .cmd("memory")
+                .arg("usage")
+                .arg(&params.key)
+                .query(&mut conn)?;
+            Ok(cluster_value)
+        })
+        .do_query()?;
 
     #[derive(Debug, Serialize)]
     struct Val {
@@ -34,45 +54,53 @@ pub async fn key(payload: &str) -> ResponseResult {
         pub pttl: i64,
         pub memory: i64,
     }
-    let mut data = Val {
-        _type: "".to_string(),
-        pttl: 0,
-        memory: 0,
+    let data = Val {
+        _type: value.0,
+        pttl: value.1,
+        memory: value.2,
     };
-    match value {
-        Value::Bulk(val) => {
-            for (i, val) in val.iter().enumerate() {
-                match val {
-                    Value::Int(val) => {
-                        if i == 1 {
-                            data.pttl = val.to_owned()
-                        } else {
-                            data.memory = val.to_owned()
-                        }
-                    }
-                    Value::Status(val) => {
-                        data._type = val.to_owned()
-                    }
-                    _ => {}
-                }
-            }
-        }
-        _ => {}
-    }
+
     Response::ok(data, None).into_response()
 }
 
-async fn database(payload: &str) -> ResponseResult {
+pub async fn database(payload: &str) -> ResponseResult {
     let params = extract::<Params>(payload)?;
-    let res = Connections::get(&params.id)
+    let mut clients = Connections::get(&params.id)
         .await?
-        .connect(None)
-        .await?
-        .run::<String>(|conn| {
-            conn.get("")?
-        }, |conn| {
-            conn.get("")?
-        })?;
-
-    Ok("".to_string())
+        .connect::<((String, String), i64, String)>(params.db)
+        .await?;
+    clients
+        .cluster_query(|mut conn| {
+            let r = redis::pipe()
+                .cmd("config")
+                .arg("databases")
+                .cmd("dbsize")
+                .arg("")
+                .query(&mut conn)?;
+            Ok(r)
+        })
+        .single_query(|mut conn| {
+            let r = redis::pipe()
+                .cmd("config")
+                .arg("get")
+                .arg("databases")
+                .cmd("dbsize")
+                .cmd("info")
+                .arg("memory")
+                .query(&mut conn)?;
+            Ok(r)
+        });
+    let res = clients.do_query()?;
+    #[derive(Serialize)]
+    struct Info {
+        pub database: String,
+        pub keys: i64,
+        pub memory: String,
+    }
+    let info = Info {
+        database: res.0 .1,
+        keys: res.1,
+        memory: res.2,
+    };
+    Response::ok(info, None).into_response()
 }
