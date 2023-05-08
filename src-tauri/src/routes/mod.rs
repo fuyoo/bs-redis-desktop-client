@@ -1,5 +1,6 @@
 pub mod connections;
 pub mod info;
+pub mod string;
 
 use anyhow::Result;
 use log::error;
@@ -26,7 +27,10 @@ async fn dispatch(path: &str, payload: &str) -> ResponseResult {
         "/connection/test" => connections::test_connection(&payload).await,
         "/connection/available" => connections::is_available(&payload).await,
         "/info/database" => info::database(&payload).await,
+        "/info/keys" => info::keys(&payload).await,
         "/info/key" => info::key(&payload).await,
+        "/key/string/get" => string::get(&payload).await,
+
         _ => Response::<Option<bool>>::new(
             404,
             None,

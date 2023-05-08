@@ -16,7 +16,7 @@ pub async fn get_connections_list(_payload: &str) -> ResponseResult {
 }
 
 pub async fn update_connection(payload: &str) -> ResponseResult {
-    println!("{}", payload);
+    debug!("{}", payload);
     let data = extract::<Connections>(payload)?;
     let id = data.id.clone();
     if data.insert_or_update().await? {

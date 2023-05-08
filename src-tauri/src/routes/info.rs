@@ -4,6 +4,7 @@ use crate::{
     utils::extract,
 };
 use log::debug;
+use redis::{cmd, Value};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -103,4 +104,59 @@ pub async fn database(payload: &str) -> ResponseResult {
         memory: res.2,
     };
     Response::ok(info, None).into_response()
+}
+#[derive(Debug, Deserialize, Serialize, Clone)]
+struct KeysParams {
+    pub id: String,
+    pub db: Option<i32>,
+    pub cursor: Option<i32>,
+    pub pattern: Option<String>,
+    pub count: Option<i32>,
+}
+pub async fn keys(payload: &str) -> ResponseResult {
+    let params = extract::<KeysParams>(payload)?;
+    let params2 = params.clone();
+    let mut clients = Connections::get(&params.id)
+        .await?
+        .connect::<(String,Vec<String>)>(params.db)
+        .await?;
+
+    clients
+        .cluster_query(move |conn| {
+            let res = cmd("scan")
+                .arg(&params.cursor)
+                .arg("match")
+                .arg(&params.pattern)
+                .arg("count")
+                .arg(&params.count)
+                .query(conn)?;
+
+            Ok(res)
+        })
+        .single_query(move |conn| {
+            let res = cmd("scan")
+                .arg(&params2.cursor)
+                .arg("match")
+                .arg(&params2.pattern)
+                .arg("count")
+                .arg(&params2.count)
+                .query(conn)?;
+
+            Ok(res)
+        });
+    let data = clients.do_query()?;
+    debug!("data: {:?}", data);
+    #[derive(Debug, Serialize)]
+    struct Data {
+        pub cursor: i32,
+        pub keys: Vec<String>,
+    }
+    let cursor = data.0;
+    let mut keys = vec![];
+    for v in data.1 {
+            keys.push(v);
+
+    }
+    let data = Data { cursor:cursor.parse()?, keys };
+    Response::ok(data, None).into_response()
 }
