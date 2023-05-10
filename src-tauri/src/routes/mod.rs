@@ -29,6 +29,7 @@ async fn dispatch(path: &str, payload: &str) -> ResponseResult {
         "/info/database" => info::database(&payload).await,
         "/info/keys" => info::keys(&payload).await,
         "/info/key" => info::key(&payload).await,
+        "/key/delete" => info::delete_key(&payload).await,
         "/key/string/get" => string::get(&payload).await,
 
         _ => Response::<Option<bool>>::new(

@@ -4,7 +4,7 @@ use crate::{
     utils::extract,
 };
 use log::debug;
-use redis::{cmd, Value};
+use redis::{cmd, Commands, ErrorKind, RedisError};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -18,6 +18,7 @@ pub async fn key(payload: &str) -> ResponseResult {
     debug!("payload: {}", payload);
     let params = extract::<Params>(payload)?;
     let key = params.key.clone();
+    let key2 = params.key.clone();
     let value = Connections::get(&params.id)
         .await?
         .connect::<(String, i64, i64)>(params.db)
@@ -46,8 +47,35 @@ pub async fn key(payload: &str) -> ResponseResult {
                 .query(&mut conn)?;
             Ok(cluster_value)
         })
-        .do_query()?;
-
+        .do_query();
+    let value = match value {
+        Ok(value) => value,
+        Err(err) => {
+            match err.downcast_ref::<RedisError>() {
+                Some(err) => match err.kind() {
+                    ErrorKind::TypeError => {
+                        if err.to_string().contains("response was nil") {
+                            return Response::fail(
+                                "",
+                                Some(&format!(
+                                    "Key '{:?}' not exists.",
+                                    key2.unwrap_or("".to_owned())
+                                )),
+                            )
+                            .into_response();
+                        }
+                    }
+                    _ => {
+                        debug!("Redis Kind _ {}", err);
+                    }
+                },
+                None => {
+                    debug!("Redis Error None,{}", err);
+                }
+            };
+            return Response::fail("", None).into_response();
+        }
+    };
     #[derive(Debug, Serialize)]
     struct Val {
         #[serde(rename = "type")]
@@ -118,7 +146,7 @@ pub async fn keys(payload: &str) -> ResponseResult {
     let params2 = params.clone();
     let mut clients = Connections::get(&params.id)
         .await?
-        .connect::<(String,Vec<String>)>(params.db)
+        .connect::<(String, Vec<String>)>(params.db)
         .await?;
 
     clients
@@ -154,9 +182,32 @@ pub async fn keys(payload: &str) -> ResponseResult {
     let cursor = data.0;
     let mut keys = vec![];
     for v in data.1 {
-            keys.push(v);
-
+        keys.push(v);
     }
-    let data = Data { cursor:cursor.parse()?, keys };
+    let data = Data {
+        cursor: cursor.parse()?,
+        keys,
+    };
     Response::ok(data, None).into_response()
+}
+
+pub async fn delete_key(payload: &str) -> ResponseResult {
+    let data = extract::<Params>(payload)?;
+    let key = data.key.clone();
+    let mut client = Connections::get(&data.id)
+        .await?
+        .connect::<()>(data.db)
+        .await?;
+
+    client
+        .cluster_query(move |conn| {
+            conn.del(&data.key)?;
+            Ok(())
+        })
+        .single_query(move |conn| {
+            conn.del(&key)?;
+            Ok(())
+        });
+    client.do_query()?;
+    Response::ok("", None).into_response()
 }
