@@ -1,11 +1,10 @@
 name: Run Rust
 
 on:
-  push:
+  release:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
-
+    types: [published]
+    
 env:
   CARGO_TERM_COLOR: always
 
