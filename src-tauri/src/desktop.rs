@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-use tauri::{ RunEvent };
+use tauri::{Manager, RunEvent, WindowEvent};
 
 use crate::{routes, utils::init_sqlite};
 
@@ -14,16 +14,21 @@ pub fn main() -> Result<()> {
         RunEvent::Ready => {
             println!("app is ready!");
         }
-        // RunEvent::WindowEvent { event, .. } => match event {
-        //     WindowEvent::CloseRequested { api, .. } => {
-        //         // prevent close for clear opened tab tabs
-        //         api.prevent_close();
-        //         if let Some(win) = &_handle.get_window("main") {
-        //             let _ = win.emit("clear", ());
-        //         }
-        //     }
-        //     _ => {}
-        // },
+        RunEvent::WindowEvent { event, label, .. } => match event {
+            WindowEvent::CloseRequested { api, .. } => {
+                // prevent close
+                if let Some(win) = &_handle.get_window(&label) {
+                    #[cfg(target_os = "macos")]
+                    {
+                        // on macos, we hide the window instead of close the window.
+                        // because when we clicking the dock icon, we can show it again.
+                        let _ = tauri::AppHandle::hide(&win.app_handle());
+                        api.prevent_close();
+                    }
+                }
+            }
+            _ => {}
+        },
         _ => {}
     });
     Ok(())
