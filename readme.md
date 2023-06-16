@@ -47,15 +47,15 @@ English | [中文](./readme_cn.md)
 - change app icon：at this project directory execute `cargo tauri icon "image absoute path"`
 - redis uri see [redis uri](./uri.md)
 
-## Tag#1.1.1 Screenshots, new version is developing
+## Developing Screenshots.
 
-![1](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/en_0.png)
+![1](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/new/0.jpg)
 
-![2](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/en_1.png)
+![2](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/new/1.jpg)
 
-![3](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/en_2.png)
+![3](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/new/2.jpg)
 
-![4](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/en_3.png)
+![4](https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/master/imgs/new/3.jpg)
 
 ## if you are interested for this project please make a PR! thanks a lot!
 
