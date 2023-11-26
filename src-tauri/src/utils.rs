@@ -11,6 +11,13 @@ use ssh_jumper::{
     SshJumper,
 };
 use std::{net::TcpListener, path::PathBuf};
+
+use crate::models::Connections;
+use log::debug;
+use redis::{
+    cluster::{ClusterClient, ClusterConnection},
+    Client,
+};
 use tauri::api::path;
 use tokio::{sync::oneshot, task::JoinHandle as TokioJoinHandle};
 #[cfg(target_os = "windows")]
@@ -106,6 +113,7 @@ pub fn init_sqlite() -> Result<()> {
         }
         // to string
         let filepath = d.display().to_string();
+        debug!("sqlite pat");
         // connect and init sqlite tables
         let sp: Result<()> = tokio::runtime::Runtime::new()?.block_on(async move {
             init_sqlite_tables(&filepath).await?;
@@ -169,6 +177,7 @@ async fn init_sqlite_tables(db_path: &str) -> Result<()> {
 pub fn extract<T: serde::de::DeserializeOwned>(data: &str) -> Result<T> {
     Ok(serde_json::from_str::<T>(data)?)
 }
+
 /// create proxy
 pub fn create_proxy(info: SshJumpTaskInfo) -> Result<(oneshot::Receiver<bool>, u16)> {
     let (tx, tr) = oneshot::channel();
@@ -218,7 +227,123 @@ pub fn create_proxy(info: SshJumpTaskInfo) -> Result<(oneshot::Receiver<bool>, u
     Ok((tr, local_port))
 }
 
+/// get the idle port
 pub fn get_idle_port() -> Result<u16> {
     // input a port 0,mean's tell the kernel give us an idle port!;
     Ok(TcpListener::bind(("127.0.0.1", 0))?.local_addr()?.port())
+}
+
+pub trait DoQuery<T> {
+    fn query_cluster(&mut self, f: impl Fn(&mut ClusterConnection) -> Result<T>);
+    fn query_single(&mut self, f: impl Fn(&mut redis::Connection) -> Result<T>);
+}
+
+pub struct RdbClients<T> {
+    cluster: Option<ClusterClient>,
+    single: Option<Client>,
+    cluster_fn: Option<Box<dyn Fn(&mut ClusterConnection) -> Result<T>>>,
+    single_fn: Option<Box<dyn Fn(&mut redis::Connection) -> Result<T>>>,
+}
+
+impl<T> RdbClients<T> {
+    pub fn new(params: &Connections, database: Option<i32>) -> Result<Self> {
+        // check is the cluster connection
+        let is_cluster = if let Some(cluster) = params.cluster {
+            cluster
+        } else {
+            false
+        };
+        let mut rdb_clients = RdbClients {
+            cluster: None,
+            single: None,
+            cluster_fn: None,
+            single_fn: None,
+        };
+        // is cluster
+        if is_cluster {
+            let c = create_cluster_redis_client(params)?;
+            rdb_clients.cluster = Some(c);
+        } else {
+            let c = create_single_connection(&params, database)?;
+            rdb_clients.single = Some(c)
+        }
+        Ok(rdb_clients)
+    }
+    pub fn single_query(
+        &mut self,
+        f: impl Fn(&mut redis::Connection) -> Result<T> + 'static,
+    ) -> &mut RdbClients<T> {
+        self.single_fn = Some(Box::new(f));
+        self
+    }
+    pub fn cluster_query(
+        &mut self,
+        f: impl Fn(&mut ClusterConnection) -> Result<T> + 'static,
+    ) -> &mut RdbClients<T> {
+        self.cluster_fn = Some(Box::new(f));
+        self
+    }
+    pub fn has_available_connection(&self) -> Result<bool> {
+        if let Some(cluster) = &self.cluster {
+            let _ = cluster.get_connection()?;
+            return Ok(true);
+        }
+        if let Some(single) = &self.single {
+            let _ = single.get_connection()?;
+            return Ok(true);
+        }
+        Err(anyhow!("No connection available!"))
+    }
+    pub fn do_query(&mut self) -> Result<T> {
+        if let Some(cluster) = &self.cluster {
+            return if let Some(f) = &self.cluster_fn {
+                let mut conn = cluster.get_connection()?;
+                f(&mut conn)
+            } else {
+                Err(anyhow!("not a cluster connection!"))
+            };
+        }
+
+        if let Some(single) = &self.single {
+            return if let Some(f) = &self.single_fn {
+                let mut conn = single.get_connection()?;
+                f(&mut conn)
+            } else {
+                Err(anyhow!("not a single connection!"))
+            };
+        }
+
+        Err(anyhow!("cannot find any available connections!"))
+    }
+}
+
+pub fn create_single_connection(params: &Connections, database: Option<i32>) -> Result<Client> {
+    // generate uri
+    let uri = format!(
+        r#"redis://{}:{}@{}:{}/{}?timeout=10s"#,
+        &params.username.clone().unwrap_or("".to_string()),
+        &params.password.clone().unwrap_or("".to_string()),
+        &params.address.clone(),
+        &params.port.clone().unwrap_or(6379),
+        &database.clone().unwrap_or(0)
+    );
+    debug!("connection uri: {:?}", uri);
+    // crate a client
+    let client = Client::open(uri)?;
+    // return
+    Ok(client)
+}
+
+pub fn create_cluster_redis_client(params: &Connections) -> Result<ClusterClient> {
+    let nodes = params
+        .nodes
+        .clone()
+        .unwrap_or("".to_string())
+        .split(",")
+        .enumerate()
+        .map(|x| x.1.to_owned())
+        .collect::<Vec<String>>();
+    debug!("cluster nodes: {:?}", nodes);
+    let client = ClusterClient::new(nodes)?;
+    Ok(client)
 }

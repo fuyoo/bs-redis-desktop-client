@@ -1,0 +1,30 @@
+name: Run Rust
+
+on:
+  release:
+    branches: [ "master" ]
+    types: [published]
+    
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    - name: checkout submodule
+      run: git submodule init && git submodule update --remote 
+    - name: build ui
+      run: cd bs-frontend && npm install && npm run build
+    - name: change to nightly
+      run: rustup default nightly
+    - name: install tauri-cli
+      run: cargo install tauri-cli
+    - name: build
+      run:  cargo tauri build
