@@ -1,13 +1,24 @@
 import {createMemoryHistory, createRouter} from 'vue-router'
-import HomeView from "@/views/HomeView.vue";
+import HomeView from '@/views/HomeView.vue'
+import Layout from '@/Layout.vue'
 
 const routes = [
-    {path: '/', component: HomeView}
+    {
+        path: '/',
+        component: Layout,
+        redirect: '/host',
+        children: [
+            {
+                path: '/host',
+                component: HomeView
+            }
+        ]
+    }
 ]
 
 const router = createRouter({
     history: createMemoryHistory(),
-    routes,
+    routes
 })
 
 export default router

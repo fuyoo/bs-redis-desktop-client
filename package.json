@@ -23,6 +23,7 @@
     "vue-router": "^4.3.2"
   },
   "devDependencies": {
+    "@arco-design/web-vue": "^2.55.2",
     "@iconify/json": "^2.2.213",
     "@tauri-apps/cli": "^1",
     "@types/node": "^20.12.12",

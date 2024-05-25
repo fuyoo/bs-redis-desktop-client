@@ -16,6 +16,8 @@ export default defineConfig({
     ],
     rules: [
         [/^m-([\.\d]+)$/, ([_, num]) => ({ margin: `${num}px` })],
-        [/^p-([\.\d]+)$/, ([_, num]) => ({ padding: `${num}px` })]
+        [/^p-([\.\d]+)$/, ([_, num]) => ({ padding: `${num}px` })],
+        [/^h-([\.\d]+)$/, ([_, num]) => ({ height: `${num}px` })],
+        [/^w-([\.\d]+)$/, ([_, num]) => ({ width: `${num}px` })]
     ]
 })
