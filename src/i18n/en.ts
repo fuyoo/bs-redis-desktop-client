@@ -1,3 +1,6 @@
 export default {
-    name:"helloWord"
+    layout: {
+        host: 'Hosts',
+        settings: "Settings"
+    }
 }

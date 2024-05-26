@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
+    "lint": "vue-tsc --noEmit ",
     "preview": "vite preview",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
@@ -30,6 +31,7 @@
     "@unocss/preset-icons": "^0.60.3",
     "@unocss/preset-uno": "^0.60.3",
     "@vitejs/plugin-vue": "^5.0.4",
+    "sass": "^1.77.2",
     "typescript": "^5.0.2",
     "unocss": "^0.60.3",
     "vite": "^5.0.0",

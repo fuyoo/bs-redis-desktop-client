@@ -20,12 +20,8 @@ export default defineConfig(async () => ({
         }
     },
     define: {
-        __SYSTEM_INFO__: JSON.stringify({
-            pkg: {
-                version: pkg.version,
-                dependencies: pkg.dependencies,
-                devDependencies: pkg.devDependencies
-            },
+        "import.meta.env.VITE_VERSION": JSON.stringify({
+            version: pkg.version,
             lastBuildTime: dayjs().format('YYYY-MM-DD HH:mm:ss')
         })
     },

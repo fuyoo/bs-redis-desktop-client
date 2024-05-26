@@ -1,3 +1,6 @@
 export default {
-    name:"你好世界"
+    layout: {
+        host: '主机',
+        settings: "设置"
+    }
 }

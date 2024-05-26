@@ -1,6 +1,6 @@
 import {createMemoryHistory, createRouter} from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
-import Layout from '@/Layout.vue'
+import HostsView from '@/views/HostsView.vue'
+import Layout from '@/layout/Layout.vue'
 
 const routes = [
     {
@@ -10,7 +10,15 @@ const routes = [
         children: [
             {
                 path: '/host',
-                component: HomeView
+                component: HostsView
+            },
+            {
+                path: '/settings',
+                component: () => import("@/views/SettingsView.vue")
+            },
+            {
+                path: '/tab/:id',
+                component: () => import("@/layout/TabViewLayout.vue")
             }
         ]
     }
