@@ -2,7 +2,7 @@
 import {appWindow} from '@tauri-apps/api/window'
 import NavigatorItem from '../components/NavigatorItem.vue'
 import logo from '../assets/logo.png'
-import {ref} from 'vue'
+import {nextTick, ref} from 'vue'
 import useTabStore from '../store/tabs'
 
 const tabStore = useTabStore()
@@ -36,6 +36,11 @@ const okFn = (id: string | number) => tabStore.changeTab(id as number)
 
 const closeFn = (id: string | number) => tabStore.delTab(id as number)
 
+nextTick(()=>{
+  try {
+      document.body.removeChild(document.querySelector('._do_first_loading_container')!)
+  } catch (e) {}
+})
 </script>
 
 <template>
@@ -63,8 +68,8 @@ const closeFn = (id: string | number) => tabStore.delTab(id as number)
                          :label="$t('layout.settings')" @ok="okFn"/>
         </a-space>
       </div>
-      <a-scrollbar outer-class="_tabscroller py-8px" ref="ScrollerRef">
-        <a-space direction="vertical" fill class="px-10px">
+      <a-scrollbar outer-class="_tabscroller py-0px" ref="ScrollerRef">
+        <a-space direction="vertical" fill class="px-10px py-8px">
 
           <NavigatorItem v-for="item in tabStore.list" :id="item.id" :mini="min" tab
                          :active="item.id === tabStore.activeTab?.id"
@@ -127,7 +132,7 @@ const closeFn = (id: string | number) => tabStore.delTab(id as number)
 }
 
 ._tabscroller {
-  height: calc(100vh - 200px);
+  height: calc(100vh - 192px);
 
   &::v-deep(.arco-scrollbar-container) {
     overflow: auto;
@@ -147,7 +152,7 @@ const closeFn = (id: string | number) => tabStore.delTab(id as number)
     height: 8px;
   }
   &::-webkit-scrollbar-thumb {
-    background: gray;
+    background: #0004;
     border-radius: 4px;
   }
 }

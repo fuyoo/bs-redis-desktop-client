@@ -1,14 +1,23 @@
 <!doctype html>
 <html lang="en" data-tauri-drag-region>
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tauri + Vue + Typescript App</title>
-  </head>
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="./loading.css">
+    <title>BS Redis Desktop Client</title>
+</head>
 
-  <body >
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+<body>
+<div class="_do_first_loading_container" data-tauri-drag-region>
+    <div class="_do_first_loading" data-tauri-drag-region>
+        <div data-tauri-drag-region></div>
+        <div data-tauri-drag-region></div>
+        <div data-tauri-drag-region></div>
+        <div data-tauri-drag-region></div>
+    </div>
+</div>
+<div id="app"></div>
+<script type="module" src="/src/main.ts"></script>
+</body>
 </html>
