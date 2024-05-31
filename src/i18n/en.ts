@@ -1,6 +1,10 @@
 export default {
     layout: {
         host: 'Hosts',
-        settings: "Settings"
+        settings: "Settings",
+        add:"Add"
+    },
+    settings: {
+        lang: "Language"
     }
 }

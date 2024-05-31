@@ -62,10 +62,10 @@ nextTick(()=>{
         <a-space direction="vertical" fill>
           <NavigatorItem :id="-1" :mini="min" :active="-1 === tabStore.activeTab?.id" icon="i-mdi:server-network"
                          :closeable="false"
-                         :label="$t('layout.host')" @ok="okFn"/>
+                         :label="$t('layout.host' as any)" @ok="okFn"/>
           <NavigatorItem :id="-2" :mini="min" :active="-2 === tabStore.activeTab?.id" icon="i-ic:round-settings"
                          :closeable="false"
-                         :label="$t('layout.settings')" @ok="okFn"/>
+                         :label="$t('layout.settings' as any)" @ok="okFn"/>
         </a-space>
       </div>
       <a-scrollbar outer-class="_tabscroller py-0px" ref="ScrollerRef">

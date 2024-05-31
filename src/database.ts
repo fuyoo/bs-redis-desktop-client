@@ -7,10 +7,8 @@ export interface ConnectionImpl {
     cluster: boolean;
 }
 export interface SettingsImpl {
-    id?: number;
-    name: string;
-    uri: string | string[];
-    cluster: boolean;
+    lang?: string,
+    id: number
 }
 export class Database extends Dexie {
     // 'connection' is added by dexie when declaring the stores()

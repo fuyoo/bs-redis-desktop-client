@@ -14,7 +14,7 @@ const routes = [
             },
             {
                 path: '/settings',
-                component: () => import("@/views/SettingsView.vue")
+                component: () => import("@/views/SettingsView/SettingsView.vue")
             },
             {
                 path: '/tab/:id',

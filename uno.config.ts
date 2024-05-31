@@ -18,6 +18,15 @@ export default defineConfig({
         [/^m-([\.\d]+)$/, ([_, num]) => ({margin: `${num}px`})],
         [/^p-([\.\d]+)$/, ([_, num]) => ({padding: `${num}px`})],
         [/^h-([\.\d]+)$/, ([_, num]) => ({height: `${num}px`})],
-        [/^w-([\.\d]+)$/, ([_, num]) => ({width: `${num}px`})]
+        [/^w-([\.\d]+)$/, ([_, num]) => ({width: `${num}px`})],
+        [/^left-([\.\d]+)$/, ([_, num]) => ({left: `${num}px`})],
+        [/^top-([\.\d]+)$/, ([_, num]) => ({top: `${num}px`})],
+        [/^right-([\.\d]+)$/, ([_, num]) => ({right: `${num}px`})],
+        [/^bottom-([\.\d]+)$/, ([_, num]) => ({bottom: `${num}px`})],
+        [/text-overflow/, () => ({
+            "text-overflow": "ellipsis",
+            overflow: "hidden",
+            "white-space": "nowrap"
+        })],
     ]
 })

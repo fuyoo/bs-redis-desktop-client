@@ -20,11 +20,28 @@ i18next
             "zh-CN":{
                 translation: zh_cn
             }
-        }
+        },
     });
+export const Languages = [
+    {
+       label: "English",
+       value: "en",
+    },{
+    label:"简体中文",
+        "value":'zh-CN'
+    }
+]
 
+import database from "@/database.ts"
 export default {
     install(app:App) {
+        database.settings.get(1)
+            .then(async (data) =>{
+                if (data) {
+                 await  i18next.changeLanguage( data.lang)
+                }
+            })
+            .catch(e => console.error(e))
         app.use(I18NextVue, { i18next })
     }
 }
