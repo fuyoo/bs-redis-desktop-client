@@ -1,5 +1,5 @@
 import {createMemoryHistory, createRouter} from 'vue-router'
-import HostsView from '@/views/HostsView.vue'
+import HostsView from '@/views/HostView/Host.vue'
 import Layout from '@/layout/Layout.vue'
 
 const routes = [

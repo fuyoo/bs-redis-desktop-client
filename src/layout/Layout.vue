@@ -87,22 +87,22 @@ nextTick(()=>{
       </div>
     </div>
     <div class="w-full">
-      <div class="w-full h-26 bg-#EDF1F2 flex justify-between border-b" data-tauri-drag-region>
+      <div class="w-full _act_bar bg-#EDF1F2 flex justify-between border-b" data-tauri-drag-region>
         <div></div>
         <div class="flex">
           <div
               @click="doWindowAction(BarAction.mini)"
-              class="w-[26px] flex flex-justify-center text-[gray] items-center text-[16px] hover:bg-[#0001]  hover:text-[black] hover:cursor-pointer">
+              class="w-[30px] flex flex-justify-center text-[gray] items-center text-[16px] hover:bg-[#0001]  hover:text-[black] hover:cursor-pointer">
             <div class="i-ic-round-minimize"></div>
           </div>
           <div
               @click="doWindowAction(BarAction.toggleMax)"
-              class="w-[26px] flex flex-justify-center text-[gray] items-center text-[16px] hover:bg-[#0001] hover:text-[black] hover:cursor-pointer">
+              class="w-[30px] flex flex-justify-center text-[gray] items-center text-[16px] hover:bg-[#0001] hover:text-[black] hover:cursor-pointer">
             <div class="i-ic-round-fullscreen"></div>
           </div>
           <div
               @click="doWindowAction(BarAction.exit)"
-              class="w-[26px] flex flex-justify-center text-[gray] items-center text-[16px] hover:bg-[#0001] hover:text-[red] hover:cursor-pointer">
+              class="w-[30px] flex flex-justify-center text-[gray] items-center text-[16px] hover:bg-[#0001] hover:text-[red] hover:cursor-pointer">
             <div class="i-ic-round-close"></div>
           </div>
         </div>
@@ -127,10 +127,14 @@ nextTick(()=>{
 </style>
 
 <style lang="scss" scoped>
+$act-bar-height: 30px;
 .menu {
   transition: width 0.168s linear;
 }
 
+._act_bar{
+  height: $act-bar-height;
+}
 ._tabscroller {
   height: calc(100vh - 192px);
 
@@ -145,11 +149,11 @@ nextTick(()=>{
 }
 
 ._ctx_scroller {
-  height: calc(100vh - 26px);
+  height: calc(100vh - $act-bar-height);
   overflow: auto;
   &::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 0px;
+    height: 0px;
   }
   &::-webkit-scrollbar-thumb {
     background: #0004;

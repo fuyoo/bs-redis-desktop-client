@@ -24,9 +24,9 @@
     "windows": [
       {
         "title": "BS",
-        "width": 850,
+        "width": 860,
         "height": 600,
-        "minWidth": 850,
+        "minWidth": 860,
         "minHeight": 600,
         "decorations": false,
         "center": true
