@@ -27,7 +27,7 @@ const close = (key: number | string) => {
 <template>
   <div>
     <div
-        class="_c_m_item select-none rounded-lg px-1 py-1 hover:bg-[#32364A] text-white flex justify-between items-center"
+        class="_c_m_item cursor-default select-none rounded-lg px-1 py-1 hover:bg-[#32364A] text-white flex justify-between items-center"
         @click="click(props.id)" v-if="!props.mini" :class="{
           'tab-active': tab && active,
           'active': !tab && active
@@ -36,7 +36,7 @@ const close = (key: number | string) => {
         <div class="w-30 h-30 flex justify-center  items-center">
           <div :class="props.icon" class="text-[18px]"></div>
         </div>
-        <div class="text-12px w-90px text-ellipsis" style="overflow:hidden; white-space: nowrap">{{ props.label }}</div>
+        <div class="text-12px w-90px text-ellipsis select-none cursor-default" style="overflow:hidden; white-space: nowrap">{{ props.label }}</div>
       </div>
       <div @click.stop="close(props.id)" v-if="props.closeable"
            class="_m_cos rounded-md hover:text-red bg-[#0001] p-4 cursor-pointer">
@@ -60,7 +60,7 @@ const close = (key: number | string) => {
           'tab-active': tab && active,
           'active': !tab && active
         }">
-        <div class="flex items-center justify-center w-full">
+        <div class="flex items-center justify-center w-full ">
           <div class="w-30 h-30 flex justify-center  items-center">
             <div :class="props.icon" class="text-[18px]"></div>
           </div>
@@ -89,6 +89,7 @@ const close = (key: number | string) => {
 
 <style lang="scss" scoped>
 ._c_m_item {
+  *{cursor: default;user-select: none}
   ._m_cos {
     display: none;
   }

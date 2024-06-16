@@ -7,6 +7,10 @@ export default {
         hostForm: {
             name: "Host Name",
             normal:"Normal Arguments",
+            submit: "Submit",
+            save: "Save",
+            delete: "Delete",
+            connect: "Connect",
             hostName: {
                 placeholder: "Host Name (Required)",
             },

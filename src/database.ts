@@ -1,10 +1,18 @@
 import Dexie, {Table} from 'dexie'
 
+
+export interface ConnectionInfo{
+    host: string,
+    port?: string,
+    db?: string,
+    username?: string,
+    password?: string
+}
 export interface ConnectionImpl {
     id?: number;
     name: string;
-    uri: string | string[];
-    cluster: boolean;
+    node: ConnectionInfo[]
+    cluster?: boolean;
 }
 export interface SettingsImpl {
     lang?: string,

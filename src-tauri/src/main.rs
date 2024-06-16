@@ -15,9 +15,16 @@ fn main() {
             #[cfg(target_os = "windows")]
             {
               let window = app.get_window("main").unwrap();
+                let _ = window.set_decorations(false);
               set_shadow(&window, true).expect("Unsupported platform!");  
             }
+            #[cfg(target_os = "macos")]
+            {
+            }
             Ok(())
+        })
+        .on_page_load(|w,_| {
+            let _ = w.show();
         })
         .invoke_handler(tauri::generate_handler![greet])
         .run(tauri::generate_context!())

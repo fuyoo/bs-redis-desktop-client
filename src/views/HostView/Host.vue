@@ -1,32 +1,63 @@
 <script setup lang="ts">
 import useTabStore from '../../store/tabs.ts'
-import {ref} from 'vue'
-import {ConnectionImpl} from '@/database.ts'
+import {nextTick, ref} from 'vue'
+import {ConnectionImpl, ConnectionInfo} from '@/database.ts'
 import HostForm from '@/views/HostView/HostForm.vue'
+import {DrawerMode} from "@/interface.ts";
+import db from "@/database"
 
 const tabStore = useTabStore()
-const jumpTo = () => {
-  const id = Math.ceil(Math.random() * 10e9)
+const jumpTo = (connection?:ConnectionImpl) => {
+  console.log(connection)
+  if(!connection || !connection.id) {
+    return
+  }
   tabStore.addTab({
-    id: id,
-    path: `/tab/${id}`,
-    name: '' + id
+    id: connection.id,
+    path: `/tab/${connection.id}`,
+    name: connection.name
   })
 }
 
-enum DrawerMode {
-  edit,
-  add
-}
 
 const mode = ref(DrawerMode.add)
 const drawer = ref(false)
+const connectionData = ref<ConnectionImpl | undefined>()
 const openDrawerFn = (m: DrawerMode, data?: ConnectionImpl) => {
-  console.log(m, data)
-  drawer.value = true
+  drawer.value = !drawer.value
   mode.value = m
+  connectionData.value = data
 }
-const handleSelect = ()=>{}
+const formRef = ref<any>()
+const handleSelect = async (e: any) => {
+  switch (e) {
+    case "save":
+      await formRef.value?.save()
+      break
+    case "delete":
+      await db.connection.delete(connectionData.value?.id);
+      drawer.value = false
+      await queryHostList();
+      break
+    case "connect":
+      jumpTo(connectionData.value)
+  }
+}
+nextTick(() => {
+  try {
+    document.body.removeChild(document.querySelector('._do_first_loading_container')!)
+  } catch (e) {
+  }
+})
+const hostList = ref<ConnectionImpl[]>([])
+const queryHostList = async () => {
+  hostList.value = await db.connection.filter(() => true).toArray()
+}
+queryHostList()
+const onOk = () => {
+  drawer.value = false
+  queryHostList()
+}
 </script>
 
 <template>
@@ -34,9 +65,10 @@ const handleSelect = ()=>{}
     <div class="drawer-transition w-full" :class="{'drawer-open':drawer}">
       <div class="flex bg-#E6EBEB h-50px sticky left-0 top-0  justify-between items-center"
            style="z-index: 2">
-            <span class="ml-15px text-18px">
-                <div class="i-tabler:server text-24px"></div>
-                {{ $t('layout.host' as any) }}</span>
+        <div class="ml-15px text-18px">
+          <div class="i-tabler:server text-24px"></div>
+          {{ $t('layout.host' as any) }}
+        </div>
 
         <a-button type="primary" class="mr-15px" size="mini" @click="openDrawerFn(DrawerMode.add)">
           <template #icon>
@@ -46,18 +78,20 @@ const handleSelect = ()=>{}
         </a-button>
       </div>
       <div class="flex flex-wrap _main p-25px">
-        <div @dblclick="jumpTo()"
+        <a-empty description="noting at here." v-show="hostList.length == 0"></a-empty>
+        <div @dblclick="jumpTo(host)"
              class="select-none cursor-pointer relative flex p-10 w-280px rounded-lg items-center bg-white _host_items"
-             v-for="i in 9" :key="i">
+             v-for="(host,i) in hostList" :key="i">
           <div class="p-5 rounded-lg  bg-#282B3D text-white">
             <div class="i-tabler:server-bolt text-26px"></div>
           </div>
           <div class="flex ml-10px flex-col text-overflow justify-between">
-            <div class="font-500 w-230px pb-3px text-overflow">10.35.11.21511111111111asdfasdfasdfasdfasdfasdf1111
+            <div class="font-500 w-230px pb-3px text-overflow">
+              {{ host.name }}
             </div>
-            <div class="text-gray w-230px text-overflow">password,cluster</div>
+            <div class="text-gray w-230px text-overflow">{{ host.cluster ? 'cluster' : `${host.node[0].host}${host.node[0].password ? ',password':''}` }}</div>
           </div>
-          <div @click="openDrawerFn(DrawerMode.edit)"
+          <div @dblclick.stop @click.stop="openDrawerFn(DrawerMode.edit,host)"
                class="rounded-md w-20px h-20px absolute right-10px top-14px p-4 _edit bg-amber justify-center items-center hidden">
             <div class="i-ic-round-edit"></div>
           </div>
@@ -67,7 +101,7 @@ const handleSelect = ()=>{}
     <div class="drawer-transition w-0 overflow-hidden" :class="{drawer:drawer}">
       <div class="flex bg-#E6EBEB h-50px sticky left-0 top-0  justify-between items-center"
            style="z-index: 2">
-            <span class="ml-15px text-14px">
+            <span class="ml-15px text-14px  flex-shrink-0">
                 <div class="i-tabler:server text-20px"></div>
                 {{ mode == DrawerMode.add ? $t('layout.add' as any) : $t('layout.edit' as any) }}</span>
 
@@ -76,31 +110,35 @@ const handleSelect = ()=>{}
             <a-dropdown @select="handleSelect" position="br" v-if="mode == DrawerMode.edit">
               <div class="i-ic:round-more-horiz text-20px"></div>
               <template #content>
-                <a-doption>
+                <a-doption value="connect">
                   <template #icon>
                     <div class="i-ic:twotone-cast-connected text-18px"></div>
                   </template>
-                  Connect
+                  {{ $t('layout.hostForm.connect') }}
                 </a-doption>
-                <a-doption>
+                <a-doption value="save">
                   <template #icon>
                     <div class="i-ic:round-save text-18px"></div>
                   </template>
-                  Save
+                  {{ $t('layout.hostForm.save') }}
                 </a-doption>
-                <a-doption>
+                <a-doption value="delete">
                   <template #icon>
                     <div class="i-ic:round-delete text-18px"></div>
                   </template>
-                  Delete
+                  {{ $t('layout.hostForm.delete') }}
                 </a-doption>
               </template>
-            </a-dropdown></div>
-          <div class="i-ic:round-arrow-forward text-20px" @click="drawer = false"></div>
+            </a-dropdown>
+          </div>
+          <div class="i-ic:round-close text-20px" @click="drawer = false"></div>
           <div class="w-5px"></div>
         </a-space>
       </div>
-      <HostForm></HostForm>
+      <div class="h-400px overflow-auto _form_ctx">
+
+        <HostForm :mode="mode" :data="connectionData" @ok="onOk" ref="formRef"></HostForm>
+      </div>
     </div>
   </div>
 </template>
@@ -152,5 +190,13 @@ $drawer-width: 330px;
   }
 }
 
+._form_ctx {
+  height: calc(100% - 50px);
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
 
 </style>

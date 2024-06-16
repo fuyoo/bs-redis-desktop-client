@@ -7,6 +7,10 @@ export default {
         hostForm: {
             name: "主机名称",
             normal:"常规属性",
+            submit: "提交",
+            save: "保存",
+            delete: "删除",
+            connect: "连接",
            hostName: {
                placeholder: "主机名(必填项)",
            },
