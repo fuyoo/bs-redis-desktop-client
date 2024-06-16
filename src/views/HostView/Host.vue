@@ -8,7 +8,6 @@ import db from "@/database"
 
 const tabStore = useTabStore()
 const jumpTo = (connection?:ConnectionImpl) => {
-  console.log(connection)
   if(!connection || !connection.id) {
     return
   }
@@ -24,7 +23,7 @@ const mode = ref(DrawerMode.add)
 const drawer = ref(false)
 const connectionData = ref<ConnectionImpl | undefined>()
 const openDrawerFn = (m: DrawerMode, data?: ConnectionImpl) => {
-  drawer.value = !drawer.value
+  drawer.value = true
   mode.value = m
   connectionData.value = data
 }
