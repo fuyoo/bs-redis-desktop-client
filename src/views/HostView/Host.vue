@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import useTabStore from '../../store/tabs.ts'
 import {nextTick, ref} from 'vue'
-import {ConnectionImpl, ConnectionInfo} from '@/database.ts'
+import {ConnectionImpl} from '@/database.ts'
 import HostForm from '@/views/HostView/HostForm.vue'
 import {DrawerMode} from "@/interface.ts";
 import db from "@/database"
@@ -78,7 +78,7 @@ const onOk = () => {
         </a-button>
       </div>
       <div class="flex flex-wrap _main p-25px">
-        <a-empty description="noting at here." v-show="hostList.length == 0"></a-empty>
+        <a-empty description="nothing at here." v-show="hostList.length == 0"></a-empty>
         <div @dblclick="jumpTo(host)"
              class="select-none cursor-pointer relative flex p-10 w-280px rounded-lg items-center bg-white _host_items"
              v-for="(host,i) in hostList" :key="i">
