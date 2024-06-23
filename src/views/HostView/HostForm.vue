@@ -24,7 +24,7 @@ watch(() => props.data, (data) => {
 })
 const submitFn = async (v: any) => {
   const data = unProxy(v)
-  await db.connection.put(data)
+  await db.connection.add(data)
   emits("ok", data)
 }
 const save = async () => {

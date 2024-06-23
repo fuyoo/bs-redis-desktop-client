@@ -50,7 +50,7 @@ console.log(isMacos)
         'justify-start':!min,
         'flex-shrink': 0,
       }" :style="{
-        paddingTop: isMacos ? '35px' : '0'}">
+        paddingTop: isMacos ? '35px' : '10px'}">
         <img data-tauri-drag-region :src="logo" alt="logo" width="30" height="30" class="mr-1">
         <div v-if="!min" class="text-gray w-120px text-ellipsis text-nowrap"
              style="white-space: nowrap;overflow: hidden" data-tauri-drag-region>BS <small

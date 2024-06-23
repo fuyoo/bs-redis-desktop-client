@@ -177,6 +177,7 @@ dependencies = [
 name = "bsrdc"
 version = "0.0.0"
 dependencies = [
+ "log",
  "serde",
  "serde_json",
  "tauri",

@@ -50,7 +50,14 @@ nextTick(() => {
 })
 const hostList = ref<ConnectionImpl[]>([])
 const queryHostList = async () => {
-  hostList.value = await db.connection.filter(() => true).toArray()
+  let hosts = [] as any
+  try {
+    hosts = await db.connection.filter(() => true).toArray()
+    console.log(hosts)
+  } catch (e) {
+
+  }
+  hostList.value = hosts
 }
 queryHostList()
 const onOk = () => {
