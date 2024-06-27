@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
+    "build:pass": "vite build",
     "lint": "vue-tsc --noEmit ",
     "preview": "vite preview",
     "tauri:dev": "tauri dev",
