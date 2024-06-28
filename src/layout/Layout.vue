@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {appWindow} from '@tauri-apps/api/window'
+import {getCurrent} from '@tauri-apps/api/window'
 import NavigatorItem from '../components/NavigatorItem.vue'
 import logo from '../assets/logo.png'
 import { ref} from 'vue'
@@ -22,13 +22,13 @@ enum BarAction {
 function doWindowAction(act: BarAction) {
   switch (act) {
     case BarAction.exit:
-      appWindow.close()
+    getCurrent().close()
       break
     case BarAction.toggleMax:
-      appWindow.toggleMaximize()
+    getCurrent().toggleMaximize().then(e => console.log(e))
       break
     case BarAction.mini:
-      appWindow.minimize()
+    getCurrent().minimize()
       break
   }
 }
@@ -36,7 +36,7 @@ function doWindowAction(act: BarAction) {
 const okFn = (id: string | number) => tabStore.changeTab(id as number)
 
 const closeFn = (id: string | number) => tabStore.delTab(id as number)
-const isMacos = navigator.userAgent.indexOf("Mac") > -1
+const isMacos =  navigator.userAgent.indexOf("Mac") > -1
 console.log(isMacos)
 </script>
 

@@ -12,7 +12,7 @@ pub struct Response {}
 impl Response {
     pub fn into_response(self) -> String {
         serde_json::to_string(&self).unwrap_or_else(|e| {
-            error!("{:?}",e);
+            error!("{:?}", e);
             String::from("{}")
         })
     }

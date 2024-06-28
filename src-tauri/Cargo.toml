@@ -8,14 +8,15 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1", features = [] }
+tauri-build = { version = "2.0.0-beta", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = [ "window-all", "shell-open", "devtools"] }
+tauri = { version = "2.0.0-beta", features = [ "devtools"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 window-shadows = "0.2.2"
 log = { version = "0.4.21", features = [] }
+tauri-plugin-shell = "2.0.0-beta.7"
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
