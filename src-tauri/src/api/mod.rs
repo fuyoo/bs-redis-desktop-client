@@ -18,6 +18,7 @@ impl Response {
     }
 }
 
+
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[command]
 pub fn request(rid: &str, action: &str, connection_info: &str, data: &str) -> String {

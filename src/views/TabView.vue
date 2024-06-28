@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import {ref} from 'vue'
 import {useRoute} from 'vue-router'
+import { status } from '@/api/backend';
 const route = useRoute()
 const count = ref(0)
+
+status<any>({})
+.then( console.log)
 </script>
 
 <template>
