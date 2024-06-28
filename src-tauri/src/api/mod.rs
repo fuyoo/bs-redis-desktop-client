@@ -20,8 +20,8 @@ impl Response {
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[command]
-pub fn request(rid: &str, action: &str, connectionInfo: &str, data: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", action);
+pub fn request(rid: &str, action: &str, connection_info: &str, data: &str) -> String {
+    println!("rid: {}\naction: {}\nconnection_info: {}\ndata: {}", rid,action,connection_info, data);
 
     let resp = Response {};
     resp.into_response()
