@@ -8,6 +8,9 @@ English | [中文](./docs/zh_CN.md)
 > running speed!
 
 
+## Screenshots
+![1](./docs/imgs/1.png)
+
 ## this project is rebuilding, if you need the old resource please check tag#1.1.1
 
 ## branch sciter is based on sciter framework,more info see sciter branch.
