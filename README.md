@@ -7,6 +7,20 @@ English | [中文](./docs/zh_CN.md)
 > The BS redis desktop client is powered by Rust and Tauri, with very small weight, beautiful interface and faster
 > running speed!
 
+## Todo List
+
+- [ ] String
+- [ ] JSON
+- [ ] Lists
+- [ ] Sets
+- [ ] Hashes
+- [ ] Sorted sets
+- [x] ⚠️Streams (we are unsupported.)
+- [x] ⚠️Geospatial (we are unsupported.)
+- [x] ⚠️Bitmaps (we are unsupported.)
+- [x] ⚠️Bitfields (we are unsupported.)
+- [x] ⚠️Probabilistic (we are unsupported.)
+- [x] ⚠️Time series (we are unsupported.)
 
 ## Screenshots
 ![1](./docs/imgs/1.png)

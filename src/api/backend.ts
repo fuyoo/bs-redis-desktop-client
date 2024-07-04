@@ -4,7 +4,7 @@ import { invoke } from "@tauri-apps/api/core"
 const getConnectionInfo = async () => {
     const route = useRoute()
     const id = Number(route.query.id)
-    return await db.connection.get(id)
+    return db.connection.get(id);
 } 
 
 export interface ResponseBody<T> {
@@ -19,11 +19,11 @@ export const RReq  = async <T>(action:string, data: any) => {
             rid:Math.random().toString(36),
             action,
             data:JSON.stringify(data),
-            connectionInfo:JSON.stringify(info)
+            connectionInfo:info
         })
 }
 
 
 export function status<T>(data:any) {
-    return RReq("/status",data)
+    return RReq<T>("/status",data)
 }
