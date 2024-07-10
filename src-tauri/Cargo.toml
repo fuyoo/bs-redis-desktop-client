@@ -19,6 +19,7 @@ window-shadows = "0.2.2"
 log = { version = "0.4.21", features = [] }
 tauri-plugin-shell = "2.0.0-beta.7"
 redis = { version = "0.25.4", features = ["tokio-comp"] }
+anyhow = "1.0.86"
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
