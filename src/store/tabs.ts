@@ -24,7 +24,7 @@ const initTab = (): Map<number, TabItem> => {
     return map
 }
 const defaultMenuIds = [-1, -2]
-export default defineStore('tabs', () => {
+export const useTabStore = defineStore('tabs', () => {
 
     const tabs = ref<Map<number, TabItem>>(initTab())
     const activeId = ref(-1)

@@ -3,14 +3,16 @@ import {getCurrent} from '@tauri-apps/api/window'
 import NavigatorItem from '../components/NavigatorItem.vue'
 import logo from '../assets/logo.png'
 import { ref} from 'vue'
-import useTabStore from '../store/tabs'
+import {useTabStore} from '../store/tabs'
 
 const tabStore = useTabStore()
 const min = ref(false)
 const ver = import.meta.env.VITE_VERSION.version
 const ScrollerRef = ref<any>()
 tabStore.setScroller(() => {
-  ScrollerRef.value?.scrollTop(tabStore.list.length * 80)
+  if (ScrollerRef.value) {
+    ScrollerRef.value.scrollTop = tabStore.list.length * 80
+  }
 })
 
 enum BarAction {

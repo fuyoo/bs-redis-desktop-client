@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  $END$
+  <h1>connected successful!</h1>
 </template>
 
 <style scoped>

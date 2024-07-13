@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import useTabStore from '../store/tabs'
+import {useTabStore} from '../store/tabs'
 
 const tabStore = useTabStore()
-import TabView from '@/views/TabView.vue'
+import TabView from '@/views/TabView'
 </script>
 
 <template>

@@ -2,11 +2,11 @@ export default {
     layout: {
         host: 'Hosts',
         settings: "Settings",
-        add:"New Host",
-        edit :"Edit Host",
+        add: "New Host",
+        edit: "Edit Host",
         hostForm: {
             name: "Host Name",
-            normal:"Normal Arguments",
+            normal: "Normal Arguments",
             submit: "Submit",
             save: "Save",
             delete: "Delete",
@@ -29,6 +29,11 @@ export default {
             password: {
                 placeholder: "Password"
             },
+        },
+        connection: {
+            host: "Host",
+            cluster: "Cluster Type",
+            close: "Close"
         }
     },
     settings: {

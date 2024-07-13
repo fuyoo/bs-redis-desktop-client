@@ -29,6 +29,11 @@ export default {
             password: {
                 placeholder: "密码"
             },
+        },
+        connection: {
+            host: "地址",
+            cluster: "集群模式",
+            close:"关闭",
         }
     },
     settings: {

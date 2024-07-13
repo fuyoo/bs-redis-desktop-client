@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import useTabStore from '../../store/tabs.ts'
+import {useTabStore} from '@/store/tabs.ts'
 import {nextTick, ref} from 'vue'
 import {ConnectionImpl} from '@/database.ts'
 import HostForm from '@/views/HostView/HostForm.vue'
@@ -32,6 +32,7 @@ const handleSelect = async (e: any) => {
   switch (e) {
     case "save":
       await formRef.value?.save()
+      await queryHostList();
       break
     case "delete":
       await db.connection.delete(connectionData.value?.id);
@@ -52,7 +53,7 @@ const hostList = ref<ConnectionImpl[]>([])
 const queryHostList = async () => {
   let hosts = [] as any
   try {
-    hosts = await db.connection.filter(() => true).toArray()
+    hosts = await db.connection.toArray()
     console.log(hosts)
   } catch (e) {
 

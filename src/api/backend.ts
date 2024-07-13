@@ -1,29 +1,27 @@
-import { useRoute } from "vue-router"
+
 import db from "@/database"
-import { invoke } from "@tauri-apps/api/core"
-const getConnectionInfo = async () => {
-    const route = useRoute()
-    const id = Number(route.query.id)
-    return db.connection.get(id);
-} 
+import {invoke} from "@tauri-apps/api/core"
+import {useTabStore} from "@/store/tabs.ts";
 
 export interface ResponseBody<T> {
     code: number,
-    data:T,
+    data: T,
     msg: string
 }
 
-export const RReq  = async <T>(action:string, data: any) => {
-        const info =  await getConnectionInfo()
-        return invoke<ResponseBody<T>>("request",{
-            rid:Math.random().toString(36),
-            action,
-            data:JSON.stringify(data),
-            connectionInfo:info
-        })
+export const Req = async <T>(action: string, data: any) => {
+    const tabs = useTabStore()
+    const id = Number(tabs.activeTab?.id || '0')
+    const info = await db.connection.get(id);
+    return invoke<ResponseBody<T>>("request", {
+        rid: Math.random().toString(36),
+        action,
+        data: JSON.stringify(data),
+        connectionInfo: info
+    })
 }
 
 
-export function status<T>(data:any) {
-    return RReq<T>("/status",data)
+export function status<T>(data: any) {
+    return Req<T>("/status", data)
 }
