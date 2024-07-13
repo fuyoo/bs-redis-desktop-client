@@ -1,3 +1,4 @@
+use async_trait::async_trait;
 use redis::{Client, Cmd, FromRedisValue};
 use serde::{Deserialize, Serialize};
 
@@ -26,21 +27,23 @@ impl ConnectionImpl {
             let cfg = &self.node[0];
             RedisSingleClient::connect(cfg)
         } else {
-            // 这里等下一步去实现
+            // next work step.
             todo!()
         }
     }
 }
 
 
+#[async_trait]
 pub trait RedisClientImpl {
-     fn do_command<T: FromRedisValue>(self, cmd: &Cmd) -> anyhow::Result<T>;
+    async fn do_command<T: FromRedisValue>(self, cmd: &Cmd) -> anyhow::Result<T>;
 }
 
 pub struct RedisSingleClient(Client);
 
+#[async_trait]
 impl RedisClientImpl for  RedisSingleClient {
-      fn do_command<T: FromRedisValue>(self, cmd: &Cmd) -> anyhow::Result<T> {
+    async fn do_command<T: FromRedisValue>(self, cmd: &Cmd) -> anyhow::Result<T> {
         let mut conn = self.0.get_connection()?;
         return Ok(cmd.query::<T>(&mut conn)?);
     }

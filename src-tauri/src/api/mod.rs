@@ -11,10 +11,12 @@ use crate::api::rdb::RedisClientImpl;
 #[command]
 pub async fn request(rid: &str, action: &str, connection_info: rdb::ConnectionImpl, data: &str) -> tauri::Result<Response<Option<String>>> {
     println!("rid: {}\naction: {}\nconnection_info: {:?}\ndata: {:?}", rid, action, connection_info, data);
-    let r = connection_info.into_client().unwrap().do_command::<Option<String>>(&cmd("get").arg("123"))?;
+    let r = connection_info.into_client().unwrap().do_command::<Option<String>>(&cmd("get").arg("123")).await?;
     println!("{:#?}", r);
     Ok(r_ok!(r, None))
 }
+
+
 
 
 
