@@ -29,7 +29,7 @@ watch(() => lng.value,async (r)=>{
     await i18next.changeLanguage(r)
     try {
             data.lang = r
-       database.settings.add(data,1)
+       database.settings.put(data,1)
     } catch (e) {
       console.log(e)
     }
