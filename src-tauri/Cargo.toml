@@ -15,9 +15,9 @@ tauri-build = { version = "2.0.0-beta", features = [] }
 tauri = { version = "2.0.0-beta", features = [ "devtools"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-window-shadows = "0.2.2"
 log = { version = "0.4.21", features = [] }
 tauri-plugin-shell = "2.0.0-beta.7"
+tauri-plugin-window-state = "=2.0.0-beta.11"
 redis = { version = "0.25.4", features = ["tokio-comp"] }
 anyhow = "1.0.86"
 async-trait = "0.1.81"
