@@ -1,5 +1,6 @@
 pub mod api;
-
+#[cfg(not(target_os = "macos"))]
+use tauri::Manager;
 pub fn run() {
     let mut app = tauri::Builder::default();
     // Access the system shell. Allows you to spawn child processes
