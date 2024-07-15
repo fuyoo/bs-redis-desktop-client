@@ -1,7 +1,8 @@
 pub mod api;
-#[cfg(not(target_os = "macos"))]
 use tauri::Manager;
-pub fn run() {
+use tauri::RunEvent;
+
+pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     let mut app = tauri::Builder::default();
     // Access the system shell. Allows you to spawn child processes
     // and manage files and URLs using their default application.
@@ -19,7 +20,20 @@ pub fn run() {
         }
         Ok(())
     });
-    app.invoke_handler(tauri::generate_handler![api::request])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+    let runner = app
+        .invoke_handler(tauri::generate_handler![api::request])
+        .build(tauri::generate_context!())?;
+    runner.run(|app, evt| match evt {
+        RunEvent::Exit => {}
+        RunEvent::ExitRequested { .. } => {}
+        RunEvent::WindowEvent { .. } => {}
+        RunEvent::Ready => match app.get_webview_window("main") {
+            None => {}
+            Some(win) => {
+                let _ = win.show();
+            }
+        },
+        _ => {}
+    });
+    Ok(())
 }
