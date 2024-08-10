@@ -89,6 +89,7 @@ const close = (key: number | string) => {
 
 <style lang="scss" scoped>
 ._c_m_item {
+  position: relative;
   *{cursor: default;user-select: none}
   ._m_cos {
     display: none;
@@ -97,7 +98,6 @@ const close = (key: number | string) => {
   &:hover ._m_cos {
     display: flex;
   }
-  position: relative;
 }
 
 .active {

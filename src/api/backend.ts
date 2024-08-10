@@ -9,16 +9,16 @@ export interface ResponseBody<T> {
     msg: string
 }
 
-export const Req = async <T>(action: string, data: any) => {
+export const Req = async <T>(path: string, data: any) => {
     const tabs = useTabStore()
     const id = Number(tabs.activeTab?.id || '0')
     const info = await db.connection.get(id);
-    return invoke<ResponseBody<T>>("request", {
-        rid: Math.random().toString(36),
-        action,
+    const res = await invoke<string>("request", {
+        path,
         data: JSON.stringify(data),
         connectionInfo: info
     })
+    return JSON.parse(res) as ResponseBody<T>
 }
 
 
