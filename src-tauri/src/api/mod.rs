@@ -1,22 +1,27 @@
+use redis::cmd;
+use tauri::{command, Result};
+use crate::api::resp::{IntoResponse};
+use crate::api::rdb::RedisClientImpl;
+use crate::api::resp::Response;
+
 pub mod rdb;
 pub mod resp;
+use crate::{r_404, r_ok};
 
-use redis::cmd;
-use tauri::command;
-use resp::Response;
-use crate::r_ok;
-use crate::api::rdb::RedisClientImpl;
-
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[command]
-pub async fn request(rid: &str, action: &str, connection_info: rdb::ConnectionImpl, data: &str) -> tauri::Result<Response<Option<String>>> {
-    println!("rid: {}\naction: {}\nconnection_info: {:?}\ndata: {:?}", rid, action, connection_info, data);
-    let r = connection_info.into_client().unwrap().do_command::<Option<String>>(&cmd("get").arg("123")).await?;
-    println!("{:#?}", r);
-    Ok(r_ok!(r, None))
+pub async fn request(path: &str, connection_info: rdb::ConnectionImpl, data: &str)
+                     -> Result<String> {
+    match path {
+        "/status" => status(connection_info, data).await?.into_response(),
+        &_ => r_404!(path).into_response()
+    }
 }
 
-
+//
+async fn status(connection_info: rdb::ConnectionImpl, data: &str) -> Result<Response<Option<String>>> {
+    let r = connection_info.into_client()?.do_command::<Option<String>>(&cmd("ping")).await?;
+    Ok(r_ok!(r,None))
+}
 
 
 
