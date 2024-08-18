@@ -8,7 +8,7 @@ const cmp = shallowRef(Status as any)
 </script>
 
 <template>
-  <div class="w-full">
+  <div class="w-full h-full">
     <Component :is="cmp" @ok="() => cmp = Data"/>
   </div>
 </template>

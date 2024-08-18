@@ -40,7 +40,6 @@ export const useTabStore = defineStore('tabs', () => {
     }
     const changeTab = async (tabId: number) => {
         activeId.value = tabId
-        console.log(activeTab.value)
         await router.push({
             path: activeTab.value?.path,
             query: {...activeTab.value}

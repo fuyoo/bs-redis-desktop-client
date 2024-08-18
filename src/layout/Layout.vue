@@ -39,7 +39,6 @@ const okFn = (id: string | number) => tabStore.changeTab(id as number)
 
 const closeFn = (id: string | number) => tabStore.delTab(id as number)
 const isMacos =  navigator.userAgent.indexOf("Mac") > -1
-console.log(isMacos)
 </script>
 
 <template>
@@ -108,7 +107,7 @@ console.log(isMacos)
           </div>
         </div>
       </div>
-      <div class="bg-#EDF1F2 _ctx_scroller">
+      <div class="bg-#EDF1F2 _ctx_scroller" :style="{width: min ? 'calc(100vw - 65px)' : 'calc(100vw - 175px)'}">
         <router-view v-slot="{ Component }">
           <transition>
             <keep-alive>
