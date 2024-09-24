@@ -14,6 +14,7 @@ pub async fn request(path: &str, connection_info: rdb::ConnectionImpl, data: &st
     match path {
         "/status" => status(connection_info).await?.into_response(),
         "/info" => base_info(connection_info,data).await?.into_response(),
+        "/keys"=> keys(connection_info,data).await?.into_response(),
         &_ => r_404!(path).into_response()
     }
 }
@@ -34,8 +35,9 @@ async  fn base_info(connection_info: ConnectionImpl,data: &str) -> Result<Respon
     Ok(r_ok!(r,None))
 }
 
-// async fn keys(connection_impl: ConnectionImpl,data: &str) -> Result<Response<Vec<String>>> {
-//     //struct res =
-//    // connection_impl.into_client()?.do_command()
-// }
+// search keys
+async fn keys(connection_info: ConnectionImpl,data: &str) -> Result<Response<Vec<String>>> {
+    let client = connection_info.into_client()?;
+    Ok(r_ok!(vec![],None))
+}
 
