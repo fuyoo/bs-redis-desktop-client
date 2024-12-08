@@ -1,65 +1,40 @@
-# BS Redis Desktop Client n
+# bsrdc (bsredis)
 
-English | [中文](./docs/zh_CN.md)
+A Redis GUI Client
 
-> BS Redis Desktop Client tauri
-
-> The BS redis desktop client is powered by Rust and Tauri, with very small weight, beautiful interface and faster
-> running speed!
-
-## Todo List
-
-- [ ] String
-- [ ] JSON
-- [ ] Lists
-- [ ] Sets
-- [ ] Hashes
-- [ ] Sorted sets
-- [x] ⚠️Streams (we are unsupported.)
-- [x] ⚠️Geospatial (we are unsupported.)
-- [x] ⚠️Bitmaps (we are unsupported.)
-- [x] ⚠️Bitfields (we are unsupported.)
-- [x] ⚠️Probabilistic (we are unsupported.)
-- [x] ⚠️Time series (we are unsupported.)
-
-## Screenshots
-![1](./docs/imgs/1.png)
-
-## this project is rebuilding, if you need the old resource please check tag#1.1.1
-
-## branch sciter is based on sciter framework,more info see sciter branch.
-
-## Software download and communication
-
-* Software download：[Home Page](http://bs.xsa.link)
-* Communication： QQ GROUP：877290961
-
-### Development
-
-```shell
-pnpm tauri:dev
+## Install the dependencies
+```bash
+yarn
+# or
+npm install
 ```
 
-### Directory tree
-
-- `/src-tauri` is  [tauri](https://tauri.app/) rust code
-
-### Init environment
-
-- See [tauri guides](https://tauri.app/v1/guides/)
-
-### build
-
-```shell
-pnpm tauri:build
+### Start the app in development mode (hot-code reloading, error reporting, etc.)
+```bash
+quasar dev
 ```
 
-### Other
 
-- change app icon `pnpm tauri:gen-icon`
-- redis uri see [redis uri](./docs/uri.md)
+### Lint the files
+```bash
+yarn lint
+# or
+npm run lint
+```
 
 
-## LICENSE
+### Format the files
+```bash
+yarn format
+# or
+npm run format
+```
 
-[MIT](./LICENSE)
+
+### Build the app for production
+```bash
+quasar build
+```
+
+### Customize the configuration
+See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).

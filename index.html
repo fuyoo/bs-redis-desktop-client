@@ -1,23 +1,21 @@
-<!doctype html>
-<html lang="en" data-tauri-drag-region>
-<head>
-    <meta charset="UTF-8"/>
-    <link rel="icon" type="image/svg+xml" href="/vite.svg"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="stylesheet" href="./loading.css">
-    <title>BS Redis Desktop Client</title>
-</head>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= productName %></title>
 
-<body>
-<div class="_do_first_loading_container" data-tauri-drag-region>
-    <div class="_do_first_loading" data-tauri-drag-region>
-        <div data-tauri-drag-region></div>
-        <div data-tauri-drag-region></div>
-        <div data-tauri-drag-region></div>
-        <div data-tauri-drag-region></div>
-    </div>
-</div>
-<div id="app"></div>
-<script type="module" src="/src/main.ts"></script>
-</body>
+    <meta charset="utf-8">
+    <meta name="description" content="<%= productDescription %>">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width<% if (ctx.mode.cordova || ctx.mode.capacitor) { %>, viewport-fit=cover<% } %>">
+
+    <link rel="icon" type="image/png" sizes="128x128" href="icons/favicon-128x128.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="icons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+    <link rel="icon" type="image/ico" href="favicon.ico">
+  </head>
+  <body>
+    <!-- quasar:entry-point -->
+  </body>
 </html>
