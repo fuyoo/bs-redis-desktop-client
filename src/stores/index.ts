@@ -1,6 +1,5 @@
 import { defineStore } from '#q-app/wrappers'
 import { createPinia } from 'pinia'
-import type { Router } from 'vue-router';
 
 /*
  * When adding new properties to stores, you should also

@@ -21,6 +21,7 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
         Ok(())
     });
     let runner = app
+    .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![api::request])
         .build(tauri::generate_context!())?;
     runner.run(|app, evt| match evt {

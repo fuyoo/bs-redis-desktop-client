@@ -2,36 +2,17 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+        <q-toolbar-title data-tauri-drag-region> BS </q-toolbar-title>
+        <div>v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
-
+        <q-item-label header> Operation </q-item-label>
         <EssentialLink
+          @click="jumpTo(link.link)"
           v-for="link in linksList"
           :key="link.title"
           v-bind="link"
@@ -46,57 +27,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import EssentialLink, { type EssentialLinkProps } from 'components/EssentialLink.vue';
-
+import { ref } from 'vue'
+import EssentialLink, { type EssentialLinkProps } from 'components/EssentialLink.vue'
+import { open } from '@tauri-apps/plugin-shell'
 const linksList: EssentialLinkProps[] = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
+    title: 'Host',
+    caption: 'redis database host',
     icon: 'school',
-    link: 'https://quasar.dev'
+    link: 'https://redis.io',
   },
   {
     title: 'Github',
-    caption: 'github.com/quasarframework',
+    caption: 'github.com/fuyoo/bs',
     icon: 'code',
-    link: 'https://github.com/quasarframework'
+    link: 'https://github.com/fuyoo/bs-redis-desktop',
   },
   {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
+    title: 'Settings',
+    caption: 'app setting',
+    icon: 'settings',
   },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
+]
+
+const leftDrawerOpen = ref(false)
+function toggleLeftDrawer() {
+  leftDrawerOpen.value = !leftDrawerOpen.value
+}
+const jumpTo = async (url?: string) => {
+  if (url) {
+    console.log
   }
-];
-
-const leftDrawerOpen = ref(false);
-
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 </script>
