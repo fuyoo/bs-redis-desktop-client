@@ -73,6 +73,7 @@ export default [
       'prefer-promise-reject-errors': 'off',
       '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
       '@typescript-eslint/no-unused-expressions': 'off',
+      'vue/multi-word-component-names': 'off',
       // allow debugger during development only
       'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     },
