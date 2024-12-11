@@ -22,6 +22,7 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import { getAllWindows, getCurrentWindow } from '@tauri-apps/api/window'
 enum Operation {
   reset,
@@ -29,6 +30,7 @@ enum Operation {
   max,
   exit,
 }
+const { t } = useI18n()
 const $q = useQuasar()
 const handleOperation = async (o: Operation) => {
   switch (o) {
@@ -36,14 +38,12 @@ const handleOperation = async (o: Operation) => {
       $q.dialog({
         transitionShow: 'rotate',
         title: '提示',
-        message: '你确定要关闭应用吗？',
+        message: t('exit'),
         ok: {
           push: true,
-          label: '确定',
         },
         cancel: {
           push: true,
-          label: '取消',
           color: 'negative',
         },
         persistent: true,

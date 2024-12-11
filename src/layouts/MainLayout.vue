@@ -25,37 +25,47 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <q-scroll-area class="w-full h-[calc(100vh-50px)]">
+        <router-view />
+      </q-scroll-area>
     </q-page-container>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import WindowOperationButtonGroup from 'src/components/WindowOperationButtonGroup.vue'
 import EssentialLink, { type EssentialLinkProps } from 'components/EssentialLink.vue'
-const linksList: EssentialLinkProps[] = [
+const { t, locale } = useI18n()
+const linksList = ref<EssentialLinkProps[]>([
   {
-    title: 'Host',
-    caption: 'redis database host',
+    title: t('menu[0][0]'),
+    caption: t('menu[0][1]'),
     icon: 'storage',
     link: '/',
   },
   {
-    title: 'Settings',
-    caption: 'app setting',
+    title: t('menu[1][0]'),
+    caption: t('menu[1][1]'),
     icon: 'settings',
     link: '/settings',
     badge: true,
   },
   {
-    title: 'Github',
+    title: t('menu[2][0]'),
     caption: 'github.com/fuyoo/bs',
     icon: 'code',
     link: 'https://github.com/fuyoo/bs-redis-desktop-client',
     inner: 2,
   },
-]
+])
+watch(locale, () => {
+  linksList.value.forEach((v: any, i: number) => {
+    v.title = t(`menu[${i}][0]`)
+    v.caption = t(`menu[${i}][1]`)
+  })
+})
 const leftDrawerOpen = ref(false)
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value

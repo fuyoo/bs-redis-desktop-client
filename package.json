@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.14.0",
+    "@iconify/json": "^2.2.281",
     "@intlify/unplugin-vue-i18n": "^2.0.0",
     "@quasar/app-vite": "^2.0.0",
     "@tauri-apps/api": "^2.1.1",
