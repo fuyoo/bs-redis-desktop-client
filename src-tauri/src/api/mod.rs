@@ -1,6 +1,6 @@
-use redis::{cmd};
-use tauri::{command, Manager, Result, Runtime};
-use crate::api::resp::{IntoResponse};
+use redis::cmd;
+use tauri::{command, Result};
+use crate::api::resp::IntoResponse;
 use crate::api::rdb::{ConnectionImpl, RedisClientImpl};
 use crate::api::resp::Response;
 
@@ -19,12 +19,6 @@ pub async fn request(path: &str, connection_info: rdb::ConnectionImpl, data: &st
     }
 }
 
-#[tauri::command]
-async fn command_name<R: Runtime>(app: tauri::AppHandle<R>, window: tauri::Window<R>) -> Result<()> {
-    let win = app.app_handle().get_webview_window("main").unwrap();
-    
-  Ok(())
-}
 // check connection status
 async fn status(connection_info: ConnectionImpl) -> Result<Response<Option<String>>> {
     let r = connection_info.into_client()?.do_command::<Option<String>>(&cmd("ping")).await?;

@@ -8,9 +8,17 @@ const routes: RouteRecordRaw[] = [
     children: [
       { path: '/home', component: () => import('pages/home/index.vue') },
       { path: '/settings', component: () => import('pages/settings/index.vue') },
+      {
+        path: '/host/:id',
+        component: () => import('pages/host/index.vue'),
+      },
     ],
   },
-
+  {
+    path: '/host/:id',
+    component: () => import('layouts/HostViewLayout.vue'),
+    children: [{ path: 'status', component: () => import('pages/host/index.vue') }],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {

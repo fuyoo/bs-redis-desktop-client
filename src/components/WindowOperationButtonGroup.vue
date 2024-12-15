@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex-shrink-0">
     <q-btn
       flat
       round
