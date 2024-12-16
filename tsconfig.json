@@ -1,3 +1,4 @@
 {
-  "extends": "./.quasar/tsconfig.json"
+  "extends": "./.quasar/tsconfig.json",
+  "include": ["./global.d.ts"]
 }

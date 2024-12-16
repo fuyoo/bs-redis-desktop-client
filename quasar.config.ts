@@ -2,9 +2,11 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
 import { defineConfig } from '#q-app/wrappers'
+import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-
+import { readFileSync } from 'node:fs'
 export default defineConfig((ctx) => {
+  const pkg = readFileSync(path.join(__dirname, 'package.json')).toString()
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
@@ -93,6 +95,10 @@ export default defineConfig((ctx) => {
           { server: false },
         ],
       ],
+      alias: { '@': path.join(__dirname, 'src') },
+      rawDefine: {
+        PKG: pkg,
+      },
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer

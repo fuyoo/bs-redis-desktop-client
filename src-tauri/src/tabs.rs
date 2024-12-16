@@ -1,19 +1,18 @@
 use std::{collections::HashSet, sync::Mutex};
 
-use anyhow::anyhow;
 use serde::{Deserialize, Serialize};
-use tauri::{webview, LogicalPosition, LogicalSize, Manager, PhysicalPosition, PhysicalSize, Result};
+use tauri::{webview, LogicalPosition, LogicalSize, Manager, Result};
 
-use crate::{api::resp::{IntoResponse, Response}, r_ok};
+use crate::{api::resp::{ Response}, r_ok};
 #[derive(Default,Serialize,Deserialize,Hash, Eq, PartialEq, Debug, Clone)]
 pub struct Tab{
 pub id:String,
-pub name:String
+pub name:Option<String>
 }
 
 #[tauri::command]
 pub async fn tab_change(app: tauri::AppHandle,tab:Tab) -> Result<()> {
-  // first we should checking webview is created? if it has, show it hidden others.
+  // first we should check webview is created? if it has, show it hidden others.
     let view = app.app_handle().get_window("main").unwrap();
     match  view.get_webview(&tab.id) {
         None => {
@@ -32,7 +31,6 @@ pub async fn tab_change(app: tauri::AppHandle,tab:Tab) -> Result<()> {
                 if item.label() != &tab.id && item.label() != "main" {
                     item.hide()?;
                 }
-                println!("------------------------->{}",item.label())
             }
         },
         Some(vb) => {
@@ -79,6 +77,10 @@ pub async fn tab_close(app: tauri::AppHandle,tab:Tab) -> Result<Response<bool>> 
         Ok(mut set) => set.remove(&tab),
         Err(_) => false,
     };
+    if let Some(view) = app.app_handle().get_webview(&tab.id) {
+        view.close()?;
+    }
+
     Ok(r_ok!(v, None))
 }
 
@@ -89,7 +91,7 @@ pub async fn tab_view_resize(app: tauri::AppHandle,id:String) -> Result<Response
             return Ok(r_ok!(true, None));
         }
     if let Some(vb) = app.app_handle().get_webview(&id) {
-        // first we should checking webview is created? if it has, show it hidden others.
+        // first we should check webview is created? if it has, show it and hidden others.
         let view = app.app_handle().get_window("main").unwrap();
         vb.set_position(LogicalPosition::new(0, 60))?;
             let size = view.inner_size()?;
