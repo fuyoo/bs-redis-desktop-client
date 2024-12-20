@@ -1,4 +1,5 @@
 {
   "extends": "./.quasar/tsconfig.json",
-  "include": ["./global.d.ts"]
+  "include": ["./src/env.d.ts"],
+  "exclude": ["src-tauri/**/*"]
 }

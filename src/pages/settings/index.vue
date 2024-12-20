@@ -22,5 +22,6 @@
 
 <script setup lang="ts">
 import CoLanguage from './components/CoLanguage.vue'
-const pkg = window.PKG
+// below type assert code aim to pass vscode ts-plugin type checking.
+const pkg = (window as any).package
 </script>

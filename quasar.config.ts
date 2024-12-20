@@ -97,7 +97,7 @@ export default defineConfig((ctx) => {
       ],
       alias: { '@': path.join(__dirname, 'src') },
       rawDefine: {
-        PKG: pkg,
+        package: pkg,
       },
     },
 

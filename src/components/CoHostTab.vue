@@ -1,7 +1,7 @@
 <template>
   <q-tabs class="mx-10" dense shrink stretch inline-label outside-arrows mobile-arrows>
-    <q-route-tab @click="handleClose" v-for="item in hosts" :key="item.id" :to="`/host/${item.id}`" icon="storage"
-      :label="item.name">
+    <q-route-tab @click="handleClose" v-for="item in tabStore.tabList" :key="item.id" :to="`/host/${item.id}`"
+      icon="storage" :label="item.name">
       <q-btn :data-id="item.id" dense flat size="xs" round class="ml-1">
         <span class="i-ic:round-close text-4" :data-id="item.id"></span>
       </q-btn>
@@ -11,10 +11,11 @@
 
 <script lang="ts" setup>
 import { invoke } from '@tauri-apps/api/core'
-import { ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-const router = useRouter()
+import { watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { useTabStore } from '../stores/tab';
 const route = useRoute()
+const tabStore = useTabStore()
 watch(
   () => route.params.id,
   async (id: string | string[] | undefined) => {
@@ -25,16 +26,14 @@ watch(
 // below logic aim to reset webview position when the window was resizing.
 let timer: any
 window.addEventListener('resize', () => {
+  // throttle to improve performance
   clearTimeout(timer)
   setTimeout(async () => {
     if (route.params.id) {
-      const resp = await invoke('tab_view_resize', { id: route.params.id })
-      console.log(resp)
+      await invoke('tab_view_resize', { id: route.params.id })
     }
   }, 160)
 })
-// todo: this tabs list should be fetched from rust side.
-const hosts = ref(new Array(10).fill(0).map((e, i) => ({ id: i + '', name: `HOST-${i}` })))
 
 // handle tab close logic.
 const handleClose = async (ev: Event) => {
@@ -42,21 +41,7 @@ const handleClose = async (ev: Event) => {
   if (id) {
     // prevent q-route-tab component route to new path.
     ev.preventDefault()
-    // close webview at rust side.
-    await invoke('tab_close', { tab: { id } })
-    // update tabs list.
-    const index = hosts.value.findIndex((e) => e.id === id)
-    hosts.value.splice(hosts.value.findIndex((e) => e.id === id), 1)
-    const nid = hosts.value[index]?.id || hosts.value[index - 1]?.id
-    // focus on next tab.
-    if (route.params.id) {
-      if (nid) {
-        await router.push(`/host/${nid}`)
-      } else {
-        // if tab empty, go to home page.
-        await router.push(`/`)
-      }
-    }
+    tabStore.close(id)
   }
 }
 </script>

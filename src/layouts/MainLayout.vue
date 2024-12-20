@@ -2,7 +2,7 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar data-tauri-drag-region>
-        <span class="mt-4 ml--0.5 flex-shrink-0 text-#fff9" :class="{ 'hide': !$q.platform.is.mac }">BS RDC</span>
+        <span class="mt-4 ml-12 flex-shrink-0 text-#fff9" :class="{ 'hide': !$q.platform.is.mac }"></span>
         <q-btn class="ml-5" flat dense round icon="home" to="/"></q-btn>
         <q-btn class="ml-5" flat dense round icon="info"
           @click="open(`https://github.com/fuyoo/bs-redis-desktop-client`)"></q-btn>
