@@ -28,9 +28,9 @@
       {
         "title": "BS",
         "width": 860,
-        "height": 600,
+        "height": 720,
         "minWidth": 860,
-        "minHeight": 600,
+        "minHeight": 720,
         "center": true,
         "hiddenTitle": true,
         "titleBarStyle": "Overlay",

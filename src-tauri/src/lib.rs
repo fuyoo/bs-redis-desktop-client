@@ -1,5 +1,6 @@
 pub mod api;
 pub mod tabs;
+use std::collections::HashMap;
 use std::collections::HashSet;
 
 use std::sync::Mutex;
@@ -25,7 +26,7 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
         Ok(())
     });
     let runner = app
-    .manage(Mutex::new(HashSet::<tabs::Tab>::new()))
+    .manage(Mutex::new(Vec::<tabs::Tab>::new()))
     .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![api::request,
             tabs::tab_list,tabs::tab_change,tabs::tab_view_resize,tabs::tab_close])
