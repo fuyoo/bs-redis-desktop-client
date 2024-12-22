@@ -24,6 +24,7 @@
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { getAllWindows, getCurrentWindow } from '@tauri-apps/api/window'
+import { useTabStore } from '../stores/tab'
 enum Operation {
   reset,
   mini,
@@ -32,9 +33,12 @@ enum Operation {
 }
 const { t } = useI18n()
 const $q = useQuasar()
+const tabStore = useTabStore()
 const handleOperation = async (o: Operation) => {
   switch (o) {
-    case Operation.exit:
+    case Operation.exit: {
+      const tab = tabStore.focusTab()
+      await tabStore.change({ id: 'main' })
       $q.dialog({
         transitionShow: 'rotate',
         title: '提示',
@@ -47,8 +51,13 @@ const handleOperation = async (o: Operation) => {
           color: 'negative',
         },
         persistent: true,
-      }).onOk(async () => (await getAllWindows()).forEach((element) => element.close()))
+      })
+        .onOk(async () => (await getAllWindows()).forEach((element) => element.close()))
+        .onCancel(async () => {
+          if (tab) await tabStore.change(tab)
+        })
       break
+    }
     case Operation.max:
       getCurrentWindow().toggleMaximize()
       break

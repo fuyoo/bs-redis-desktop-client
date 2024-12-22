@@ -1,7 +1,13 @@
 <template>
   <q-tabs class="mx-10" dense shrink stretch inline-label outside-arrows mobile-arrows>
-    <q-route-tab @click="handleClose" v-for="item in tabStore.tabList" :key="item.id" :to="`/host/${item.id}`"
-      icon="storage" :label="item.name">
+    <q-route-tab
+      @click="handleClose"
+      v-for="item in tabStore.tabList"
+      :key="item.id"
+      :to="`/host/${item.id}`"
+      icon="storage"
+      :label="item.name"
+    >
       <q-btn :data-id="item.id" dense flat size="xs" round class="ml-1">
         <span class="i-ic:round-close text-4" :data-id="item.id"></span>
       </q-btn>
@@ -13,14 +19,18 @@
 import { invoke } from '@tauri-apps/api/core'
 import { watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useTabStore } from '../stores/tab';
+import { useTabStore } from '../stores/tab'
 const route = useRoute()
 const tabStore = useTabStore()
 watch(
   () => route.params.id,
   async (id: string | string[] | undefined) => {
-    const resp = await invoke('tab_change', { tab: { id: id || 'main', name: 'host' } })
-    console.log(resp)
+    const tab = tabStore.tab(id as string)
+    if (tab) {
+      await invoke('tab_change', { tab })
+    } else {
+      await invoke('tab_change', { tab: { id: id || 'main' } })
+    }
   },
 )
 // below logic aim to reset webview position when the window was resizing.
@@ -44,4 +54,6 @@ const handleClose = async (ev: Event) => {
     tabStore.close(id)
   }
 }
+// init tab
+tabStore.update()
 </script>
