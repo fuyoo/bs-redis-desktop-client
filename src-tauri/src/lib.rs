@@ -1,7 +1,5 @@
 pub mod api;
 pub mod tabs;
-use std::collections::HashMap;
-use std::collections::HashSet;
 
 use std::sync::Mutex;
 use tauri::Manager;

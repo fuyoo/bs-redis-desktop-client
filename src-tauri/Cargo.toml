@@ -1,6 +1,6 @@
 [package]
 name = "bsrdc"
-version = "0.0.0"
+version = "2.0.0-dev"
 description = "BS Redis Desktop Client"
 authors = ["you"]
 edition = "2021"

@@ -17,7 +17,7 @@
     ]
   },
   "productName": "BS",
-  "version": "0.1.0",
+  "version": "2.0.0-dev",
   "identifier": "link.xsa.bs",
   "plugins": {},
   "app": {
@@ -34,7 +34,6 @@
         "center": true,
         "hiddenTitle": true,
         "titleBarStyle": "Overlay",
-        "tabbingIdentifier": "main",
         "visible": false
       }
     ]
