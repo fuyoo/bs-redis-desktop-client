@@ -1,8 +1,8 @@
 {
   "build": {
-    "beforeDevCommand": "npm run dev",
-    "beforeBuildCommand": "npm run build",
-    "frontendDist": "../dist/spa",
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build",
+    "frontendDist": "../dist",
     "devUrl": "http://localhost:9000"
   },
   "bundle": {
@@ -28,9 +28,9 @@
       {
         "title": "BS",
         "width": 860,
-        "height": 720,
+        "height": 600,
         "minWidth": 860,
-        "minHeight": 720,
+        "minHeight": 600,
         "center": true,
         "hiddenTitle": true,
         "titleBarStyle": "Overlay",

@@ -1,18 +1,6 @@
-declare namespace NodeJS {
-  interface ProcessEnv {
-    NODE_ENV: string
-    VUE_ROUTER_MODE: 'hash' | 'history' | 'abstract' | undefined
-    VUE_ROUTER_BASE: string | undefined
-  }
-}
+/// <reference types="vite/client" />
 
-declare namespace global {
-  interface Window {
-    package: Package
-  }
-}
-
-declare class Package {
+interface Package {
   name: string
   version: string
   description: string
@@ -37,5 +25,7 @@ interface BackendResponse<T> {
 
 interface Tab {
   id: string
-  name: string
+  name?: string
 }
+
+declare const __APP_PKG: Package

@@ -4,7 +4,7 @@ import { shallowRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 export const useTabStore = defineStore('tab', () => {
   // tab list
-  const tabList = shallowRef<{ id: string; name: string }[]>([])
+  const tabList = shallowRef<Tab[]>([])
   // route
   const route = useRoute()
   // router
