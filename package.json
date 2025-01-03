@@ -1,6 +1,6 @@
 {
   "name": "bsredis",
-  "version": "2.0.0-dev",
+  "version": "2.0.0-1",
   "description": "A Redis GUI Client",
   "productName": "BSRDC",
   "author": "'fuyoo' <fuyoo0928@gmail.com>",
