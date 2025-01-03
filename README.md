@@ -11,30 +11,10 @@ npm install
 
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
 ```bash
-quasar dev
+npm run tauri:dev
 ```
 
-
-### Lint the files
+### Build the app in release mode
 ```bash
-yarn lint
-# or
-npm run lint
+npm run tauri:build
 ```
-
-
-### Format the files
-```bash
-yarn format
-# or
-npm run format
-```
-
-
-### Build the app for production
-```bash
-quasar build
-```
-
-### Customize the configuration
-See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
