@@ -9,4 +9,5 @@ export default {
     ['Github', 'github.com/fuyoo/bs-redis-desktop-client'],
   ],
   settings: ['Settings', 'Language', 'Version'],
+  actions: ['Ok', 'Cancel'],
 }

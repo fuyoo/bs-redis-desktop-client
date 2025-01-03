@@ -6,4 +6,5 @@ export default {
     ['Github', 'github.com/fuyoo/bs-redis-desktop-client'],
   ],
   settings: ['设置', '语言', '版本'],
+  actions: ['确定', '取消'],
 }

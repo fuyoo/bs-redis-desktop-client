@@ -11,7 +11,7 @@
           <span class="text-3 text-#0006">password,cluster</span>
         </div>
       </div>
-      <div
+      <div @click="addFn"
         class="w-15 h-15 shadow-lg b b-solid b-#0001 flex justify-center items-center text-10 rounded cursor-pointer active:opacity-50">
         <i class="i-ic:round-plus"></i>
       </div>
@@ -21,10 +21,29 @@
 
 <script setup lang="ts">
 import { useTabStore } from '@/stores/tab';
-
-
+import { Dialog } from 'quasar';
+import CoHostForm from "./components/CoHostForm.vue"
 const tab = useTabStore()
 const changeTab = (i: number) => {
   tab.change({ id: `host-${i}`, name: `host-${i}` })
+}
+
+const addFn = () => {
+  Dialog.create({
+    component: CoHostForm,
+
+    // props forwarded to your custom component
+    componentProps: {
+      text: 'something',
+      persistent: true,
+      // ...more..props...
+    }
+  }).onOk(() => {
+    console.log('OK')
+  }).onCancel(() => {
+    console.log('Cancel')
+  }).onDismiss(() => {
+    console.log('Called on OK or Cancel')
+  })
 }
 </script>
