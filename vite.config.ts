@@ -8,13 +8,10 @@ import UnoCSS from 'unocss/vite'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
-import { json } from 'node:stream/consumers'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const pkg = readFileSync(path.join(__dirname, 'package.json')).toString()
-  const env = loadEnv(mode, process.cwd())
-  env.VITE_APP_PKG = pkg
   return {
     plugins: [
       vue({

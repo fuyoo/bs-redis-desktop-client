@@ -20,14 +20,9 @@
     "lint": "run-s lint:*",
     "format": "prettier --write src/"
   },
-  "dependencies": {
-    "@quasar/extras": "^1.16.15",
-    "pinia": "^2.2.6",
-    "vue": "^3.5.13",
-    "vue-router": "^4.4.5"
-  },
   "devDependencies": {
     "@iconify/json": "^2.2.287",
+    "@quasar/extras": "^1.16.15",
     "@quasar/vite-plugin": "^1.8.1",
     "@tauri-apps/api": "^2.1.1",
     "@tauri-apps/cli": "^2.1.0",
@@ -48,6 +43,7 @@
     "jsdom": "^25.0.1",
     "npm-run-all2": "^7.0.1",
     "oxlint": "^0.11.0",
+    "pinia": "^2.3.0",
     "prettier": "^3.3.3",
     "quasar": "^2.17.5",
     "sass": "^1.83.0",
@@ -57,7 +53,9 @@
     "vite": "^6.0.1",
     "vite-plugin-vue-devtools": "^7.6.5",
     "vitest": "^2.1.5",
+    "vue": "^3.5.13",
     "vue-i18n": "^10.0.5",
+    "vue-router": "^4.5.0",
     "vue-tsc": "^2.1.10"
   }
 }

@@ -10,4 +10,18 @@ export default {
   ],
   settings: ['Settings', 'Language', 'Version'],
   actions: ['Ok', 'Cancel'],
+  home: {
+    form: {
+      lable: ['Name', 'Host', 'Port', 'Database', 'Username', 'Password', 'Cluster'],
+      hint: [
+        'Record Name(Required)',
+        'Connection Host(Required)',
+        'Connection Port(not Required)',
+        'Redis Database(not Required)',
+        'Redis Auth Username(not Required)',
+        'Redis Auth Password(not Required)',
+      ],
+      rule: ['Host Name is Required', 'Connection host is Required'],
+    },
+  },
 }

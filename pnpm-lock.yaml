@@ -7,23 +7,13 @@ settings:
 importers:
 
   .:
-    dependencies:
-      '@quasar/extras':
-        specifier: ^1.16.15
-        version: 1.16.15
-      pinia:
-        specifier: ^2.2.6
-        version: 2.3.0(typescript@5.6.3)(vue@3.5.13(typescript@5.6.3))
-      vue:
-        specifier: ^3.5.13
-        version: 3.5.13(typescript@5.6.3)
-      vue-router:
-        specifier: ^4.4.5
-        version: 4.5.0(vue@3.5.13(typescript@5.6.3))
     devDependencies:
       '@iconify/json':
         specifier: ^2.2.287
         version: 2.2.287
+      '@quasar/extras':
+        specifier: ^1.16.15
+        version: 1.16.15
       '@quasar/vite-plugin':
         specifier: ^1.8.1
         version: 1.8.1(@vitejs/plugin-vue@5.2.1(vite@6.0.5(@types/node@22.10.2)(jiti@2.4.2)(sass-embedded@1.83.0)(sass@1.83.0)(tsx@4.19.2))(vue@3.5.13(typescript@5.6.3)))(quasar@2.17.5)(vite@6.0.5(@types/node@22.10.2)(jiti@2.4.2)(sass-embedded@1.83.0)(sass@1.83.0)(tsx@4.19.2))(vue@3.5.13(typescript@5.6.3))
@@ -84,6 +74,9 @@ importers:
       oxlint:
         specifier: ^0.11.0
         version: 0.11.1
+      pinia:
+        specifier: ^2.3.0
+        version: 2.3.0(typescript@5.6.3)(vue@3.5.13(typescript@5.6.3))
       prettier:
         specifier: ^3.3.3
         version: 3.4.2
@@ -111,9 +104,15 @@ importers:
       vitest:
         specifier: ^2.1.5
         version: 2.1.8(@types/node@22.10.2)(jsdom@25.0.1)(sass-embedded@1.83.0)(sass@1.83.0)
+      vue:
+        specifier: ^3.5.13
+        version: 3.5.13(typescript@5.6.3)
       vue-i18n:
         specifier: ^10.0.5
         version: 10.0.5(vue@3.5.13(typescript@5.6.3))
+      vue-router:
+        specifier: ^4.5.0
+        version: 4.5.0(vue@3.5.13(typescript@5.6.3))
       vue-tsc:
         specifier: ^2.1.10
         version: 2.1.10(typescript@5.6.3)
