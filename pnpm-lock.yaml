@@ -56,6 +56,12 @@ importers:
       '@vue/tsconfig':
         specifier: ^0.7.0
         version: 0.7.0(typescript@5.6.3)(vue@3.5.13(typescript@5.6.3))
+      '@vueuse/rxjs':
+        specifier: ^12.3.0
+        version: 12.3.0(rxjs@7.8.1)(typescript@5.6.3)
+      dexie:
+        specifier: ^4.0.10
+        version: 4.0.10
       eslint:
         specifier: ^9.14.0
         version: 9.17.0(jiti@2.4.2)
@@ -83,6 +89,9 @@ importers:
       quasar:
         specifier: ^2.17.5
         version: 2.17.5
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
       sass:
         specifier: ^1.83.0
         version: 1.83.0
@@ -1468,6 +1477,14 @@ packages:
       vue:
         optional: true
 
+  '@vueuse/rxjs@12.3.0':
+    resolution: {integrity: sha512-IjUWPEJvEOmfig0gLVTSQc2soi1Q8c1uCKDdcUG9SfC65GzzdT1mrXglujmR0XzuXVfJJnirtUeUNpvBB+nZfA==}
+    peerDependencies:
+      rxjs: '>=6.0.0'
+
+  '@vueuse/shared@12.3.0':
+    resolution: {integrity: sha512-X3YD35GUeW0d5Gajcwv9jdLAJTV2Jdb/Ll6Ii2JIYcKLYZqv5wxyLeKtiQkqWmHg3v0J0ZWjDUMVOw2E7RCXfA==}
+
   abbrev@2.0.0:
     resolution: {integrity: sha512-6/mh1E2u2YgEsCHdY0Yx5oW+61gZU+1vXaoiHHrpKeuRNNgFvS+/jrwHiQhB5apAf5oB7UB7E19ol2R2LKH8hQ==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
@@ -1707,6 +1724,9 @@ packages:
     resolution: {integrity: sha512-pGjwhsmsp4kL2RTz08wcOlGN83otlqHeD/Z5T8GXZB+/YcpQ/dgo+lbU8ZsGxV0HIvqqxo9l7mqYwyYMD9bKDg==}
     engines: {node: '>=0.10'}
     hasBin: true
+
+  dexie@4.0.10:
+    resolution: {integrity: sha512-eM2RzuR3i+M046r2Q0Optl3pS31qTWf8aFuA7H9wnsHTwl8EPvroVLwvQene/6paAs39Tbk6fWZcn2aZaHkc/w==}
 
   duplexer@0.1.2:
     resolution: {integrity: sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==}
@@ -4340,6 +4360,20 @@ snapshots:
       typescript: 5.6.3
       vue: 3.5.13(typescript@5.6.3)
 
+  '@vueuse/rxjs@12.3.0(rxjs@7.8.1)(typescript@5.6.3)':
+    dependencies:
+      '@vueuse/shared': 12.3.0(typescript@5.6.3)
+      rxjs: 7.8.1
+      vue: 3.5.13(typescript@5.6.3)
+    transitivePeerDependencies:
+      - typescript
+
+  '@vueuse/shared@12.3.0(typescript@5.6.3)':
+    dependencies:
+      vue: 3.5.13(typescript@5.6.3)
+    transitivePeerDependencies:
+      - typescript
+
   abbrev@2.0.0: {}
 
   acorn-jsx@5.3.2(acorn@8.14.0):
@@ -4542,6 +4576,8 @@ snapshots:
 
   detect-libc@1.0.3:
     optional: true
+
+  dexie@4.0.10: {}
 
   duplexer@0.1.2: {}
 
