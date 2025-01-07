@@ -6,11 +6,11 @@ import { reactive, shallowRef, toRaw } from 'vue'
 defineEmits([
   ...useDialogPluginComponent.emits,
 ])
+const props = defineProps<{
+  data?: ConnectionHost
+}>()
 //why have below code? refrence https://quasar.dev/quasar-plugins/dialog#writing-the-custom-component
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
-function onSubmit() {
-  console.log(formModel)
-}
 const formModel = reactive<ConnectionHost>({
   name: '',
   node: [
@@ -19,11 +19,12 @@ const formModel = reactive<ConnectionHost>({
     },
   ],
   cluster: false,
+  ...(toRaw(props.data)),
 })
 const formRef = shallowRef<any>()
 
 console.log(db.hosts)
-const submit = async () => {
+const submitFn = async () => {
   await formRef.value?.validate()
   await db.hosts.put(toRaw(formModel))
   onDialogOK(toRaw(formModel))
@@ -40,7 +41,7 @@ const submit = async () => {
         </q-bar>
 
         <q-scroll-area class="h-460px">
-          <q-form ref="formRef" @submit="onSubmit" class="q-gutter-md p-4">
+          <q-form ref="formRef" class="q-gutter-md p-4">
             <q-input v-model="formModel.name" filled :label="$t('home.form.lable[0]')" :hint="$t('home.form.hint[0]')"
               lazy-rules :rules="[(val) => (val && val.length > 0) || $t('home.form.rule[0]')]" />
             <q-input v-model="formModel.node[0].host" filled :label="$t('home.form.lable[1]')"
@@ -59,7 +60,7 @@ const submit = async () => {
         </q-scroll-area>
         <!-- buttons example -->
         <q-card-actions align="right">
-          <q-btn color="primary" :label="$t('actions[0]')" @click="submit" />
+          <q-btn color="primary" :label="$t('actions[0]')" @click="submitFn" />
           <q-btn color="primary" :label="$t('actions[1]')" @click="onDialogCancel" />
         </q-card-actions>
       </q-card>

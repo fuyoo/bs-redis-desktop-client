@@ -23,16 +23,15 @@ pub struct ConnectionImpl {
 
 impl ConnectionImpl {
     pub fn into_client(self) -> anyhow::Result<impl RedisClientImpl> {
-        if self.cluster.is_none() {
+        if self.cluster.unwrap_or(false) == false {
             let cfg = &self.node[0];
             RedisSingleClient::connect(cfg)
         } else {
             // next work step.
-            todo!()
+            anyhow::bail!("cluster mode not support yet")
         }
     }
 }
-
 
 #[async_trait]
 pub trait RedisClientImpl {
@@ -42,7 +41,7 @@ pub trait RedisClientImpl {
 pub struct RedisSingleClient(Client);
 
 #[async_trait]
-impl RedisClientImpl for  RedisSingleClient {
+impl RedisClientImpl for RedisSingleClient {
     async fn do_command<T: FromRedisValue>(self, cmd: &Cmd) -> anyhow::Result<T> {
         let mut conn = self.0.get_connection()?;
         return Ok(cmd.query::<T>(&mut conn)?);
@@ -60,7 +59,4 @@ impl RedisSingleClient {
         ))?;
         Ok(RedisSingleClient(c))
     }
-
 }
-
-

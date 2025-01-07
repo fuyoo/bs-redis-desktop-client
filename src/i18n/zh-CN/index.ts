@@ -6,7 +6,7 @@ export default {
     ['Github', 'github.com/fuyoo/bs-redis-desktop-client'],
   ],
   settings: ['设置', '语言', '版本'],
-  actions: ['确定', '取消'],
+  actions: ['确定', '取消', '删除', '修改', '添加'],
   home: {
     form: {
       lable: ['名称', '地址', '端口', '数据库', '用户名', '密码', '是否集群'],

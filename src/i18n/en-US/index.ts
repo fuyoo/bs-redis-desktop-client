@@ -9,7 +9,7 @@ export default {
     ['Github', 'github.com/fuyoo/bs-redis-desktop-client'],
   ],
   settings: ['Settings', 'Language', 'Version'],
-  actions: ['Ok', 'Cancel'],
+  actions: ['Ok', 'Cancel', 'Delete', 'Modify', 'Add'],
   home: {
     form: {
       lable: ['Name', 'Host', 'Port', 'Database', 'Username', 'Password', 'Cluster'],
