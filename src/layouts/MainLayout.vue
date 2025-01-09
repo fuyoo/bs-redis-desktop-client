@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header>
       <q-toolbar data-tauri-drag-region>
         <span class="mt-4 ml-12 flex-shrink-0 text-#fff9" :class="{ hide: !$q.platform.is.mac }"></span>
         <q-btn class="ml-5" flat dense round icon="home" to="/"></q-btn>
@@ -15,7 +15,11 @@
 
     <q-page-container>
       <q-scroll-area class="w-full h-[calc(100vh-50px)]">
-        <router-view />
+        <router-view v-slot="{ Component }">
+          <keep-alive>
+            <component :is="Component" />
+          </keep-alive>
+        </router-view>
       </q-scroll-area>
     </q-page-container>
   </q-layout>

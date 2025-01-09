@@ -25,7 +25,8 @@ const formRef = shallowRef<any>()
 
 console.log(db.hosts)
 const submitFn = async () => {
-  await formRef.value?.validate()
+  const r = await formRef.value?.validate()
+  if (!r) return
   await db.hosts.put(toRaw(formModel))
   onDialogOK(toRaw(formModel))
 }

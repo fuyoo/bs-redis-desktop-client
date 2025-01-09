@@ -10,14 +10,19 @@ const routes: RouteRecordRaw[] = [
       { path: '/settings', component: settings },
       {
         path: '/host/:id',
-        component: () => import('@/pages/host/index.vue'),
+        component: () => import('@/pages/host/empty.vue'),
       },
     ],
   },
   {
-    path: '/host/:id',
+    path: '/tab/:id',
     component: () => import('@/layouts/HostViewLayout.vue'),
-    children: [{ path: 'status', component: () => import('@/pages/host/index.vue') }],
+    children: [
+      {
+        path: 'main',
+        component: () => import('@/pages/host/index.vue'),
+      },
+    ],
   },
   // Always leave this as last one,
   // but you can also remove it

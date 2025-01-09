@@ -54,7 +54,6 @@ export const useTabStore = defineStore('tab', () => {
   }
   const update = async () => {
     const resp = await invoke<BackendResponse<Tab[]>>('tab_list')
-    console.log(resp)
     tabList.value = resp.data
   }
 

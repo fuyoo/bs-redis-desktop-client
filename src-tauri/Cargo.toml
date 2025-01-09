@@ -22,6 +22,7 @@ tauri-plugin-window-state = "2"
 redis = { version = "0.25.4", features = ["tokio-comp"] }
 anyhow = "1.0.86"
 async-trait = "0.1.81"
+embed_plist = "1.2.2"
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!

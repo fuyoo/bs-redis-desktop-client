@@ -1,5 +1,10 @@
-<template>
-  <q-page class="row items-center justify-evenly"> </q-page>
-</template>
+<script setup lang="ts">
+import { useRoute } from 'vue-router';
 
-<script setup lang="ts"></script>
+const route = useRoute()
+</script>
+<template>
+  <div>
+    <span>{{ route.params.id }}</span>
+  </div>
+</template>

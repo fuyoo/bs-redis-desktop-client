@@ -14,7 +14,12 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "macOS": {
+      "entitlements": "Release.entitlements",
+      "exceptionDomain": "",
+      "frameworks": []
+    }
   },
   "productName": "BS",
   "version": "2.0.0-1",

@@ -9,7 +9,7 @@ pub struct Tab {
     pub id: String,
     pub name: Option<String>,
 }
-
+static TAB_BAR_HEIGHT: u32 = 60;
 #[tauri::command]
 pub async fn tab_change(app: tauri::AppHandle, tab: Tab) -> Result<Response<()>> {
     // first we should check webview is created? if it has, show it hidden others.
@@ -32,13 +32,13 @@ pub async fn tab_change(app: tauri::AppHandle, tab: Tab) -> Result<Response<()>>
         None => {
             let v = webview::WebviewBuilder::new(
                 &tab.id,
-                tauri::WebviewUrl::App(format!("/#/host/{}/status", &tab.id).parse().unwrap()),
+                tauri::WebviewUrl::App(format!("/#/tab/{}/main", &tab.id).parse().unwrap()),
             );
             let size = view.inner_size()?;
             view.add_child(
                 v,
-                LogicalPosition::new(0, 60),
-                LogicalSize::new(size.width, size.height - 60),
+                LogicalPosition::new(0, TAB_BAR_HEIGHT),
+                LogicalSize::new(size.width, size.height - TAB_BAR_HEIGHT),
             )?;
             // here we hide other views
             let vbs = view.webviews();
@@ -60,9 +60,9 @@ pub async fn tab_change(app: tauri::AppHandle, tab: Tab) -> Result<Response<()>>
             if tab.id == "main" {
                 return Ok(r_ok!((), None));
             }
-            vb.set_position(LogicalPosition::new(0, 60))?;
+            vb.set_position(LogicalPosition::new(0, TAB_BAR_HEIGHT))?;
             let size = view.inner_size()?;
-            vb.set_size(LogicalSize::new(size.width, size.height - 60))?;
+            vb.set_size(LogicalSize::new(size.width, size.height - TAB_BAR_HEIGHT))?;
             vb.show()?;
         }
     }
@@ -116,9 +116,9 @@ pub async fn tab_view_resize(app: tauri::AppHandle, id: String) -> Result<Respon
     if let Some(vb) = app.app_handle().get_webview(&id) {
         // first we should check webview is created? if it has, show it and hidden others.
         let view = app.app_handle().get_window("main").unwrap();
-        vb.set_position(LogicalPosition::new(0, 60))?;
+        vb.set_position(LogicalPosition::new(0, TAB_BAR_HEIGHT))?;
         let size = view.inner_size()?;
-        vb.set_size(LogicalSize::new(size.width, size.height - 60))?;
+        vb.set_size(LogicalSize::new(size.width, size.height - TAB_BAR_HEIGHT))?;
         vb.show()?;
     }
     Ok(r_ok!(true, None))
