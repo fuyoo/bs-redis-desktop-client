@@ -7,14 +7,16 @@ use tauri::{command, Result};
 
 pub mod rdb;
 pub mod resp;
+pub mod router;
 use crate::{r_404, r_error, r_ok};
 
-pub async fn route<T: serde::Serialize>(f: impl Future<Output = Result<Response<T>>>) -> String {
+async fn route<T: serde::Serialize>(f: impl Future<Output = Result<Response<T>>>) -> String {
     match f.await {
         Ok(r) => r.to_string(),
         Err(e) => r_error!(e).to_string(),
     }
 }
+
 
 #[command]
 pub async fn request(
@@ -30,6 +32,8 @@ pub async fn request(
     };
     Ok(r)
 }
+
+
 
 // check connection status
 async fn status(connection_info: ConnectionImpl) -> Result<Response<Option<String>>> {
