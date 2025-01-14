@@ -24,7 +24,7 @@ export const request = async <T>({
   // if code is not 0, show error message
   if (body.code !== 0 && notify !== false) {
     Notify.create({
-      position: 'top',
+      position: 'bottom',
       message: body.msg,
       color: 'negative',
       timeout: 0,

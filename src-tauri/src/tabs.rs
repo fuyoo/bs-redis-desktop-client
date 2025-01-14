@@ -9,7 +9,7 @@ pub struct Tab {
     pub id: String,
     pub name: Option<String>,
 }
-static TAB_BAR_HEIGHT: u32 = 60;
+static TAB_BAR_HEIGHT: u32 = 50;
 #[tauri::command]
 pub async fn tab_change(app: tauri::AppHandle, tab: Tab) -> Result<Response<()>> {
     // first we should check webview is created? if it has, show it hidden others.

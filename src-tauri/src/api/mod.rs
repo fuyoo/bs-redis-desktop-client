@@ -7,7 +7,6 @@ use tauri::{command, Result};
 
 pub mod rdb;
 pub mod resp;
-pub mod router;
 use crate::{r_404, r_error, r_ok};
 
 async fn route<T: serde::Serialize>(f: impl Future<Output = Result<Response<T>>>) -> String {
@@ -25,8 +24,11 @@ pub async fn request(
     data: &str,
 ) -> Result<String> {
     let r = match path {
+        // checking connection status
         "/status" => route(status(connection_info)).await,
-        "/info" => route(base_info(connection_info, data)).await,
+        // fetch redis info
+        "/info" => route(info(connection_info, data)).await,
+        // fetch keys
         "/keys" => route(keys(connection_info, data)).await,
         &_ => r_404!(path).to_string(),
     };
@@ -45,7 +47,7 @@ async fn status(connection_info: ConnectionImpl) -> Result<Response<Option<Strin
 }
 
 // base_info
-async fn base_info(
+async fn info(
     connection_info: ConnectionImpl,
     data: &str,
 ) -> Result<Response<Option<String>>> {

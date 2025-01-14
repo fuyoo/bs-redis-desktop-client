@@ -1,7 +1,7 @@
 <script setup lang="ts">
 </script>
 <template>
-  <div>
+  <q-scroll-area style="width: 100vw; height: 100vh">
     <router-view></router-view>
-  </div>
+  </q-scroll-area>
 </template>

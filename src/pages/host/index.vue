@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
+import { useRoute } from 'vue-router'
 
 const route = useRoute()
+import CoHostInfo from './components/CoHostInfo.vue'
 </script>
 <template>
-  <div>
-    <span>{{ route.params.id }}</span>
-  </div>
+  <co-host-info></co-host-info>
 </template>
