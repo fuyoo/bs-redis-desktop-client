@@ -74,6 +74,9 @@ importers:
       jsdom:
         specifier: ^25.0.1
         version: 25.0.1
+      json-formatter-js:
+        specifier: ^2.5.18
+        version: 2.5.18
       npm-run-all2:
         specifier: ^7.0.1
         version: 7.0.2
@@ -89,9 +92,6 @@ importers:
       quasar:
         specifier: ^2.17.5
         version: 2.17.5
-      renderjson:
-        specifier: ^1.4.0
-        version: 1.4.0
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -2149,6 +2149,9 @@ packages:
   json-buffer@3.0.1:
     resolution: {integrity: sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ==}
 
+  json-formatter-js@2.5.18:
+    resolution: {integrity: sha512-1OF3PafvJRAZAhb3EZUjLBdG+HXSpdHytV3nOD19OLzbhQgc8q8J8F6ro9hSdbcG0rXeWq33dQ37HxQLp3y74A==}
+
   json-parse-even-better-errors@4.0.0:
     resolution: {integrity: sha512-lR4MXjGNgkJc7tkQ97kb2nuEMnNCyU//XYVH0MKTGcXEiSudQ5MKGKen3C5QubYy0vmq+JGitUg92uuywGEwIA==}
     engines: {node: ^18.17.0 || >=20.5.0}
@@ -2462,9 +2465,6 @@ packages:
   readdirp@4.0.2:
     resolution: {integrity: sha512-yDMz9g+VaZkqBYS/ozoBJwaBhTbZo3UNYQHNRw1D3UFQB8oHB4uS/tAODO+ZLjGWmUbKnIlOWO+aaIiAxrUWHA==}
     engines: {node: '>= 14.16.0'}
-
-  renderjson@1.4.0:
-    resolution: {integrity: sha512-R0IZoxjWQP4XMJjLkPjNKSwjDyl20EiLohyu1Os7AvIvO4F4Vtar1N6IjJLPLjDN7OYOXTsqtIVJupQnQMvYQw==}
 
   resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
@@ -5089,6 +5089,8 @@ snapshots:
 
   json-buffer@3.0.1: {}
 
+  json-formatter-js@2.5.18: {}
+
   json-parse-even-better-errors@4.0.0: {}
 
   json-schema-traverse@0.4.1: {}
@@ -5371,8 +5373,6 @@ snapshots:
       picomatch: 2.3.1
 
   readdirp@4.0.2: {}
-
-  renderjson@1.4.0: {}
 
   resolve-from@4.0.0: {}
 

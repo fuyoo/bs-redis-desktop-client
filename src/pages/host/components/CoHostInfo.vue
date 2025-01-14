@@ -3,11 +3,11 @@ import { onMounted, shallowRef } from 'vue'
 import { db, type ConnectionHost } from '@/db'
 import { useRoute } from 'vue-router'
 import { request } from '@/api'
-import renderjson from 'renderjson'
+import JSONFormatter from 'json-formatter-js'
 const route = useRoute()
 const ctxRef = shallowRef<HTMLElement | undefined>()
 const fetchInfo = async () => {
-  const resp = await db.hosts.get<ConnectionHost>(parseInt(route.params.id as string))
+  const resp = await db.hosts.get({ id: parseInt(route.params.id as string) })
   console.log(resp)
   const data = await request<string>({
     connectionInfo: resp!,
@@ -29,8 +29,8 @@ const fetchInfo = async () => {
         }
       }
     })
-  renderjson.set_show_to_level(1).set_icons('+', '-')
-  ctxRef.value?.appendChild(renderjson(cfg))
+  const formatter = new JSONFormatter(cfg)
+  ctxRef.value?.appendChild(formatter.render())
 }
 onMounted(() => {
   fetchInfo()
