@@ -4,13 +4,12 @@ import { db, type ConnectionHost } from '@/db'
 import { useRoute } from 'vue-router'
 import { request } from '@/api'
 import JSONFormatter from 'json-formatter-js'
+import { useReqStore } from '@/stores/req'
 const route = useRoute()
 const ctxRef = shallowRef<HTMLElement | undefined>()
+const reqStore = useReqStore()
 const fetchInfo = async () => {
-  const resp = await db.hosts.get({ id: parseInt(route.params.id as string) })
-  console.log(resp)
-  const data = await request<string>({
-    connectionInfo: resp!,
+  const data = await reqStore.reqWithHost<string>({
     path: '/info',
     data: '',
   })
@@ -21,7 +20,7 @@ const fetchInfo = async () => {
     .map((e) => e.trimStart())
     .map((e) => e.split('\r\n').filter((e) => !!e))
     .forEach((per) => {
-      let key = per[0]
+      const key = per[0]
       cfg[key] = []
       for (const i of per) {
         if (i != key) {

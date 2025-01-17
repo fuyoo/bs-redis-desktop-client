@@ -24,4 +24,7 @@ export default {
       rule: ['Host Name is Required', 'Connection host is Required'],
     },
   },
+  tabs: {
+    tabName: ['Status', 'Data'],
+  },
 }

@@ -1,6 +1,6 @@
 pub mod api;
 pub mod tabs;
-
+pub mod tools;
 use std::sync::Mutex;
 use tauri::Manager;
 use tauri::RunEvent;
@@ -24,10 +24,15 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
         Ok(())
     });
     let runner = app
-    .manage(Mutex::new(Vec::<tabs::Tab>::new()))
-    .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![api::request,
-            tabs::tab_list,tabs::tab_change,tabs::tab_view_resize,tabs::tab_close])
+        .manage(Mutex::new(Vec::<tabs::Tab>::new()))
+        .plugin(tauri_plugin_shell::init())
+        .invoke_handler(tauri::generate_handler![
+            api::request,
+            tabs::tab_list,
+            tabs::tab_change,
+            tabs::tab_view_resize,
+            tabs::tab_close
+        ])
         .build(tauri::generate_context!())?;
     runner.run(|app, evt| match evt {
         RunEvent::Exit => {}

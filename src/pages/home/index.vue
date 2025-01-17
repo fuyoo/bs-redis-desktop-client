@@ -1,18 +1,19 @@
 <template>
   <q-page class="p-4">
     <div class="flex gap-4">
-      <div :ref="`tab-${i.id}`" v-for="i in hosts" :key="i.id" @click="changeTab(i)" class="_i-c relative px-4 h-15 shadow-lg b b-solid
-         b-#0001 flex justify-center items-center rounded cursor-pointer" :class="{
+      <div :ref="`tab-${i.id}`" v-for="i in hosts" :key="i.id" @click="changeTab(i)"
+        class="_i-c relative px-4 h-15 shadow-lg b b-solid b-#0001 flex justify-center items-center rounded cursor-pointer"
+        :class="{
           loading: loadingStack.has(i.id || -1),
-          offline: offlineHosts.has(i.id || -1)
+          offline: offlineHosts.has(i.id || -1),
+          connected: connected.includes((i.id || -1).toString()),
         }" :title="i.name">
-        <div
-          class="active:opacity-50 bg-#000 text-white rounded flex justify-center items-center text-5 w-8 h-8 mr-3 disconnect">
+        <div class="bg-#000 text-white rounded flex justify-center items-center text-5 w-8 h-8 mr-3 disconnect">
           <i class="i-mdi:server-network def"></i>
           <i class="i-mdi:lan-disconnect off"></i>
           <i class="i-eos-icons:loading connecting"></i>
         </div>
-        <div class="active:opacity-50 flex-1 flex flex-col mr-2 justify-center items-start select-none">
+        <div class="flex-1 flex flex-col mr-2 justify-center items-start select-none">
           <span class="text-4 text-#333 inline-block max-w-50 text-nowrap text-ellipsis overflow-hidden">{{ i.name
             }}</span>
           <span class="text-3 text-#0006">{{ i.cluster ? 'cluster' : 'stand-alone' }}</span>
@@ -23,7 +24,7 @@
               <q-item-section>
                 <div>
                   <i class="i-ic:round-edit mr-2 text-4"></i>
-                  <span>{{ $t("actions[3]") }}</span>
+                  <span>{{ $t('actions[3]') }}</span>
                 </div>
               </q-item-section>
             </q-item>
@@ -32,7 +33,7 @@
               <q-item-section class="flex">
                 <div>
                   <i class="i-ic:round-delete mr-2 text-4"></i>
-                  <span>{{ $t("actions[2]") }}</span>
+                  <span>{{ $t('actions[2]') }}</span>
                 </div>
               </q-item-section>
             </q-item>
@@ -52,17 +53,20 @@
 </template>
 
 <script setup lang="ts">
-import { useTabStore } from '@/stores/tab';
-import { Dialog } from 'quasar';
-import CoHostForm from "./components/CoHostForm.vue"
-import { liveQuery, type Observable } from "dexie";
-import { useObservable } from "@vueuse/rxjs";
-import { db, type ConnectionHost } from "@/db";
-import { type Ref, reactive } from 'vue';
-import { request } from '@/api';
+import { useTabStore } from '@/stores/tab'
+import { Dialog } from 'quasar'
+import CoHostForm from './components/CoHostForm.vue'
+import { liveQuery, type Observable } from 'dexie'
+import { useObservable } from '@vueuse/rxjs'
+import { db, type ConnectionHost } from '@/db'
+import { type Ref, computed, reactive } from 'vue'
+import { request } from '@/api'
 const tab = useTabStore()
 const offlineHosts = reactive<Set<number>>(new Set())
 const loadingStack = reactive<Set<number>>(new Set())
+const connected = computed(() => {
+  return tab.tabList.map((item) => item.id)
+})
 const changeTab = async (i: ConnectionHost) => {
   // reset offline status
   offlineHosts.delete(i.id!)
@@ -75,7 +79,8 @@ const changeTab = async (i: ConnectionHost) => {
   // it is response for checking online.
   const { code } = await request({
     path: `/status`,
-    connectionInfo: i, data: ""
+    connectionInfo: i,
+    data: '',
   })
   // code 0 represent is online.
   if (code !== 0) {
@@ -106,13 +111,13 @@ const modifyFn = (ch: ConnectionHost) => {
     // props forwarded to your custom component
     componentProps: {
       data: ch,
-    }
+    },
   }).onOk((ret: ConnectionHost) => changeTab(ret))
 }
 </script>
 
 <style lang="scss" scoped>
-@import "@/css/quasar.variables.scss";
+@import '@/css/quasar.variables.scss';
 
 .off {
   display: none;
@@ -136,7 +141,6 @@ const modifyFn = (ch: ConnectionHost) => {
   .off {
     display: inline;
   }
-
 }
 
 .loading {
@@ -161,6 +165,26 @@ const modifyFn = (ch: ConnectionHost) => {
 
   &:hover ._h-s {
     opacity: 1;
+  }
+}
+
+.connected {
+  border-color: $positive;
+
+  * {
+    color: $positive;
+  }
+
+  &::before {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    border-radius: 50%;
+    background-color: $positive;
   }
 }
 </style>

@@ -1,13 +1,16 @@
-import { type ConnectionHost } from '@/db'
+import { defineStore } from 'pinia'
+
+import { db, type ConnectionHost } from '@/db'
 import { invoke } from '@tauri-apps/api/core'
 import { Notify } from 'quasar'
-interface CommonRequestParams {
+import { useRoute } from 'vue-router'
+export interface CommonRequestParams {
   connectionInfo: ConnectionHost
   path: string
   data?: string
   notify?: boolean
 }
-export const request = async <T>({
+const request = async <T>({
   connectionInfo,
   path,
   data,
@@ -37,6 +40,22 @@ export const request = async <T>({
   return body
 }
 
-export const dbsize = <T>(info: ConnectionHost) => {
-  request(data)
-}
+export const useReqStore = defineStore('req', () => {
+  // at here, we should get host from route params.
+  const route = useRoute()
+  const reqWithHost = async <R>(option: {
+    path: string
+    data?: any
+    notify?: boolean
+  }): Promise<BackendResponse<R>> => {
+    const host = await db.hosts.get({ id: parseInt(route.params.id as string) })
+    return request({
+      connectionInfo: host!,
+      path: option.path,
+      data: option.data,
+      notify: option.notify,
+    })
+  }
+  const reqNoHost = request
+  return { reqWithHost, reqNoHost }
+})

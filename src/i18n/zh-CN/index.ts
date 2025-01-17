@@ -22,4 +22,7 @@ export default {
       rule: ['请输入名称', '请输入地址'],
     },
   },
+  tabs: {
+    tabName: ['状态', '数据'],
+  },
 }

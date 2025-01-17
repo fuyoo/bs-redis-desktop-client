@@ -1,10 +1,11 @@
 use std::future::Future;
 
+use super::tools::extract;
 use crate::api::rdb::{ConnectionImpl, RedisClientImpl};
 use crate::api::resp::Response;
-use redis::cmd;
+use redis::{cmd, Value};
+use serde::{Deserialize, Serialize};
 use tauri::{command, Result};
-
 pub mod rdb;
 pub mod resp;
 use crate::{r_404, r_error, r_ok};
@@ -16,7 +17,6 @@ async fn route<T: serde::Serialize>(f: impl Future<Output = Result<Response<T>>>
     }
 }
 
-
 #[command]
 pub async fn request(
     path: &str,
@@ -24,18 +24,15 @@ pub async fn request(
     data: &str,
 ) -> Result<String> {
     let r = match path {
+        "/cmd" => route(do_query(connection_info, data)).await,
         // checking connection status
         "/status" => route(status(connection_info)).await,
         // fetch redis info
         "/info" => route(info(connection_info, data)).await,
-        // fetch keys
-        "/keys" => route(keys(connection_info, data)).await,
         &_ => r_404!(path).to_string(),
     };
     Ok(r)
 }
-
-
 
 // check connection status
 async fn status(connection_info: ConnectionImpl) -> Result<Response<Option<String>>> {
@@ -47,10 +44,7 @@ async fn status(connection_info: ConnectionImpl) -> Result<Response<Option<Strin
 }
 
 // base_info
-async fn info(
-    connection_info: ConnectionImpl,
-    data: &str,
-) -> Result<Response<Option<String>>> {
+async fn info(connection_info: ConnectionImpl, data: &str) -> Result<Response<Option<String>>> {
     if data == "" {
         let r = connection_info
             .into_client()?
@@ -65,8 +59,22 @@ async fn info(
     Ok(r_ok!(r, None))
 }
 
-// search keys
-async fn keys(connection_info: ConnectionImpl, data: &str) -> Result<Response<Vec<String>>> {
+/// secarch keys param.
+#[derive(Serialize, Deserialize, Debug)]
+struct KeyParam {
+    pub cursor: Option<usize>,
+    pub key: String,
+    pub count: Option<usize>,
+}
+
+// here,we provide a query function,to do all query from frontend.
+async fn do_query(connection_info: ConnectionImpl, data: &str) -> Result<Response<String>> {
+    let param = extract::<Vec<String>>(data)?;
+    let mut cmd_ = cmd(param.get(0).unwrap());
+    for (_, v) in param.iter().skip(1).enumerate() {
+        cmd_.arg(v);
+    }
     let client = connection_info.into_client()?;
-    Ok(r_ok!(vec![], None))
+    let resp = client.do_command::<Value>(&mut cmd_).await?;
+    Ok(r_ok!(rdb::convert_to_string(resp)?, None))
 }

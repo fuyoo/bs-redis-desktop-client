@@ -1,5 +1,6 @@
+use anyhow::Result;
 use async_trait::async_trait;
-use redis::{Client, Cmd, FromRedisValue};
+use redis::{Client, Cmd, FromRedisValue, Value};
 use serde::{Deserialize, Serialize};
 
 // connection info
@@ -59,4 +60,25 @@ impl RedisSingleClient {
         ))?;
         Ok(RedisSingleClient(c))
     }
+}
+
+pub fn convert_to_string(ori: Value) -> Result<String> {
+    let v = match ori {
+        Value::Nil => "".to_string(),
+        Value::Int(i) => i.to_string(),
+        Value::Data(d) => String::from_utf8_lossy(&d).to_string(),
+        Value::Bulk(b) => {
+            let mut s = "".to_string();
+            for (k, v) in b.iter().enumerate() {
+                s += &convert_to_string(v.clone())?;
+                if k != b.len() - 1 {
+                    s += "\n";
+                }
+            }
+            s
+        }
+        Value::Status(_) => "".to_string(),
+        Value::Okay => "".to_string(),
+    };
+    Ok(v)
 }
