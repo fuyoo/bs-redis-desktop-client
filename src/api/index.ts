@@ -36,7 +36,3 @@ export const request = async <T>({
   }
   return body
 }
-
-export const dbsize = <T>(info: ConnectionHost) => {
-  request(data)
-}
