@@ -25,4 +25,5 @@ export default {
   tabs: {
     tabName: ['状态', '数据'],
   },
+  hostInfo: ['内存'],
 }
