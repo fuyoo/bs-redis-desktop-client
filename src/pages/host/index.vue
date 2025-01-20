@@ -13,13 +13,13 @@ const useDb = (db: number) => {
 }
 const unUseDb = (db: number) => {
   tabs.value.delete(db)
-  if (tabs.value.size == 0) {
-    navTab.value = "status"
-  } else {
-    setTimeout(() => {
+  setTimeout(() => {
+    if (tabs.value.size == 0) {
+      navTab.value = "status"
+    } else {
       navTab.value = `tab-${[...tabs.value][tabs.value.size - 1]}`
-    }, 100)
-  }
+    }
+  }, 100)
 }
 const splitterModel = ref(50)
 const doCommand = async () => {
