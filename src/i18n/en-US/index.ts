@@ -27,5 +27,5 @@ export default {
   tabs: {
     tabName: ['Status', 'Data'],
   },
-  hostInfo: ['Memory'],
+  hostInfo: ['Memory', 'Server', 'Stats', 'Details', 'Key Anylaysis'],
 }

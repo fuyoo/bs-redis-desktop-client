@@ -46,9 +46,13 @@ export const useReqStore = defineStore('req', () => {
   const reqWithHost = async <R>(option: {
     path: string
     data?: any
+    db?: string
     notify?: boolean
   }): Promise<BackendResponse<R>> => {
     const host = await db.hosts.get({ id: parseInt(route.params.id as string) })
+    if (option.db && host) {
+      host.node[0].db = option.db
+    }
     return request({
       connectionInfo: host!,
       path: option.path,

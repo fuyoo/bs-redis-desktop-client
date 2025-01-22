@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { onMounted, ref, shallowRef } from 'vue'
-import JSONFormatter from 'json-formatter-js'
-import { useReqStore } from '@/stores/req'
+import { computed, ref } from 'vue'
 
-const ctxRef = shallowRef<HTMLElement | undefined>()
+import { useReqStore } from '@/stores/req'
+import { showHostConfigureDetail } from '@/tools'
+import { useRoute } from 'vue-router'
+const route = useRoute()
 const reqStore = useReqStore()
 const config = ref<Record<string, Record<string, any>>>({})
 const fetchInfo = async () => {
@@ -27,14 +28,8 @@ const fetchInfo = async () => {
       }
     })
   config.value = cfg
-  setTimeout(() => {
-    fetchInfo()
-  }, 3000)
 }
-onMounted(async () => {
-  await fetchInfo()
-
-})
+fetchInfo()
 const helper = (k: string, section: string) => {
   try {
     const v = config.value[section].filter((e: string) => e.indexOf(k) != -1);
@@ -47,23 +42,37 @@ const helper = (k: string, section: string) => {
     return 0
   }
 }
-let flag = false
-const detailFn = () => {
-  if (!flag) {
-    const formatter = new JSONFormatter(config.value)
-    ctxRef.value!.innerHTML = ''
-    ctxRef.value?.appendChild(formatter.render())
-  } else {
-    ctxRef.value!.innerHTML = ''
-  }
-  flag = !flag
-}
+
+
+const columns = [
+  { name: 'db', label: 'db', field: 'db', align: 'left', },
+  { name: 'keys', label: 'keys', field: 'keys', align: 'left', },
+  { name: 'expires', label: 'expires', field: 'expires', align: 'left', },
+  { name: 'avg_ttl', label: 'avg_ttl', field: 'avg_ttl', align: 'left', },
+  { name: 'subexpiry', label: 'subexpiry', field: 'subexpiry', align: 'left', }
+] as any
+const rows = computed(() => {
+  const space = config.value['Keyspace']?.map((item: string) => {
+    const obj = {} as { db: string, keys: string, expires: string, avg_ttl: string, subexpiry: string, [K: string]: string }
+    const v = item.split(':')
+    obj.db = v[0]
+    v[1].split(",").forEach((item: string) => {
+      const v: string[] = item.split("=")
+      obj[v[0]] = v[1]
+    })
+    return obj
+  })
+  return space || []
+})
+
+
 </script>
 <template>
   <div class="flex gap-4 p-4">
     <q-card flat class="flex-1 b b-solid b-#eee">
-      <q-card-section>
-        <div class="text-h6">Server</div>
+      <q-card-section class="flex justify-between items-center">
+        <div class="text-h6">{{ $t("hostInfo[1]") }}</div>
+        <q-btn icon="info" dense flat rounded @click="showHostConfigureDetail(route.params.id as string)"></q-btn>
       </q-card-section>
       <q-separator />
       <q-card-actions vertical>
@@ -75,7 +84,7 @@ const detailFn = () => {
     </q-card>
     <q-card flat class="flex-1 b b-solid b-#eee">
       <q-card-section>
-        <div class="text-h6">Memory</div>
+        <div class="text-h6">{{ $t("hostInfo[0]") }}</div>
       </q-card-section>
       <q-separator />
       <q-card-actions vertical>
@@ -87,17 +96,22 @@ const detailFn = () => {
     </q-card>
     <q-card flat class="flex-1 b b-solid b-#eee">
       <q-card-section>
-        <div class="text-h6">Stats</div>
+        <div class="text-h6">{{ $t("hostInfo[2]") }}</div>
       </q-card-section>
       <q-separator />
       <q-card-actions vertical>
-        <q-chip>Connecting Clients :{{ helper("connected_clitens", "Stats") }} </q-chip>
+        <q-chip>Connected Clients :{{ helper("connected_clients", "Clients") }} </q-chip>
         <q-chip>Total Connections Received: {{ helper("total_connections_received", "Stats") }}</q-chip>
         <q-chip>Total Commands Processed: {{ helper("total_commands_processed", "Stats") }}</q-chip>
         <q-chip>Rejected Connections: {{ helper("rejected_connections", "Status") }}</q-chip>
       </q-card-actions>
     </q-card>
-    <div class="p-4 z-1 realative text-4.5" ref="ctxRef"></div>
+    <q-card flat class="flex-1 b b-solid b-#eee">
+      <q-card-section>
+        <div class="text-h6">{{ $t("hostInfo[4]") }}</div>
+      </q-card-section>
+      <q-table flat class="w-full b b-solid b-#eee" :columns="columns" :rows="rows"></q-table>
+    </q-card>
   </div>
 </template>
 

@@ -25,5 +25,5 @@ export default {
   tabs: {
     tabName: ['状态', '数据'],
   },
-  hostInfo: ['内存'],
+  hostInfo: ['内存', '服务端', '状态', '详情', 'Key情况'],
 }
