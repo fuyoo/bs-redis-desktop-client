@@ -56,48 +56,66 @@ interface Tree {
 }
 const ID = () => Math.random().toString(36).slice(2)
 // below code is aim to parse the key name to tree structure
-const parseLevel = (ori: Tree[], key: string) => {
-  // todo: split symbol should be configurable.
-  // if not matched with `:` add it to tree structure immediately.
-  if (!key.includes(':')) {
-    ori.push({ label: key, icon: "key", type: 'key', id: ID() })
-    return
+const parseLevel = (ori: Tree[], key: string, delimiter: string = ':') => {
+  // Handle empty key
+  if (!key) {
+    return;
   }
-  // otherwise split it to and parse it to tree structure.
-  const arr = key.split(':')
-  // append children to root
+
+  // If not matched with delimiter, add it to tree structure immediately.
+  if (!key.includes(delimiter)) {
+    ori.push(createTreeNode(key, 'key'));
+    return;
+  }
+
+  // Otherwise split it and parse it to tree structure.
+  const arr = key.split(delimiter);
+
   const appendChildren = (ori: Tree[], arr: string[]) => {
-    // search root key.
-    const root = ori.find((e) => e.label === arr[0] && e.type != 'key')
-    // finded root key
+    // Search root key.
+    const root = ori.find((e) => e.label === arr[0] && e.type !== 'key');
+
+    // Found root key
     if (root) {
-      // if not children, create it.
-      if (!root.children) root.children = []
-      // recursive parse it.
-      appendChildren(root.children, arr.splice(1))
+      // If not children, create it.
+      if (!root.children) root.children = [];
+      // Recursive parse it.
+      appendChildren(root.children, arr.slice(1));
     } else {
-      // if key length is less than 2, it means it is a key.
+      // If key length is less than 2, it means it is a key.
       if (arr.length <= 1) {
-        const obj = { label: key, icon: "key", type: 'key', id: ID() } as Tree
-        ori.push(obj)
-        return
+        ori.push(createTreeNode(key, 'key'));
+        return;
       }
-      // otherwise create as a folder.
-      const obj = { label: arr[0], icon: "folder", type: 'folder', children: [], id: ID() } as Tree
-      // push it to as root.
-      ori.push(obj)
-      // and recursive parse it.
-      appendChildren(obj.children!, arr.splice(1))
+      // Otherwise create as a folder.
+      const obj = createTreeNode(arr[0], 'folder');
+      obj.children = [];
+      // Push it to as root.
+      ori.push(obj);
+      // And recursive parse it.
+      appendChildren(obj.children!, arr.slice(1));
     }
+  };
+
+  // Parse it
+  try {
+    appendChildren(ori, arr);
+  } catch (error) {
+    console.error('Error parsing level:', error);
   }
-  // parse it
-  appendChildren(ori, arr)
-}
+};
+
+const createTreeNode = (label: string, type: 'key' | 'folder'): Tree => {
+  try {
+    return { label, icon: type === 'key' ? "key" : "folder", type, id: ID() };
+  } catch (error) {
+    console.error('Error creating tree node:', error);
+    throw error;
+  }
+};
 // todo: configurable name space enable.
 const nameSpaceEnable = ref(true)
-const icon = (e) => {
-  console.log(e.target)
-}
+
 </script>
 <template>
   <div class="flex flex-col h-full">
