@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useReqStore } from '@/stores/req';
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { RecycleScroller } from 'vue-virtual-scroller'
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css"
 import { ElTreeV2 } from 'element-plus'
@@ -26,7 +26,6 @@ const v = ref([])
 const noSearchKeys = async () => {
   const resp = await reqStore.reqWithHost<string>({
     path: '/cmd',
-    db: '0',
     data: JSON.stringify(['scan', keys.cursor, 'MATCH', '*', 'COUNT', '5000'])
   })
   const v = resp.data.split('\n')
@@ -115,22 +114,28 @@ const createTreeNode = (label: string, type: 'key' | 'folder'): Tree => {
 };
 // todo: configurable name space enable.
 const nameSpaceEnable = ref(true)
-
+const elTreeV2Ref = ref()
+const treeHeight = ref(0)
+// dynamic set tree height
+onMounted(() => {
+  window.addEventListener('resize', () => {
+    treeHeight.value = (elTreeV2Ref.value.$el.getBoundingClientRect()).height
+  })
+  treeHeight.value = (elTreeV2Ref.value.$el.getBoundingClientRect()).height
+})
 </script>
 <template>
   <div class="flex flex-col h-full">
     <div class="p-2 flex-1 flex justify-center items-center flex-row">
       <input type="text" class="flex-1 outline-none" v-model="search.match">
     </div>
-    <q-scroll-area v-if="nameSpaceEnable" class="h-[calc(100vh-120px)]">
-      <!-- <q-tree dense :nodes="keys.keys" node-key="id" no-transition /> -->
-      <el-tree-v2 style="height: calc(100vh - 120px)" :data="keys.keys" :props="{
+    <el-tree-v2 :height="treeHeight" v-if="nameSpaceEnable" class="h-[calc(100vh-160px)]" ref="elTreeV2Ref"
+      :data="keys.keys" :props="{
         value: 'id',
         label: 'label',
         children: 'children',
       }" />
-    </q-scroll-area>
-    <RecycleScroller v-else class="h-[calc(100vh-120px)] scroller mx-2" :items="keys.keys" :item-size="32"
+    <RecycleScroller v-else class="h-[calc(100vh-160px)] scroller mx-2" :items="keys.keys" :item-size="32"
       key-field="label" v-slot="{ item }">
       <div class="flex items-center  mx-2 px-2 justify-start white-space-nowrap w-full cursor-pointer hover:bg-gray-100"
         style="flex-wrap: nowrap; word-break: keep-all; overflow: hidden; text-overflow: ellipsis;">

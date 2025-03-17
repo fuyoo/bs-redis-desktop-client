@@ -1,19 +1,27 @@
 <script setup lang="ts">
 import CoHostInfo from './components/CoHostInfo.vue'
 import { ref } from 'vue'
-import { useReqStore } from '@/stores/req'
 import CoDatabase from './components/CoDatabase/index.vue'
-const navTab = ref('status')
-const dbsize = ref(16)
-const tabs = ref(new Set<number>())
+import { useRoute, useRouter } from 'vue-router'
+const router = useRouter()
+const route = useRoute()
+const navTab = ref(route.query.tab as string || 'status')
+const changeTab = (tab: string) => {
+  navTab.value = tab
+  router.replace({
+    query: {
+      tab: navTab.value
+    }
+  })
+}
 </script>
 <template>
   <div>
     <q-toolbar class="text-primary b-b b-b-solid b-b-#eee">
-      <q-btn flat round dense @click="navTab = 'status'" class="mr-2">
+      <q-btn flat round dense @click="changeTab('status')" class="mr-2">
         <i class="i-hugeicons:cpu-settings text-5"></i>
       </q-btn>
-      <q-btn flat round dense @click="navTab = 'data'" class="mr-2">
+      <q-btn flat round dense @click="changeTab('data')" class="mr-2">
         <i class="i-material-symbols:database text-5"></i>
       </q-btn>
     </q-toolbar>

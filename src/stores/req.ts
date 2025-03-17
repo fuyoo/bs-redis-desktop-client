@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 
 import { db, type ConnectionHost } from '@/db'
 import { invoke } from '@tauri-apps/api/core'
-import { Notify } from 'quasar'
+import { Notify, is } from 'quasar'
 import { useRoute } from 'vue-router'
 export interface CommonRequestParams {
   connectionInfo: ConnectionHost
@@ -39,7 +39,7 @@ const request = async <T>({
   }
   return body
 }
-
+const _T = (v: any) => Object.prototype.toString.call(v).slice(8, -1)
 export const useReqStore = defineStore('req', () => {
   // at here, we should get host from route params.
   const route = useRoute()
@@ -50,13 +50,16 @@ export const useReqStore = defineStore('req', () => {
     notify?: boolean
   }): Promise<BackendResponse<R>> => {
     const host = await db.hosts.get({ id: parseInt(route.params.id as string) })
+    if (route.query.db && host) {
+      host.node[0].db = route.query.db as string
+    }
     if (option.db && host) {
       host.node[0].db = option.db
     }
     return request({
       connectionInfo: host!,
       path: option.path,
-      data: option.data,
+      data: _T(option.data) != 'String' ? JSON.stringify(option.data) : option.data,
       notify: option.notify,
     })
   }
