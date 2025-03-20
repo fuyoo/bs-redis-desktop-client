@@ -10,10 +10,12 @@ console.log(route.fullPath)
 <template>
   <q-splitter v-model="spliter" unit="px" :limits="[200, 480]">
     <template v-slot:before>
-      <div class="w-full h-10 flex items-center justify-center">
-        <CoDbs></CoDbs>
+      <div class="_ml">
+        <div class="w-full h-10 flex items-center justify-center">
+          <CoDbs></CoDbs>
+        </div>
+        <CoKeys></CoKeys>
       </div>
-      <CoKeys></CoKeys>
     </template>
 
     <template v-slot:after>
@@ -22,3 +24,15 @@ console.log(route.fullPath)
     </template>
   </q-splitter>
 </template>
+<style scoped lang="scss">
+._ml {
+  user-select: none;
+  -webkit-user-select: none;
+
+  * {
+    user-select: none;
+    -webkit-user-select: none;
+
+  }
+}
+</style>

@@ -29,14 +29,19 @@ const reload = async (v: number) => {
 console.log(route.query)
 </script>
 <template>
-  <el-dropdown @command="reload">
-    <span>
-      <i class="i-material-symbols:database"></i> {{ $t('normal.0') + ' ' + db }}
-    </span>
+  <el-dropdown @command="reload" trigger="click" class="w-full">
+    <q-btn outline unelevated dense no-caps push long color="primary" class="w-full mx-2">
+      <div style="width: 100%;">
+        <i class="i-material-symbols:database"></i>
+        {{ $t('normal.0') + '.' + db }}
+      </div>
+    </q-btn>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item :key="item" v-for="item in Number(dbs)" :command="item - 1">{{ $t('normal.0') + (item - 1)
-        }}</el-dropdown-item>
+        <el-dropdown-item :key="item" v-for="item in Number(dbs)" :command="item - 1">
+          <div class="w-40 text-center">
+            {{ $t('normal.0') + '.' + (item - 1) }}</div>
+        </el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
