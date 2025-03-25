@@ -17,7 +17,9 @@ const fetchDbs = async () => {
 }
 fetchDbs()
 const reload = async (v: number) => {
-  console.log(v)
+  if (v == Number(route.query.db || 0)) {
+    return
+  }
   await router.replace({
     query: {
       ...route.query,
@@ -26,10 +28,9 @@ const reload = async (v: number) => {
   })
   location.reload()
 }
-console.log(route.query)
 </script>
 <template>
-  <el-dropdown @command="reload" trigger="click" class="w-full">
+  <el-dropdown :max-height="248" @command="reload" trigger="click" class="w-full">
     <q-btn outline unelevated dense no-caps push long color="primary" class="w-full mx-2">
       <div style="width: 100%;">
         <i class="i-material-symbols:database"></i>
@@ -38,9 +39,13 @@ console.log(route.query)
     </q-btn>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item :key="item" v-for="item in Number(dbs)" :command="item - 1">
+        <el-dropdown-item :disabled="item - 1 == (route.query.db || 0)" :key="item" v-for="item in Number(dbs)"
+          :command="item - 1">
           <div class="w-40 text-center">
-            {{ $t('normal.0') + '.' + (item - 1) }}</div>
+            {{ $t('normal.0') +
+              '.' +
+              (item - 1) }}
+          </div>
         </el-dropdown-item>
       </el-dropdown-menu>
     </template>
