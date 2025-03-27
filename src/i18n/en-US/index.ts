@@ -28,5 +28,5 @@ export default {
     tabName: ['Status', 'Data'],
   },
   hostInfo: ['Memory', 'Server', 'Stats', 'Details', 'Key Anylaysis'],
-  normal: ['Database'],
+  normal: ['Database','Please select a key.'],
 }
