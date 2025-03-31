@@ -1,51 +1,9 @@
 <script setup lang="ts">
 import { useReqStore } from '@/stores/req'
-import { defineComponent, h, onMounted, reactive, ref } from 'vue'
-import { RecycleScroller } from 'vue-virtual-scroller'
+import { onMounted, reactive, ref } from 'vue'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import { ElTreeV2, type TreeNode } from 'element-plus'
+import { ElTreeV2, type TreeNode,ElButton } from 'element-plus'
 import 'element-plus/dist/index.css'
-const reqStore = useReqStore()
-// this is to do search
-const search = reactive({
-  cursor: '0',
-  match: '',
-  keys: [],
-})
-const model = defineModel()
-// this is no search
-const keys = reactive({
-  cursor: '0',
-  keys: [] as Tree[],
-})
-
-// here we do some no search logic.
-const noSearchKeys = async () => {
-  // fetch data pass through rust side.
-  const resp = await reqStore.reqWithHost<string>({
-    path: '/cmd',
-    data: JSON.stringify(['scan', keys.cursor, 'MATCH', '*', 'COUNT', '5000']),
-  })
-  // parse data
-  const v = resp.data.split('\n')
-
-  let data = [] as Tree[]
-  if (keys.cursor === '0') {
-    data = v.splice(1).map((e) => ({ type: 'key', label: e, icon: 'key', id: ID() }))
-  } else {
-    data = keys.keys.concat(
-      v.splice(1).map((e) => ({ type: 'key', label: e, icon: 'key', id: ID() })),
-    )
-  }
-  keys.cursor = v[0]
-  const arr = [] as Tree[]
-  data.forEach((e) => {
-    parseLevel(arr, e.label)
-  })
-  keys.keys = arr
-}
-noSearchKeys()
-
 // tree object
 interface Tree {
   label: string
@@ -55,6 +13,51 @@ interface Tree {
   id: string
   children?: Tree[]
 }
+
+const reqStore = useReqStore()
+// this is to do search
+const search = reactive({
+  cursor: '0',
+  match: '',
+})
+
+const model = defineModel()
+
+// following line is mark no search patten data.
+let noSearchKeyData:Tree[] = []
+const noSearchCursor = ref('0')
+const loading = ref(false)
+// here we do some no search patten logic.
+const noSearchKeys = async () => {
+  loading.value = true
+  // fetch data pass through rust side.
+  const resp = await reqStore.reqWithHost<string>({
+    path: '/cmd',
+    data: JSON.stringify(['scan',noSearchCursor.value, 'MATCH', '*', 'COUNT', '5000']),
+  })
+  // parse data
+  const v = resp.data.split('\n')
+
+  let data:Tree[] = []
+  if (noSearchCursor.value === '0') {
+    data = v.splice(1).map((e) => ({ type: 'key', label: e, icon: 'key', id: ID() }))
+  } else {
+    data = noSearchKeyData.concat(
+      v.splice(1).map((e) => ({ type: 'key', label: e, icon: 'key', id: ID() })),
+    )
+  }
+  noSearchCursor.value = v[0]
+  const arr = [] as Tree[]
+  data.forEach((e) => {
+    parseLevel(arr, e.label)
+  })
+  noSearchKeyData = arr
+  elTreeV2Ref.value?.setData(noSearchKeyData)
+  //
+  //keys.keys = arr
+}
+noSearchKeys()
+
 const ID = () => Math.random().toString(36).slice(2)
 // below code is aim to parse the key name to tree structure
 const parseLevel = (ori: Tree[], key: string, delimiter: string = ':') => {
@@ -125,13 +128,17 @@ onMounted(() => {
   })
   treeHeight.value = elTreeV2Ref.value.$el.getBoundingClientRect().height
 })
-const print = (data: TreeNode) => {
-  console.log(data)
-}
 
 const onNodeClick = (data: Record<string, any>,node: TreeNode,e: MouseEvent) => {
   if (data.type === 'key') {
     model.value = data.value
+  }
+}
+const loadMoreFn = () => {
+  if (search.match !== '') {
+
+  } else {
+    noSearchKeys()
   }
 }
 </script>
@@ -147,14 +154,14 @@ const onNodeClick = (data: Record<string, any>,node: TreeNode,e: MouseEvent) => 
       v-if="nameSpaceEnable"
       class="h-[calc(100vh-160px)]"
       ref="elTreeV2Ref"
-      :data="keys.keys"
+      :data="noSearchKeyData"
       :props="{
         value: 'id',
         label: 'label',
         children: 'children',
       }"
     >
-      <template #default="{ node, data }">
+      <template #default="{ data }">
         <div
           class="w-full text-nowrap text-ellipsis cursor-default overflow-hidden"
           :title="data.value"
@@ -163,24 +170,8 @@ const onNodeClick = (data: Record<string, any>,node: TreeNode,e: MouseEvent) => 
         </div>
       </template>
     </el-tree-v2>
-    <RecycleScroller
-      v-else
-      class="h-[calc(100vh-160px)] scroller mx-2"
-      :items="keys.keys"
-      :item-size="32"
-      key-field="label"
-      v-slot="{ item }"
-    >
-      <div
-        class="flex items-center mx-2 px-2 justify-start white-space-nowrap w-full cursor-pointer hover:bg-gray-100"
-        style="flex-wrap: nowrap; word-break: keep-all; overflow: hidden; text-overflow: ellipsis"
-      >
-        <i class="i-meteor-icons:key mr-1" style="flex-shrink: 0"></i>
-        <span>{{ item.label }}</span>
-      </div>
-    </RecycleScroller>
     <div class="flex justify-center items-center flex-1">
-      <span v-if="keys.cursor !== '0'" @click="noSearchKeys">加载更多</span>
+      <el-button size="small" class="w-full h-full" v-show="noSearchCursor !== '0'" text :loading="reqStore.reqLoading" @click="loadMoreFn">加载更多</el-button>
     </div>
   </div>
 </template>
