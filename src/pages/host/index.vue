@@ -33,7 +33,7 @@ const changeTab = (tab: string) => {
       </q-tab-panel>
       <q-tab-panel name="data" class="q-pa-none">
         <q-scroll-area class="h-[calc(100vh-50px)]">
-          <co-database></co-database>
+          <co-database class="absolute top-0 left-0 bottom-0 right-0"></co-database>
         </q-scroll-area>
       </q-tab-panel>
     </q-tab-panels>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useReqStore } from '@/stores/req'
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref, shallowRef } from 'vue'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { ElTreeV2, type TreeNode,ElButton } from 'element-plus'
 import 'element-plus/dist/index.css'
@@ -119,14 +119,15 @@ const createTreeNode = (label: string, type: 'key' | 'folder', value?: string): 
 }
 // todo: configurable name space enable.
 const nameSpaceEnable = ref(true)
-const elTreeV2Ref = ref()
-const treeHeight = ref(0)
+const treeBoxRef = shallowRef()
+const elTreeV2Ref = shallowRef()
+const treeHeight = shallowRef(560)
 // dynamic set tree height
 onMounted(() => {
   window.addEventListener('resize', () => {
-    treeHeight.value = elTreeV2Ref.value.$el.getBoundingClientRect().height
+    treeHeight.value = treeBoxRef.value.getBoundingClientRect().height - 30
   })
-  treeHeight.value = elTreeV2Ref.value.$el.getBoundingClientRect().height
+  treeHeight.value = treeBoxRef.value.getBoundingClientRect().height - 30
 })
 
 const onNodeClick = (data: Record<string, any>,node: TreeNode,e: MouseEvent) => {
@@ -143,34 +144,35 @@ const loadMoreFn = () => {
 }
 </script>
 <template>
-  <div class="flex flex-col h-full _mc">
-    <div class="p-2 flex-1 flex justify-center items-center flex-row">
+  <div class="_mc flex flex-col flex-1 justify-start items-start">
+    <div class="p-2 flex justify-center items-start flex-row">
       <input type="text" class="flex-1 outline-none" v-model="search.match" />
     </div>
-    <el-tree-v2
-      @node-click="onNodeClick"
-      :item-size="30"
-      :height="treeHeight"
-      v-if="nameSpaceEnable"
-      class="h-[calc(100vh-160px)]"
-      ref="elTreeV2Ref"
-      :data="noSearchKeyData"
-      :props="{
+    <div class="flex-1 w-full" ref="treeBoxRef">
+      <el-tree-v2
+        @node-click="onNodeClick"
+        :item-size="30"
+        :height="treeHeight"
+        v-if="nameSpaceEnable"
+        ref="elTreeV2Ref"
+        :data="noSearchKeyData"
+        :props="{
         value: 'id',
         label: 'label',
         children: 'children',
       }"
-    >
-      <template #default="{ data }">
-        <div
-          class="w-full text-nowrap text-ellipsis cursor-default overflow-hidden"
-          :title="data.value"
-        >
-          <span> {{ data.label }}</span>
-        </div>
-      </template>
-    </el-tree-v2>
-    <div class="flex justify-center items-center flex-1">
+      >
+        <template #default="{ data }">
+          <div
+            class="w-full text-nowrap text-ellipsis cursor-default overflow-hidden"
+            :title="data.value"
+          >
+            <span> {{ data.label }}</span>
+          </div>
+        </template>
+      </el-tree-v2>
+    </div>
+    <div class="flex justify-center items-center">
       <el-button size="small" class="w-full h-full" v-show="noSearchCursor !== '0'" text :loading="reqStore.reqLoading" @click="loadMoreFn">加载更多</el-button>
     </div>
   </div>

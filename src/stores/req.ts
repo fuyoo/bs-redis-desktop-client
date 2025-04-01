@@ -45,12 +45,15 @@ export const useReqStore = defineStore('req', () => {
   const reqLoading = ref(false)
   // at here, we should get host from route params.
   const route = useRoute()
+  // define a  timer to throttle the loading status
+  let timer:any;
   const reqWithHost = async <R>(option: {
     path: string
     data?: any
     db?: string
     notify?: boolean
   }): Promise<BackendResponse<R>> => {
+    clearTimeout(timer)
     reqLoading.value = true
     const host = await db.hosts.get({ id: parseInt(route.params.id as string) })
     if (route.query.db && host) {
@@ -66,11 +69,12 @@ export const useReqStore = defineStore('req', () => {
         data: _T(option.data) != 'String' ? JSON.stringify(option.data) : option.data,
         notify: option.notify,
       })
-      reqLoading.value = false
-      console.log(reqLoading.value)
+      // throttle timer
+      timer = setTimeout(()=>reqLoading.value=false,100)
       return resp
     } catch (e) {
-      reqLoading.value = false
+      // throttle timer
+      timer = setTimeout(()=>reqLoading.value=false,100)
       throw e
     }
   }

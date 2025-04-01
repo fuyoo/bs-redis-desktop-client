@@ -1,9 +1,12 @@
 <script lang="ts" setup>
-import { onBeforeUnmount, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import CoKeys from './CoKeys.vue'
 import CoDbs from './CoDbs.vue'
-import CoInformation from './CoInformation.vue'
-const key = ref('')
+import CoInformation from './CoInfomation/index.vue'
+import { ElEmpty } from 'element-plus'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+const key = ref('type:hash')
 const canMove = ref(false)
 let startX = 0
 const width = ref(200)
@@ -39,33 +42,37 @@ onBeforeUnmount(() => {
   window.removeEventListener('mouseup', mouseupFn)
   window.removeEventListener('mouseleave', mouseleaveFn)
 })
+const keyInfo = computed(() => {
+  if (key.value) {
+    return CoInformation
+  }
+  return ElEmpty
+})
 </script>
 <template>
-  <div class="flex h-full" :class="{ moving: canMove }">
-    <div class="_ml l b-r b-r-dashed b-r-#eee relative" :style="{ width: `${width}px` }">
+  <div class="flex" :class="{ moving: canMove }">
+    <div class="l flex flex-col items-start h-full b-r b-r-dashed b-r-#eee relative" :style="{ width: `${width}px` }">
         <div class="w-full h-10 flex items-center justify-center">
           <CoDbs></CoDbs>
         </div>
         <CoKeys v-model="key"></CoKeys>
       <div
         @mousedown="mousedownFn"
-        class="opacity-0 flex justify-center items-center  move w-5 h-5 bg-#ddd shadow-lg absolute top-50% mt--2 right--2 rounded"
+        class="opacity-0 flex justify-center items-center
+        move w-5 h-5 bg-#ddd shadow-lg absolute top-50% mt--2 right--2 rounded"
       >
         <span class="i-uil:arrows-resize-h"></span>
       </div>
     </div>
-    <div class="r flex-1">
-      <q-scroll-area class="h-[calc(100vh-90px)]">
-        <co-information :value="key"></co-information>
+    <div class="r flex-1 h-full">
+      <q-scroll-area class="h-full">
+        <component :is="keyInfo" :description="t('normal.1')" :value="key"></component>
       </q-scroll-area>
     </div>
   </div>
 </template>
 <style scoped lang="scss">
-._ml *{
-  -webkit-user-select: none;
-  user-select: none;
-}
+
 .moving {
   cursor: col-resize;
   &:hover .move {
