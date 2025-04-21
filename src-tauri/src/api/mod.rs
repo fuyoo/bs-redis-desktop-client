@@ -70,6 +70,10 @@ struct KeyParam {
 // here,we provide a query function,to do all query from frontend.
 async fn do_query(connection_info: ConnectionImpl, data: &str) -> Result<Response<String>> {
     let param = extract::<Vec<String>>(data)?;
+    // just print log in debug environment
+    if cfg!(debug_assertions) {
+        println!("cmd param: {:#?}", param);
+    }
     let mut cmd_ = cmd(param.get(0).unwrap());
     for (_, v) in param.iter().skip(1).enumerate() {
         cmd_.arg(v);

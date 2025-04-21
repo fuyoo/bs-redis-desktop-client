@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useReqStore } from "@/stores/req";
+import { useReqStore } from "@/stores/req.ts";
 import { ElDropdown, ElDropdownMenu, ElDropdownItem, ElButton } from "element-plus"
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";

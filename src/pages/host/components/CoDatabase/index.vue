@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, ref } from 'vue'
-import CoKeys from './CoKeys.vue'
-import CoDbs from './CoDbs.vue'
-import CoInformation from './CoInfomation/index.vue'
+import CoKeys from './components/CoKeys/index.vue'
+import CoDbs from './components/CoDatabase/index.vue'
+import CoInfoLayout from './components/CoInfoLayout/index.vue'
 import { ElEmpty } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
-const key = ref('type:hash')
+const key = ref('type:string')
 const canMove = ref(false)
 let startX = 0
 const width = ref(200)
@@ -44,7 +44,7 @@ onBeforeUnmount(() => {
 })
 const keyInfo = computed(() => {
   if (key.value) {
-    return CoInformation
+    return CoInfoLayout
   }
   return ElEmpty
 })

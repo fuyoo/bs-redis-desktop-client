@@ -77,8 +77,8 @@ pub fn convert_to_string(ori: Value) -> Result<String> {
             }
             s
         }
-        Value::Status(_) => "".to_string(),
-        Value::Okay => "".to_string(),
+        Value::Status(s) => s.to_string(),
+        Value::Okay => "okey".to_string(),
     };
     Ok(v)
 }

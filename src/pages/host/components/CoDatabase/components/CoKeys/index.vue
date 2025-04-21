@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useReqStore } from '@/stores/req'
+import { useReqStore } from '@/stores/req.ts'
 import { onMounted, reactive, ref, shallowRef } from 'vue'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { ElTreeV2, type TreeNode,ElButton } from 'element-plus'
@@ -144,8 +144,8 @@ const loadMoreFn = () => {
 }
 </script>
 <template>
-  <div class="_mc flex flex-col flex-1 justify-start items-start">
-    <div class="p-2 flex justify-center items-start flex-row">
+  <div class="_mc w-full flex flex-col flex-1 justify-start items-start">
+    <div class="p-2 flex justify-center items-start flex-row w-full">
       <input type="text" class="flex-1 outline-none" v-model="search.match" />
     </div>
     <div class="flex-1 w-full" ref="treeBoxRef">
@@ -156,6 +156,7 @@ const loadMoreFn = () => {
         v-if="nameSpaceEnable"
         ref="elTreeV2Ref"
         :data="noSearchKeyData"
+        class="w-full"
         :props="{
         value: 'id',
         label: 'label',
