@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useReqStore } from '@/stores/req.ts'
-import { shallowRef } from 'vue'
+import { shallowRef, watch } from 'vue'
 
 const props = defineProps<{
   value: string,
@@ -16,6 +16,9 @@ const fetchData = async () => {
   content.value = data
 }
 fetchData()
+watch(() => props.value, () => {
+  fetchData()
+})
 </script>
 
 <template>
