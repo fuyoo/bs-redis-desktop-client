@@ -1,5 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router'
 import settings from '@/pages/settings/index.vue'
+
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
@@ -24,7 +25,39 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: 'main',
-        component: () => import('@/pages/host/index.vue'),
+        component: () => import('@/pages/host/layout.vue'),
+        children: [
+          {
+            path: 'info',
+            component: () => import('@/pages/host/host-info.vue'),
+          },
+          {
+            path: 'database',
+            component: () => import('@/pages/host/database.vue'),
+            children: [
+              {
+                path: 'string/:key',
+                component: () =>
+                  import('@/pages/host/key-types/co-string/index.vue'),
+              },
+              {
+                path: 'set/:key',
+                component: () => import('@/pages/host/key-types/co-set/index.vue'),
+              },
+              {
+                path: 'list/:key',
+                component: () => import('@/pages/host/key-types/co-list/index.vue'),
+              },
+              {
+                path: 'hash/:key',
+                component: () => import('@/pages/host/key-types/co-hash/index.vue'),
+              },
+              {
+                path: 'zset/:key',
+                component: () => import('@/pages/host/key-types/co-zset/index.vue'),
+              },]
+          },
+        ],
       },
     ],
   },

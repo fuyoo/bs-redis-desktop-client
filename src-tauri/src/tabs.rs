@@ -32,7 +32,7 @@ pub async fn tab_change(app: tauri::AppHandle, tab: Tab) -> Result<Response<()>>
         None => {
             let v = webview::WebviewBuilder::new(
                 &tab.id,
-                tauri::WebviewUrl::App(format!("/#/tab/{}/main", &tab.id).parse().unwrap()),
+                tauri::WebviewUrl::App(format!("/#/tab/{}/main/info", &tab.id).parse().unwrap()),
             );
             let size = view.inner_size()?;
             view.add_child(

@@ -47,9 +47,9 @@ export const useTabStore = defineStore('tab', () => {
     await invoke('tab_change', { tab: tab })
     await update()
     if (tab.id == 'main') {
-      router.push('/')
+      await router.push('/')
     } else {
-      router.push(`/host/${tab.id}`)
+      await router.push(`/host/${tab.id}`)
     }
   }
   const update = async () => {

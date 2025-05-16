@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useReqStore } from '@/stores/req.ts'
-import { onMounted, reactive, ref, shallowRef } from 'vue'
+import { onBeforeUnmount, onMounted, reactive, ref, shallowRef } from 'vue'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import { ElTreeV2, type TreeNode,ElButton } from 'element-plus'
+import { ElTreeV2, type TreeNode, ElButton } from 'element-plus'
 import 'element-plus/dist/index.css'
+import { useRoute, useRouter } from 'vue-router'
+
 // tree object
 interface Tree {
   label: string
@@ -14,7 +16,9 @@ interface Tree {
   children?: Tree[]
 }
 
+const router = useRouter()
 const reqStore = useReqStore()
+const route = useRoute()
 // this is to do search
 const search = reactive({
   cursor: '0',
@@ -24,7 +28,7 @@ const search = reactive({
 const model = defineModel()
 
 // following line is mark no search patten data.
-let noSearchKeyData:Tree[] = []
+let noSearchKeyData: Tree[] = []
 const noSearchCursor = ref('0')
 const loading = ref(false)
 // here we do some no search patten logic.
@@ -33,12 +37,12 @@ const noSearchKeys = async () => {
   // fetch data pass through rust side.
   const resp = await reqStore.reqWithHost<string>({
     path: '/cmd',
-    data: JSON.stringify(['scan',noSearchCursor.value, 'MATCH', '*', 'COUNT', '5000']),
+    data: JSON.stringify(['scan', noSearchCursor.value, 'MATCH', '*', 'COUNT', '5000']),
   })
   // parse data
   const v = resp.data.split('\n')
 
-  let data:Tree[] = []
+  let data: Tree[] = []
   if (noSearchCursor.value === '0') {
     data = v.splice(1).map((e) => ({ type: 'key', label: e, icon: 'key', id: ID() }))
   } else {
@@ -68,7 +72,7 @@ const parseLevel = (ori: Tree[], key: string, delimiter: string = ':') => {
 
   // If not matched with delimiter, add it to tree structure immediately.
   if (!key.includes(delimiter)) {
-    ori.push(createTreeNode(key, 'key',key))
+    ori.push(createTreeNode(key, 'key', key))
     return
   }
 
@@ -119,36 +123,91 @@ const createTreeNode = (label: string, type: 'key' | 'folder', value?: string): 
 }
 // todo: configurable name space enable.
 const nameSpaceEnable = ref(true)
-const treeBoxRef = shallowRef()
 const elTreeV2Ref = shallowRef()
 const treeHeight = shallowRef(560)
+let resizeTimer = 0 as any
+const onResize = () => {
+  clearTimeout(resizeTimer)
+  resizeTimer = setTimeout(() => {
+    const dom = document.querySelector('#app')
+    treeHeight.value = (dom?.getBoundingClientRect()?.height || 0 )- 160
+    console.log(treeHeight.value)
+  }, 100)
+}
 // dynamic set tree height
 onMounted(() => {
-  window.addEventListener('resize', () => {
-    treeHeight.value = treeBoxRef.value.getBoundingClientRect().height - 30
-  })
-  treeHeight.value = treeBoxRef.value.getBoundingClientRect().height - 30
+  window.addEventListener('resize', onResize)
+  onResize()
 })
 
-const onNodeClick = (data: Record<string, any>,node: TreeNode,e: MouseEvent) => {
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', onResize)
+  clearTimeout(resizeTimer)
+})
+
+const onNodeClick = async (data: Record<string, any>, node: TreeNode, e: MouseEvent) => {
   if (data.type === 'key') {
-    model.value = data.value
+    const t = await reqStore.reqWithHost<string>({
+      path: '/cmd',
+      data: ['type', data.value],
+    })
+    await router.replace({
+      path: `/tab/${route.params.id}/main/database/${t.data}/${btoa(data.value)}`,
+      replace: true,
+      query: {
+        ...route.query,
+      },
+    })
   }
 }
 const loadMoreFn = () => {
   if (search.match !== '') {
-
   } else {
     noSearchKeys()
   }
 }
+const delFn = async (data: Record<string, any>) => {
+  if (data.type === 'key') {
+    const { code } = await reqStore.reqWithHost<string>({
+      path: '/cmd',
+      data: ['del', data.value],
+    })
+    if (code === 0) {
+      await noSearchKeys()
+    }
+    return
+  }
+  // delete all of children
+  const keys = [] as string[]
+  const findKeys = (data: Record<string, any>[]) => {
+    for (const item of data || []) {
+      if (item.type === 'key') {
+        keys.push(item.value)
+      } else {
+        findKeys(item.children)
+      }
+    }
+  }
+  findKeys(data.children)
+  // todo: need implement batch delete at 'rust' end. this implementation so ugly.
+  for (const key of keys) {
+    await reqStore.reqWithHost<string>({
+      path: '/cmd',
+      data: ['del', key],
+    })
+  }
+  await noSearchKeys()
+}
 </script>
 <template>
-  <div class="_mc w-full flex flex-col flex-1 justify-start items-start">
+  <div
+    ref="treeBoxRef"
+    class="overflow-hidden _mc w-full flex flex-col flex-1 justify-start items-start"
+  >
     <div class="p-2 flex justify-center items-start flex-row w-full">
       <input type="text" class="flex-1 outline-none" v-model="search.match" />
     </div>
-    <div class="flex-1 w-full" ref="treeBoxRef">
+    <div class="flex-1 w-full">
       <el-tree-v2
         @node-click="onNodeClick"
         :item-size="30"
@@ -158,10 +217,10 @@ const loadMoreFn = () => {
         :data="noSearchKeyData"
         class="w-full"
         :props="{
-        value: 'id',
-        label: 'label',
-        children: 'children',
-      }"
+          value: 'id',
+          label: 'label',
+          children: 'children',
+        }"
       >
         <template #default="{ data }">
           <div
@@ -169,12 +228,41 @@ const loadMoreFn = () => {
             :title="data.value"
           >
             <span> {{ data.label }}</span>
+            <q-menu touch-position context-menu>
+              <q-list class="min-w-25">
+                <q-item clickable v-close-popup @click="modifyFn(i)">
+                  <q-item-section>
+                    <div>
+                      <i class="i-ic:round-edit mr-2 text-4"></i>
+                      <span>{{ $t('actions[3]') }}</span>
+                    </div>
+                  </q-item-section>
+                </q-item>
+                <q-separator />
+                <q-item clickable v-close-popup @click="delFn(data)">
+                  <q-item-section class="flex">
+                    <div>
+                      <i class="i-ic:round-delete mr-2 text-4"></i>
+                      <span>{{ $t('actions[2]') }}</span>
+                    </div>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
           </div>
         </template>
       </el-tree-v2>
     </div>
     <div class="flex justify-center items-center">
-      <el-button size="small" class="w-full h-full" v-show="noSearchCursor !== '0'" text :loading="reqStore.reqLoading" @click="loadMoreFn">加载更多</el-button>
+      <el-button
+        size="small"
+        class="w-full h-full"
+        v-show="noSearchCursor !== '0'"
+        text
+        :loading="reqStore.reqLoading"
+        @click="loadMoreFn"
+        >加载更多
+      </el-button>
     </div>
   </div>
 </template>

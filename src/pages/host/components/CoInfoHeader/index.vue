@@ -1,37 +1,33 @@
 <script setup lang="ts">
 import { useReqStore } from '@/stores/req.ts'
-import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { onBeforeUnmount, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
-
+import { useRoute } from 'vue-router'
+const route = useRoute()
 const { t } = useI18n()
-const prop = defineProps<{ value?: string }>()
-const vModel = defineModel()
+const prop = defineProps<{ type?: string }>()
+
 const vSizeModel = defineModel('size')
 const reqStore = useReqStore()
 const baseInfo = reactive({
-  type: '',
   memory: '',
   pttl: '',
 })
+
+const trans = (k:string | string[]) => atob(k as string)
 let timer = -1 as any
 const fetchInfo = async () => {
   // clear interval, prevention memory leak
   clearInterval(timer)
-  const t = await reqStore.reqWithHost<string>({
-    path: '/cmd',
-    data: ['type', prop.value],
-  })
-  baseInfo.type = t.data
-  vModel.value = t.data
   const mem = await reqStore.reqWithHost<string>({
     path: '/cmd',
-    data: ['memory', 'usage', prop.value],
+    data: ['memory', 'usage', trans(route.params.key)],
   })
   baseInfo.memory = mem.data
   vSizeModel.value = mem.data
   const pttl = await reqStore.reqWithHost<string>({
     path: '/cmd',
-    data: ['pttl', prop.value],
+    data: ['pttl',  trans(route.params.key)],
   })
   baseInfo.pttl = pttl.data
   if (Number(pttl.data) > 1000) {
@@ -43,12 +39,6 @@ const fetchInfo = async () => {
   }
 }
 fetchInfo()
-watch(
-  () => prop.value,
-  () => {
-    fetchInfo()
-  },
-)
 
 const formatMilliseconds = (v: string): string => {
   const ms = Number(v)
@@ -71,7 +61,6 @@ const formatMilliseconds = (v: string): string => {
 
   return `${days}${t('timeFormat[0]')}${hours}${t('timeFormat[1]')}${minutes}${t('timeFormat[2]')}${seconds}${t('timeFormat[3]')}`
 }
-
 onBeforeUnmount(() => {
   clearInterval(timer)
 })
@@ -79,8 +68,8 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="b-b b-b-dashed b-b-#eee p-4 gap-2 flex">
-    <b>{{ value }}</b>
-    <q-badge><i class="i-iconamoon:type-bold mr-1"></i> {{ baseInfo.type.toUpperCase() }}</q-badge>
+    <b>{{ trans(route.params.key as string) }}</b>
+    <q-badge><i class="i-iconamoon:type-bold mr-1"></i> {{ type.toUpperCase() }}</q-badge>
     <q-badge><i class="i-material-symbols:memory-alt mr-1"></i> {{ baseInfo.memory }}bytes</q-badge>
     <q-badge>
       <i class="i-material-symbols:nest-clock-farsight-analog-outline"></i>TTL

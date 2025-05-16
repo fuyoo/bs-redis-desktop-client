@@ -56,7 +56,7 @@
 import { useTabStore } from '@/stores/tab'
 import { Dialog } from 'quasar'
 import CoHostForm from './components/CoHostForm.vue'
-import { liveQuery, type Observable } from 'dexie'
+import { liveQuery} from 'dexie'
 import { useObservable } from '@vueuse/rxjs'
 import { db, type ConnectionHost } from '@/db'
 import { type Ref, computed, reactive } from 'vue'
@@ -70,7 +70,7 @@ const connected = computed(() => {
 const changeTab = async (i: ConnectionHost) => {
   // reset offline status
   offlineHosts.delete(i.id!)
-  // if is loading, we don't need to request again
+  // if  loading, we don't need to request again
   if (loadingStack.has(i.id!)) {
     return
   }

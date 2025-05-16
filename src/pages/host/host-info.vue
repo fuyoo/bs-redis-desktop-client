@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 
-import { useReqStore } from '@/stores/req'
-import { showHostConfigureDetail } from '@/tools'
+import { useReqStore } from '@/stores/req.ts'
+import { showHostConfigureDetail } from '@/tools.ts'
 import { useRoute } from 'vue-router'
 const route = useRoute()
 const reqStore = useReqStore()
@@ -68,7 +68,8 @@ const rows = computed(() => {
 
 </script>
 <template>
-  <div class="flex gap-4 p-4">
+  <q-scroll-area class="w-full  bg-#eee h-full">
+    <div class="flex gap-4 p-4">
     <q-card flat class="flex-1 b b-solid b-#eee">
       <q-card-section class="flex justify-between items-center">
         <div class="text-h6">{{ $t("hostInfo[1]") }}</div>
@@ -106,13 +107,14 @@ const rows = computed(() => {
         <q-chip>Rejected Connections: {{ helper("rejected_connections", "Status") }}</q-chip>
       </q-card-actions>
     </q-card>
-    <q-card flat class="flex-1 b b-solid b-#eee">
+    <q-card flat class="w-full b b-solid b-#eee">
       <q-card-section>
         <div class="text-h6">{{ $t("hostInfo[4]") }}</div>
       </q-card-section>
       <q-table flat class="w-full b b-solid b-#eee" :columns="columns" :rows="rows"></q-table>
     </q-card>
-  </div>
+    </div>
+  </q-scroll-area>
 </template>
 
 <style lang="scss" scope>
