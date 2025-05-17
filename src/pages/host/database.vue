@@ -1,12 +1,8 @@
 <script lang="ts" setup>
-import { computed, onBeforeUnmount, ref } from 'vue'
-import CoKeys from '@/pages/host/components/CoKeys/index.vue'
-import CoDbs from './components/CoDatabase/index.vue'
-import { ElEmpty } from 'element-plus'
-import { useI18n } from 'vue-i18n'
+import { onBeforeUnmount, ref } from 'vue'
+import CoKeys from '@/pages/host/components/CoKeys/new.vue'
 import { useRoute } from 'vue-router'
 const route = useRoute()
-const { t } = useI18n()
 const key = ref('')
 const canMove = ref(false)
 let startX = 0
@@ -43,12 +39,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('mouseup', mouseupFn)
   window.removeEventListener('mouseleave', mouseleaveFn)
 })
-const keyInfo = computed(() => {
-  if (key.value) {
-    return 'CoInfoLayout'
-  }
-  return ElEmpty
-})
+
 </script>
 <template>
   <div class="flex h-full bg-white" :class="{ moving: canMove }">
@@ -56,9 +47,6 @@ const keyInfo = computed(() => {
       class="l flex flex-col items-start h-full b-r b-r-dashed b-r-#eee relative"
       :style="{ width: `${width}px` }"
     >
-      <div class="w-full h-10 flex items-center justify-center">
-        <CoDbs />
-      </div>
       <CoKeys v-model="key"></CoKeys>
       <div
         @mousedown="mousedownFn"

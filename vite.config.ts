@@ -8,7 +8,9 @@ import UnoCSS from 'unocss/vite'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
-
+import AutoImport from 'unplugin-auto-import/vite'
+import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
+import Components from 'unplugin-vue-components/vite'
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const pkg = readFileSync(path.join(__dirname, 'package.json')).toString()
@@ -22,6 +24,17 @@ export default defineConfig(({ mode }) => {
       UnoCSS(),
       quasar({
         sassVariables: fileURLToPath(new URL('./src/css/quasar.variables.scss', import.meta.url)),
+      }),
+      AutoImport({
+        imports: [
+          'vue',
+          {
+            'naive-ui': ['useDialog', 'useMessage', 'useNotification', 'useLoadingBar'],
+          },
+        ],
+      }),
+      Components({
+        resolvers: [NaiveUiResolver()],
       }),
     ],
     resolve: {

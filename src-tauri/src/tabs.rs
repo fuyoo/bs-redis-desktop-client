@@ -1,7 +1,9 @@
 use std::sync::Mutex;
 
 use serde::{Deserialize, Serialize};
-use tauri::{webview, LogicalPosition, LogicalSize, Manager, Result};
+use tauri::{
+    webview, LogicalPosition, LogicalSize, Manager, Result,
+};
 
 use crate::{api::resp::Response, r_ok};
 #[derive(Default, Serialize, Deserialize, Eq, PartialEq, Debug, Clone)]
@@ -9,7 +11,7 @@ pub struct Tab {
     pub id: String,
     pub name: Option<String>,
 }
-static TAB_BAR_HEIGHT: u32 = 50;
+static TAB_BAR_HEIGHT: f64 = 50.;
 #[tauri::command]
 pub async fn tab_change(app: tauri::AppHandle, tab: Tab) -> Result<Response<()>> {
     // first we should check webview is created? if it has, show it hidden others.
@@ -34,10 +36,12 @@ pub async fn tab_change(app: tauri::AppHandle, tab: Tab) -> Result<Response<()>>
                 &tab.id,
                 tauri::WebviewUrl::App(format!("/#/tab/{}/main/info", &tab.id).parse().unwrap()),
             );
-            let size = view.inner_size()?;
+            let fac = view.current_monitor()?.unwrap().scale_factor();
+            let size = view.inner_size()?.to_logical::<f64>(fac);
+            println!("{:#?}", size);
             view.add_child(
                 v,
-                LogicalPosition::new(0, TAB_BAR_HEIGHT),
+                LogicalPosition::<f64>::new(0., TAB_BAR_HEIGHT),
                 LogicalSize::new(size.width, size.height - TAB_BAR_HEIGHT),
             )?;
             // here we hide other views
@@ -60,8 +64,9 @@ pub async fn tab_change(app: tauri::AppHandle, tab: Tab) -> Result<Response<()>>
             if tab.id == "main" {
                 return Ok(r_ok!((), None));
             }
-            vb.set_position(LogicalPosition::new(0, TAB_BAR_HEIGHT))?;
-            let size = view.inner_size()?;
+            vb.set_position(LogicalPosition::<f64>::new(0., TAB_BAR_HEIGHT))?;
+            let fac = view.current_monitor()?.unwrap().scale_factor();
+            let size = view.inner_size()?.to_logical::<f64>(fac);
             vb.set_size(LogicalSize::new(size.width, size.height - TAB_BAR_HEIGHT))?;
             vb.show()?;
         }
@@ -116,8 +121,9 @@ pub async fn tab_view_resize(app: tauri::AppHandle, id: String) -> Result<Respon
     if let Some(vb) = app.app_handle().get_webview(&id) {
         // first we should check webview is created? if it has, show it and hidden others.
         let view = app.app_handle().get_window("main").unwrap();
-        vb.set_position(LogicalPosition::new(0, TAB_BAR_HEIGHT))?;
-        let size = view.inner_size()?;
+        vb.set_position(LogicalPosition::new(0., TAB_BAR_HEIGHT))?;
+        let fac = view.current_monitor()?.unwrap().scale_factor();
+        let size = view.inner_size()?.to_logical::<f64>(fac);
         vb.set_size(LogicalSize::new(size.width, size.height - TAB_BAR_HEIGHT))?;
         vb.show()?;
     }
