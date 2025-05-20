@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, shallowRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useReqStore } from '@/stores/req.ts'
 import { useI18n } from 'vue-i18n'
+
 const router = useRouter()
 const route = useRoute()
 const reqStore = useReqStore()
@@ -10,27 +11,28 @@ const { t } = useI18n()
 const changeTab = async (tab: string) => {
   await router.push({
     path: `/tab/${route.params.id}/main/${tab}`,
-    query: route.query,
+    query: route.query
   })
   console.log(route.path)
 }
 const tab = computed(() => {
   if (route.path.includes('database')) {
     return 'database'
-  } else {
+  }
+  else {
     return 'info'
   }
 })
-const dbs = shallowRef([])
+const dbs = shallowRef<Record<string, any>[]>([])
 const fetchDbs = async () => {
   const resp = await reqStore.reqWithHost<string>({
     path: '/cmd',
-    data: ['config', 'get', 'databases'],
+    data: ['config', 'get', 'databases']
   })
 
   dbs.value = new Array(Number(resp.data.split('\n')[1])).fill(0).map((_, i) => ({
     label: `${t('normal.0')}.${i}`,
-    value: i,
+    value: i
   }))
 }
 const selectedDb = ref(Number((route.query.db as string) || 0))
@@ -43,8 +45,8 @@ const reload = async (v: number) => {
     path: `/tab/${route.params.id}/main/database`,
     query: {
       ...route.query,
-      db: v,
-    },
+      db: v
+    }
   })
   location.reload()
 }
@@ -117,6 +119,7 @@ const reload = async (v: number) => {
 
 .active {
   position: relative;
+
   &::after {
     content: '';
     position: absolute;
@@ -128,6 +131,7 @@ const reload = async (v: number) => {
     background: var(--q-primary);
     color: var(--q-primary);
   }
+
   .c {
     color: var(--q-primary);
   }

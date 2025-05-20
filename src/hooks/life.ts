@@ -7,12 +7,9 @@ export const useResize = (sub?: number) => {
   const onResize = () => {
     clearTimeout(resizeTimer)
     resizeTimer = setTimeout(() => {
-      debugger
       const dom = document.querySelector('#app')
       height.value = (dom?.getBoundingClientRect()?.height || 0) - (sub || 0)
       width.value = dom?.getBoundingClientRect()?.width || 0
-      console.log('height', height.value)
-      console.log('width', width.value)
     }, 50)
   }
   // dynamic set tree height

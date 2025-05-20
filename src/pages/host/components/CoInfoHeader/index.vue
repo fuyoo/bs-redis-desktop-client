@@ -69,7 +69,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="b-b b-b-dashed b-b-#eee p-4 gap-2 flex">
     <b>{{ trans(route.params.key as string) }}</b>
-    <q-badge><i class="i-iconamoon:type-bold mr-1"></i> {{ type.toUpperCase() }}</q-badge>
+    <q-badge><i class="i-iconamoon:type-bold mr-1"></i> {{ type?.toUpperCase() }}</q-badge>
     <q-badge><i class="i-material-symbols:memory-alt mr-1"></i> {{ baseInfo.memory }}bytes</q-badge>
     <q-badge>
       <i class="i-material-symbols:nest-clock-farsight-analog-outline"></i>TTL

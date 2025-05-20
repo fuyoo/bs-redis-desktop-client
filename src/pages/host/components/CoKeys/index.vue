@@ -111,7 +111,7 @@ const menuOptions = ref<DropdownOption[]>([
   {
     label: '删除',
     key: 'delete',
-    icon: () => h(NIcon, { default: () => h(Trash) }),
+    icon: () => h(NIcon, null, { default: () => h(Trash) }),
   },
 ])
 const x = ref(0)
@@ -143,40 +143,42 @@ const nodeProps = ({ option }: { option: Tree }) => {
     },
   }
 }
-const handleSelect = async (data: Record<string, any>) => {
+const handleSelect = async (act: string) => {
   showDropdownRef.value = false
-  console.log(data)
-  return
-  if (data.type === 'key') {
-    const { code } = await reqStore.reqWithHost<string>({
-      path: '/cmd',
-      data: ['del', data.value],
-    })
-    if (code === 0) {
-      await queryOriginalData()
+  const data = focusNodeData
+  if (act === "delete") {
+
+    if (data?.type === 'key') {
+      const { code } = await reqStore.reqWithHost<string>({
+        path: '/cmd',
+        data: ['del', data.value],
+      })
+      if (code === 0) {
+        await queryOriginalData()
+      }
+      return
     }
-    return
-  }
-  // delete all of children
-  const keys = [] as string[]
-  const findKeys = (data: Record<string, any>[]) => {
-    for (const item of data || []) {
-      if (item.type === 'key') {
-        keys.push(item.value)
-      } else {
-        findKeys(item.children)
+    // delete all of children
+    const keys = [] as string[]
+    const findKeys = (data: Record<string, any>[]) => {
+      for (const item of data || []) {
+        if (item.type === 'key') {
+          keys.push(item.value)
+        } else {
+          findKeys(item.children)
+        }
       }
     }
+    findKeys(data?.children || [])
+    // todo: need implement batch delete at 'rust' end. this implementation so ugly.
+    for (const key of keys) {
+      await reqStore.reqWithHost<string>({
+        path: '/cmd',
+        data: ['del', key],
+      })
+    }
+    await queryOriginalData()
   }
-  findKeys(data.children)
-  // todo: need implement batch delete at 'rust' end. this implementation so ugly.
-  for (const key of keys) {
-    await reqStore.reqWithHost<string>({
-      path: '/cmd',
-      data: ['del', key],
-    })
-  }
-  await queryOriginalData()
 }
 </script>
 <template>
@@ -209,6 +211,7 @@ const handleSelect = async (data: Record<string, any>) => {
       :style="{ height: height + 'px' }"
       key-field="id"
       children-field="children"
+      class="whitespace-nowrap"
     />
     <div class="flex flex-1 w-full justify-center items-center" v-show="original.cursor != '0'">
       <n-button size="small" type="primary" :loading="reqStore.reqLoading" @click="loadMoreFn"
@@ -224,6 +227,7 @@ const handleSelect = async (data: Record<string, any>) => {
     :x="x"
     :y="y"
     @select="handleSelect"
+    @clickoutside="()=>showDropdownRef = false"
   />
 </template>
 
