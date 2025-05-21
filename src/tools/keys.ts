@@ -1,8 +1,8 @@
-import { h} from 'vue'
+import { h } from 'vue'
 import { NIcon } from 'naive-ui'
 import { Folder, KeyOutline } from '@vicons/ionicons5'
 import type { Tree } from '@/types.ts'
-
+import { useRoute } from 'vue-router'
 
 export const ID = () => Math.random().toString(36).slice(2)
 
@@ -72,4 +72,10 @@ export const parseTreeWithNameSpace = (ori: Tree[], key: string, delimiter: stri
   } catch (error) {
     console.error('Error parsing level:', error)
   }
+}
+
+// get redis key from route
+export const Key = () => {
+  const route = useRoute()
+  return atob(route.params.key as string)
 }

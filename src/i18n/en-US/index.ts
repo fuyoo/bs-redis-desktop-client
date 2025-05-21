@@ -9,7 +9,7 @@ export default {
     ['Github', 'github.com/fuyoo/bs-redis-desktop-client'],
   ],
   settings: ['Settings', 'Language', 'Version'],
-  actions: ['Ok', 'Cancel', 'Delete', 'Modify', 'Add'],
+  actions: ['Ok', 'Cancel', 'Delete', 'Edit', 'Add', 'Insert'],
   home: {
     form: {
       lable: ['Name', 'Host', 'Port', 'Database', 'Username', 'Password', 'Cluster'],
@@ -30,4 +30,6 @@ export default {
   hostInfo: ['Memory', 'Server', 'Stats', 'Details', 'Key Anylaysis'],
   normal: ['Database', 'Please select a key.'],
   timeFormat: ['d', 'h', 'm', 's', 'mill','never'],
+  table: ['Data','Operate'],
+  tips: ['Current data type unsupported yet.']
 }

@@ -6,7 +6,7 @@ export default {
     ['Github', 'github.com/fuyoo/bs-redis-desktop-client'],
   ],
   settings: ['设置', '语言', '版本'],
-  actions: ['确定', '取消', '删除', '修改', '添加'],
+  actions: ['确定', '取消', '删除', '修改', '添加','插入'],
   home: {
     form: {
       lable: ['名称', '地址', '端口', '数据库', '用户名', '密码', '是否集群'],
@@ -26,6 +26,8 @@ export default {
     tabName: ['状态', '数据'],
   },
   hostInfo: ['内存', '服务端', '状态', '详情', 'Key情况'],
-  normal: ['数据库','请选择一个键'],
-  timeFormat:['天','时','分','秒','毫秒','不过期']
+  normal: ['数据库', '请选择一个键'],
+  timeFormat: ['天', '时', '分', '秒', '毫秒', '永不过期'],
+  table: ['数据', '操作'],
+  tips: ['该数据类型尚不支持']
 }

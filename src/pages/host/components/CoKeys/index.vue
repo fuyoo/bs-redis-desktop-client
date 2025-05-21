@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useReqStore } from '@/stores/req.ts'
-import { reactive, ref, h, } from 'vue'
+import { reactive, ref, h } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { DropdownOption } from 'naive-ui'
 import { Folder, FolderOpenOutline, Trash } from '@vicons/ionicons5'
@@ -105,7 +105,7 @@ const loadMoreFn = () => {
   }
 }
 
-let focusNodeData:Tree | null
+let focusNodeData: Tree | null
 const showDropdownRef = ref(false)
 const menuOptions = ref<DropdownOption[]>([
   {
@@ -116,6 +116,7 @@ const menuOptions = ref<DropdownOption[]>([
 ])
 const x = ref(0)
 const y = ref(0)
+const supportDataType = ['string', 'list', 'set', 'zset', 'hash']
 const nodeProps = ({ option }: { option: Tree }) => {
   return {
     async onClick() {
@@ -124,6 +125,16 @@ const nodeProps = ({ option }: { option: Tree }) => {
           path: '/cmd',
           data: ['type', option.value],
         })
+        if (!supportDataType.includes(t.data)) {
+          await router.replace({
+            path: `/tab/${route.params.id}/main/database/unsupported/${btoa(option.value!)}`,
+            replace: true,
+            query: {
+              ...route.query,
+            },
+          })
+          return
+        }
         await router.replace({
           path: `/tab/${route.params.id}/main/database/${t.data}/${btoa(option.value!)}`,
           replace: true,
@@ -146,8 +157,7 @@ const nodeProps = ({ option }: { option: Tree }) => {
 const handleSelect = async (act: string) => {
   showDropdownRef.value = false
   const data = focusNodeData
-  if (act === "delete") {
-
+  if (act === 'delete') {
     if (data?.type === 'key') {
       const { code } = await reqStore.reqWithHost<string>({
         path: '/cmd',
@@ -227,7 +237,7 @@ const handleSelect = async (act: string) => {
     :x="x"
     :y="y"
     @select="handleSelect"
-    @clickoutside="()=>showDropdownRef = false"
+    @clickoutside="() => (showDropdownRef = false)"
   />
 </template>
 

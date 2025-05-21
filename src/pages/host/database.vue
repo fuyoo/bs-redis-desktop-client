@@ -1,10 +1,7 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router'
-
-const route = useRoute()
 import CoKeys from '@/pages/host/components/CoKeys/index.vue'
-
-
+const route = useRoute()
 </script>
 <template>
   <n-split direction="horizontal"  :resize-trigger-size="1" max="600px"
@@ -14,7 +11,9 @@ import CoKeys from '@/pages/host/components/CoKeys/index.vue'
       <CoKeys></CoKeys>
     </template>
     <template #2>
+      <n-modal-provider>
       <router-view :key="route.path"></router-view>
+      </n-modal-provider>
     </template>
   </n-split>
 </template>

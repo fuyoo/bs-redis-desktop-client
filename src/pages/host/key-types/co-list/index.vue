@@ -1,60 +1,67 @@
 <script setup lang="tsx">
-import { ref, shallowRef } from 'vue'
+import { reactive, ref, shallowRef } from 'vue'
 import { useRoute } from 'vue-router'
 import { useReqStore } from '@/stores/req.ts'
 import CoInfoHeader from '@/pages/host/components/CoInfoHeader/index.vue'
-import { ID } from '@/tools/keys.ts'
+import { ID, Key } from '@/tools/keys.ts'
+import { usePager } from '@/hooks/pager.tsx'
+import { useI18n } from 'vue-i18n'
+import { useResize } from '@/hooks/life.ts'
 
+const { t } = useI18n()
 const size = ref(0)
 const route = useRoute()
-const key = atob(route.params.key as string)
-console.log(key)
+const key = Key()
 const reqStore = useReqStore()
-const total = ref(0)
-const paginationReactive = reactive({
-  page: 1,
-  pageSize: 5,
-  pageCount: 0,
-  showSizePicker: true,
-  pageSizes: [3, 5, 7],
-  onChange: (page: number) => {
-    paginationReactive.page = page
-  },
-  onUpdatePageSize: (pageSize: number) => {
-    paginationReactive.pageSize = pageSize
-    paginationReactive.page = 1
-  }
-})
+const { pager, onPageChanged, calcIndex } = usePager()
 const fetchLen = async () => {
   const resp = await reqStore.reqWithHost<string>({
     path: '/cmd',
     data: ['llen', key],
   })
-  paginationReactive.pageCount = Number(resp.data)
+  pager.pageCount = Math.ceil(Number(resp.data) / pager.pageSize)
 }
 fetchLen()
 
-
-const columns = [
+const columns = reactive([
   {
-    title: 'index',
+    title: '#',
     key: 'no',
-    render: (row: Record) => {
-      return <div> { (paginationReactive.page - 1) * paginationReactive.pageSize + row.no +1 } </div>
+    render: (row: Record<string, any>) => {
+      return <div> {calcIndex(row.no)} </div>
     },
   },
-  { title: 'data', key: 'value' },
-]
-const records = shallowRef<Record[]>([])
+  { title: t('table[0]'), key: 'value' },
+  {
+    title: t('table[1]'),
+    width: 200,
+    render: (_: Record<string, any>) => {
+      return (
+        <n-space>
+          <n-button type="warning" size="tiny" quaternary>
+            {t('actions[2]')}
+          </n-button>
+          <n-button type="primary" size="tiny" quaternary>
+            {t('actions[3]')}
+          </n-button>
+        </n-space>
+      )
+    },
+  },
+])
+const records = shallowRef<Record<string, any>[]>([])
 const fetchRecords = async () => {
+  console.log('......')
   await fetchLen()
-  const resp = await reqStore.reqWithHost({
+  const resp = await reqStore.reqWithHost<string>({
     path: '/cmd',
-    data: ['lrange', key, `${(paginationReactive.page - 1) * paginationReactive.pageSize}`, `${paginationReactive.page * paginationReactive.pageSize}`],
+    data: [
+      'lrange',
+      key,
+      `${(pager.page - 1) * pager.pageSize}`,
+      `${pager.page * pager.pageSize - 1}`,
+    ],
   })
-  console.log( ['lrange', key, `${(paginationReactive.page - 1) * paginationReactive.pageSize}`, `${paginationReactive.page * paginationReactive.pageSize}`],
-  )
-  console.log(resp)
   records.value = resp.data.split('\n').map((item: string, i: number) => {
     return {
       title: item,
@@ -65,19 +72,27 @@ const fetchRecords = async () => {
   })
 }
 fetchRecords()
+onPageChanged(fetchRecords)
+const { height } = useResize()
 </script>
 
 <template>
   <div class="w-full h-full">
-    <co-info-header v-model:size="size" type="string" />
-    <n-data-table
-      remote
-      ref="table"
-      :columns="columns"
-      :data="records"
-      :loading="reqStore.reqLoading"
-      :pagination="paginationReactive"
-    />
+    <co-info-header v-model:size="size" type="string">
+      <div><n-button size="tiny" type="primary">{{ $t('actions[5]') }}</n-button></div>
+    </co-info-header>
+    <div class="p-5">
+      <n-data-table
+        remote
+        ref="table"
+        :columns="columns"
+        :data="records"
+        :loading="reqStore.reqLoading"
+        :pagination="pager"
+        :style="{ height: `${height - 200}px` }"
+        flex-height
+      />
+    </div>
   </div>
 </template>
 

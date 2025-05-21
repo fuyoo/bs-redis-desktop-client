@@ -14,3 +14,14 @@ export const showHostConfigureDetail = async (id: string) => {
     webview?.setFocus()
   }, 10)
 }
+
+export const dataToHuman = (data: string): string => {
+  const bytes = parseInt(data, 10);
+  if (isNaN(bytes) || bytes < 0) return '0 B';
+
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  const index = Math.floor(Math.log(bytes) / Math.log(1024));
+  const size = bytes / Math.pow(1024, index);
+
+  return `${size.toFixed(0)} ${sizes[index]}`;
+};

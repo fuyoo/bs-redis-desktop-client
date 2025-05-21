@@ -1,8 +1,10 @@
-import { createI18n } from 'vue-i18n'
+import { createI18n,useI18n } from 'vue-i18n'
 
 import messages from './lang'
 import { Lang, type QuasarLanguage } from 'quasar'
-import type { App } from 'vue'
+import { type App, computed } from 'vue'
+import { enUS, ruRU, zhCN } from 'naive-ui'
+
 export type MessageLanguages = keyof typeof messages
 // Type-define 'en-US' as the master schema for the resource
 export type MessageSchema = (typeof messages)['en-US']
@@ -21,13 +23,13 @@ declare module 'vue-i18n' {
 }
 /* eslint-enable @typescript-eslint/no-empty-object-type */
 
-export const useI18n = (app: App) => {
+export const injectI18n = (app: App) => {
   // import lang pack
   const languages = import.meta.glob('../../node_modules/quasar/lang/(zh-CN|en-US).js', {
     eager: true,
     import: 'default',
   })
-  // obtain currently luanguage
+  // obtain currently language
   const local = localStorage.getItem('lang') ?? (Lang.getLocale() || 'zh-CN')
   // set currently language
   Object.keys(languages).forEach((k) => {
@@ -44,4 +46,19 @@ export const useI18n = (app: App) => {
 
   // Set i18n instance on app
   app.use(i18n)
+}
+
+export const useLocate = () => {
+  const $i18n = useI18n()
+  const locate = computed(() => {
+    switch ($i18n.locale.value) {
+      case 'zh-CN':
+        return zhCN
+      case 'ruRU':
+        return ruRU
+      default:
+        return enUS
+    }
+  })
+  return { locate }
 }

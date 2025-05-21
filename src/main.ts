@@ -8,7 +8,7 @@ import '@quasar/extras/material-icons/material-icons.css'
 import 'quasar/src/css/index.sass'
 import App from './App.vue'
 import router from './router'
-import { useI18n } from './i18n'
+import { injectI18n } from './i18n'
 import 'virtual:uno.css'
 const app = createApp(App)
 app.use(Quasar, {
@@ -17,7 +17,7 @@ app.use(Quasar, {
     Notify,
   }, // import Quasar plugins and add here
 })
-app.use(useI18n)
+app.use(injectI18n)
 app.use(createPinia())
 app.use(router)
 

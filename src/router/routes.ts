@@ -55,7 +55,12 @@ const routes: RouteRecordRaw[] = [
               {
                 path: 'zset/:key',
                 component: () => import('@/pages/host/key-types/co-zset/index.vue'),
-              },]
+              },
+              {
+                path: 'unsupported/:key',
+                component: () => import('@/pages/host/key-types/co-unsupported/index.vue'),
+              },
+            ]
           },
         ],
       },
