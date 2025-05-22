@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { useReqStore } from '@/stores/req.ts'
-import { reactive, ref, h } from 'vue'
+import { reactive, ref, h,computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { DropdownOption } from 'naive-ui'
-import { Folder, FolderOpenOutline, Trash } from '@vicons/ionicons5'
+import { Folder, FolderOpenOutline, KeyOutline, Trash } from '@vicons/ionicons5'
 import { NIcon } from 'naive-ui'
 import { useResize } from '@/hooks/life.ts'
-import { ID, parseTreeWithNameSpace } from '@/tools/keys.ts'
+import { ID } from '@/tools/keys.ts'
 import type { Tree } from '@/types.ts'
+import KeysWorker from '@/worker/keys.ts?worker'
 
+const keysWorker = new KeysWorker()
 const router = useRouter()
 const reqStore = useReqStore()
 const route = useRoute()
@@ -39,40 +41,105 @@ const original = reactive<{
 // todo: enable name space by configure.
 const nameSpaceEnable = ref(true)
 // here we do some no search patten logic.
-const queryOriginalData = async () => {
-  original.loading = true
+const queryData = async (isSearch?: boolean) => {
+  if (isSearch) search.loading = true
+  else original.loading = true
   try {
     // fetch data pass through rust side.
     const resp = await reqStore.reqWithHost<string>({
       path: '/cmd',
-      data: JSON.stringify(['scan', original.cursor, 'MATCH', '*', 'COUNT', '5000']),
+      data: JSON.stringify([
+        'scan',
+        isSearch ? search.cursor : original.cursor,
+        'MATCH',
+        isSearch ? search.match : '*',
+        'COUNT',
+        '5000',
+      ]),
     })
     // parse data
     const v = resp.data.split('\n')
+    if (isSearch) {
+      let arr = []
 
-    if (original.cursor === '0') {
-      originalKeyList = v
-        .splice(1)
-        .map((e) => ({ type: 'key', label: e, icon: 'key', id: ID() }) as Tree)
-    } else {
-      v.splice(1).forEach((e) => {
-        originalKeyList.push({ type: 'key', label: e, icon: 'key', id: ID() })
+      if (search.cursor === '0') {
+        arr = v.splice(1).map((e) => ({ type: 'key', label: e, icon: 'key', id: ID() }) as Tree)
+      } else {
+        arr = search.tree.concat(
+          v.splice(1).map(
+            (e) =>
+              ({
+                type: 'key',
+                label: e,
+                icon: 'key',
+                id: ID(),
+              }) as Tree,
+          ),
+        )
+      }
+      search.cursor = v[0]
+      // const data = [] as Tree[]
+      // arr.forEach((e) => {
+      //   parseTreeWithNameSpace(data, e.label)
+      // })
+      // search.tree = data
+      keysWorker.postMessage({
+        type: 'parse',
+        data: arr,
       })
-      console.log(originalKeyList.length)
+      search.tree = await new Promise((resolve) => {
+        keysWorker.onmessage = (e) => {
+          resolve(e.data)
+        }
+      })
+    } else {
+      // no search match
+      if (original.cursor === '0') {
+        originalKeyList = v
+          .splice(1)
+          .map((e) => ({ type: 'key', label: e, icon: 'key', id: ID() }) as Tree)
+      } else {
+        v.splice(1).forEach((e) => {
+          originalKeyList.push({ type: 'key', label: e, icon: 'key', id: ID() })
+        })
+      }
+      original.cursor = v[0]
+      // const arr = [] as Tree[]
+      // originalKeyList.forEach((e) => {
+      //   parseTreeWithNameSpace(arr, e.label)
+      // })
+      // original.tree = arr
+      keysWorker.postMessage({
+        type: 'parse',
+        data: originalKeyList,
+      })
+      original.tree = await new Promise((resolve) => {
+        keysWorker.onmessage = (e) => {
+          resolve(e.data)
+        }
+      })
     }
-    original.cursor = v[0]
-    const arr = [] as Tree[]
-    originalKeyList.forEach((e) => {
-      parseTreeWithNameSpace(arr, e.label)
-    })
-    original.tree = arr
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
   original.loading = false
+  search.loading = false
 }
-queryOriginalData()
+queryData()
 
-const { height } = useResize(120)
-
+const { height } = useResize(115)
+const calcHeight = computed(() => {
+  if (search.match !== '') {
+    if (search.cursor === '0') {
+      return height.value + 30 + 'px'
+    }
+    return height.value + 'px'
+  }
+  if (original.cursor === '0') {
+    return height.value + 30 + 'px'
+  }
+  return height.value + 'px'
+})
 const updatePrefixWithExpand = (
   _keys: Array<string | number>,
   _option: Array<Tree | null>,
@@ -81,6 +148,7 @@ const updatePrefixWithExpand = (
     action: 'expand' | 'collapse' | 'filter'
   },
 ) => {
+  console.log ('updatePrefixWithExpand', _keys, _option, meta)
   if (!meta.node) return
   switch (meta.action) {
     case 'expand':
@@ -100,8 +168,9 @@ const updatePrefixWithExpand = (
 
 const loadMoreFn = () => {
   if (search.match !== '') {
+    queryData(true)
   } else {
-    queryOriginalData()
+    queryData()
   }
 }
 
@@ -154,6 +223,7 @@ const nodeProps = ({ option }: { option: Tree }) => {
     },
   }
 }
+// contextmenu selected function.
 const handleSelect = async (act: string) => {
   showDropdownRef.value = false
   const data = focusNodeData
@@ -164,7 +234,7 @@ const handleSelect = async (act: string) => {
         data: ['del', data.value],
       })
       if (code === 0) {
-        await queryOriginalData()
+        await queryData(search.match !== "")
       }
       return
     }
@@ -180,15 +250,32 @@ const handleSelect = async (act: string) => {
       }
     }
     findKeys(data?.children || [])
-    // todo: need implement batch delete at 'rust' end. this implementation so ugly.
+    // todo: need implement batch delete at 'rust' end. this implementation is so ugly.
     for (const key of keys) {
       await reqStore.reqWithHost<string>({
         path: '/cmd',
         data: ['del', key],
       })
     }
-    await queryOriginalData()
+    await queryData(search.match !== "")
   }
+}
+// throttle
+let timer = -1 as any
+const doFilter = async () => {
+  console.log(search)
+  search.cursor = '0'
+  clearTimeout(timer)
+  if (search.match === '') return
+  timer = setTimeout(async () => {
+    await queryData(true)
+  }, 100)
+}
+
+function renderPrefix(data: { option: Tree }) {
+  return h(NIcon, null, {
+    default: () => h(data.option.type === 'key' ? KeyOutline : Folder),
+  })
 }
 </script>
 <template>
@@ -199,6 +286,7 @@ const handleSelect = async (act: string) => {
         class="flex-1"
         size="tiny"
         v-model:value="search.match"
+        @update:value="doFilter"
         placeholder="redis query format"
       >
         <template #prefix>
@@ -213,17 +301,31 @@ const handleSelect = async (act: string) => {
       ref="treeInstRef"
       block-line
       show-line
+      :render-prefix="renderPrefix"
       :on-update:expanded-keys="updatePrefixWithExpand"
-      :data="original.tree"
+      :data="search.match != '' ? search.tree : original.tree"
       virtual-scroll
       expand-on-click
       :node-props="nodeProps"
-      :style="{ height: height + 'px' }"
+      :style="{ height: calcHeight }"
       key-field="id"
       children-field="children"
       class="whitespace-nowrap"
     />
-    <div class="flex flex-1 w-full justify-center items-center" v-show="original.cursor != '0'">
+    <div
+      class="flex flex-1 w-full justify-center items-center"
+      v-if="!search.match"
+      v-show="original.cursor != '0'"
+    >
+      <n-button size="small" type="primary" :loading="reqStore.reqLoading" @click="loadMoreFn"
+        >加载更多
+      </n-button>
+    </div>
+    <div
+      v-else
+      class="flex flex-1 w-full justify-center items-center"
+      v-show="search.cursor != '0'"
+    >
       <n-button size="small" type="primary" :loading="reqStore.reqLoading" @click="loadMoreFn"
         >加载更多
       </n-button>

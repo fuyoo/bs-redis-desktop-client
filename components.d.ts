@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     CoHostTab: typeof import('./src/components/CoHostTab.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    NAlert: typeof import('naive-ui')['NAlert']
     NButton: typeof import('naive-ui')['NButton']
     NConfigProvider: typeof import('naive-ui')['NConfigProvider']
     NDataTable: typeof import('naive-ui')['NDataTable']

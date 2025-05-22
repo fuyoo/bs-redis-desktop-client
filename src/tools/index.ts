@@ -17,6 +17,7 @@ export const showHostConfigureDetail = async (id: string) => {
 
 export const dataToHuman = (data: string): string => {
   const bytes = parseInt(data, 10);
+  console.log(bytes);
   if (isNaN(bytes) || bytes < 0) return '0 B';
 
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];

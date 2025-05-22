@@ -79,7 +79,9 @@ const { height } = useResize()
 <template>
   <div class="w-full h-full">
     <co-info-header v-model:size="size" type="string">
-      <div><n-button size="tiny" type="primary">{{ $t('actions[5]') }}</n-button></div>
+      <div><n-button size="tiny" type="primary">
+        <template #icon><i class="i-pajamas:insert"></i></template>
+         {{ $t('actions[5]') }}</n-button></div>
     </co-info-header>
     <div class="p-5">
       <n-data-table

@@ -1,6 +1,3 @@
-import { h } from 'vue'
-import { NIcon } from 'naive-ui'
-import { Folder, KeyOutline } from '@vicons/ionicons5'
 import type { Tree } from '@/types.ts'
 import { useRoute } from 'vue-router'
 
@@ -13,11 +10,7 @@ const createTreeNode = (label: string, type: 'key' | 'folder', value?: string): 
       icon: type === 'key' ? 'key' : 'folder',
       type,
       id: ID(),
-      value,
-      prefix: () =>
-        h(NIcon, null, {
-          default: () => h(type === 'key' ? KeyOutline : Folder),
-        }),
+      value
     }
   } catch (error) {
     console.error('Error creating tree node:', error)

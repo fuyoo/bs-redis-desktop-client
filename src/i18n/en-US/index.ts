@@ -9,7 +9,7 @@ export default {
     ['Github', 'github.com/fuyoo/bs-redis-desktop-client'],
   ],
   settings: ['Settings', 'Language', 'Version'],
-  actions: ['Ok', 'Cancel', 'Delete', 'Edit', 'Add', 'Insert'],
+  actions: ['Ok', 'Cancel', 'Delete', 'Edit', 'Add', 'Insert','Download'],
   home: {
     form: {
       lable: ['Name', 'Host', 'Port', 'Database', 'Username', 'Password', 'Cluster'],
@@ -31,5 +31,6 @@ export default {
   normal: ['Database', 'Please select a key.'],
   timeFormat: ['d', 'h', 'm', 's', 'mill','never'],
   table: ['Data','Operate'],
-  tips: ['Current data type unsupported yet.']
+  tips: ['Current data type unsupported yet.',
+    'Due to the data being larger than {size}, the displayed data is truncated. You can click the button next to it to download the original data']
 }
