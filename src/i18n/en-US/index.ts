@@ -10,6 +10,11 @@ export default {
   ],
   settings: ['Settings', 'Language', 'Version'],
   actions: ['Ok', 'Cancel', 'Delete', 'Edit', 'Add', 'Insert','Download'],
+
+  keyForm: {
+    label: ['Key Name','Data','Expire'],
+    msg: ["Key name is required","Data is required"],
+  },
   home: {
     form: {
       lable: ['Name', 'Host', 'Port', 'Database', 'Username', 'Password', 'Cluster'],

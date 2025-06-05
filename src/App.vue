@@ -8,9 +8,13 @@ const { locate } = useLocate()
 
 <template>
   <n-config-provider :locale="locate">
+    <n-modal-provider>
+    <n-dialog-provider>
     <n-message-provider>
       <RouterView />
     </n-message-provider>
+    </n-dialog-provider>
+    </n-modal-provider>
   </n-config-provider>
 </template>
 

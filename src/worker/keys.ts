@@ -7,5 +7,4 @@ self.addEventListener('message', (e) => {
     parseTreeWithNameSpace(data, e.label)
   })
   self.postMessage(data)
-  console.log(data)
 });

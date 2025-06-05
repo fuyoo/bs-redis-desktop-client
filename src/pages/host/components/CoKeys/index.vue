@@ -1,14 +1,22 @@
-<script setup lang="ts">
-import { useReqStore } from '@/stores/req.ts'
-import { reactive, ref, h,computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import type { DropdownOption } from 'naive-ui'
-import { Folder, FolderOpenOutline, KeyOutline, Trash } from '@vicons/ionicons5'
-import { NIcon } from 'naive-ui'
-import { useResize } from '@/hooks/life.ts'
-import { ID } from '@/tools/keys.ts'
-import type { Tree } from '@/types.ts'
+<script setup lang="tsx">
+import {useReqStore} from '@/stores/req.ts'
+import {reactive, ref, h, computed} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+import {type DropdownOption} from 'naive-ui'
+import {Folder, FolderOpenOutline, KeyOutline, Trash} from '@vicons/ionicons5'
+import {NIcon} from 'naive-ui'
+import {useResize} from '@/hooks/life.ts'
+import {ID} from '@/tools/keys.ts'
+import type {RedisKeyType, Tree} from '@/types.ts'
 import KeysWorker from '@/worker/keys.ts?worker'
+import {
+  addHashKey,
+  addListKey,
+  addSetKey,
+  addStringKey,
+  addZSetKey,
+  options
+} from "@/pages/host/components/CoKeys/actions.tsx";
 
 const keysWorker = new KeysWorker()
 const router = useRouter()
@@ -63,7 +71,7 @@ const queryData = async (isSearch?: boolean) => {
       let arr = []
 
       if (search.cursor === '0') {
-        arr = v.splice(1).map((e) => ({ type: 'key', label: e, icon: 'key', id: ID() }) as Tree)
+        arr = v.splice(1).map((e) => ({type: 'key', label: e, icon: 'key', id: ID()}) as Tree)
       } else {
         arr = search.tree.concat(
           v.splice(1).map(
@@ -97,18 +105,13 @@ const queryData = async (isSearch?: boolean) => {
       if (original.cursor === '0') {
         originalKeyList = v
           .splice(1)
-          .map((e) => ({ type: 'key', label: e, icon: 'key', id: ID() }) as Tree)
+          .map((e) => ({type: 'key', label: e, icon: 'key', id: ID()}) as Tree)
       } else {
         v.splice(1).forEach((e) => {
-          originalKeyList.push({ type: 'key', label: e, icon: 'key', id: ID() })
+          originalKeyList.push({type: 'key', label: e, icon: 'key', id: ID()})
         })
       }
       original.cursor = v[0]
-      // const arr = [] as Tree[]
-      // originalKeyList.forEach((e) => {
-      //   parseTreeWithNameSpace(arr, e.label)
-      // })
-      // original.tree = arr
       keysWorker.postMessage({
         type: 'parse',
         data: originalKeyList,
@@ -127,7 +130,7 @@ const queryData = async (isSearch?: boolean) => {
 }
 queryData()
 
-const { height } = useResize(115)
+const {height} = useResize(115)
 const calcHeight = computed(() => {
   if (search.match !== '') {
     if (search.cursor === '0') {
@@ -148,7 +151,6 @@ const updatePrefixWithExpand = (
     action: 'expand' | 'collapse' | 'filter'
   },
 ) => {
-  console.log ('updatePrefixWithExpand', _keys, _option, meta)
   if (!meta.node) return
   switch (meta.action) {
     case 'expand':
@@ -180,13 +182,13 @@ const menuOptions = ref<DropdownOption[]>([
   {
     label: '删除',
     key: 'delete',
-    icon: () => h(NIcon, null, { default: () => h(Trash) }),
+    icon: () => h(NIcon, null, {default: () => h(Trash)}),
   },
 ])
 const x = ref(0)
 const y = ref(0)
 const supportDataType = ['string', 'list', 'set', 'zset', 'hash']
-const nodeProps = ({ option }: { option: Tree }) => {
+const nodeProps = ({option}: { option: Tree }) => {
   return {
     async onClick() {
       if (option.type === 'key') {
@@ -217,7 +219,6 @@ const nodeProps = ({ option }: { option: Tree }) => {
       showDropdownRef.value = true
       x.value = e.clientX
       y.value = e.clientY
-      console.log(e.clientX, e.clientY)
       e.preventDefault()
       focusNodeData = option
     },
@@ -229,7 +230,7 @@ const handleSelect = async (act: string) => {
   const data = focusNodeData
   if (act === 'delete') {
     if (data?.type === 'key') {
-      const { code } = await reqStore.reqWithHost<string>({
+      const {code} = await reqStore.reqWithHost<string>({
         path: '/cmd',
         data: ['del', data.value],
       })
@@ -263,7 +264,6 @@ const handleSelect = async (act: string) => {
 // throttle
 let timer = -1 as any
 const doFilter = async () => {
-  console.log(search)
   search.cursor = '0'
   clearTimeout(timer)
   if (search.match === '') return
@@ -276,6 +276,29 @@ function renderPrefix(data: { option: Tree }) {
   return h(NIcon, null, {
     default: () => h(data.option.type === 'key' ? KeyOutline : Folder),
   })
+}
+
+
+const dialog = useDialog()
+// add
+const addFn = (v: RedisKeyType) => {
+  switch (v) {
+    case "string":
+      addStringKey(dialog)
+      break;
+    case "hash":
+      addHashKey(dialog)
+      break;
+    case "set":
+      addSetKey(dialog)
+      break;
+    case "list":
+      addListKey(dialog)
+      break;
+    case "zset":
+      addZSetKey(dialog)
+      break;
+  }
 }
 </script>
 <template>
@@ -293,9 +316,11 @@ function renderPrefix(data: { option: Tree }) {
           <i class="i-material-symbols:database-search-rounded"></i>
         </template>
       </n-input>
-      <n-button round type="primary" size="tiny">
-        <i class="i-material-symbols:add"></i>
-      </n-button>
+      <n-popselect :on-update:value="addFn" :options="options" trigger="click">
+        <n-button round type="primary" size="tiny">
+          <i class="i-material-symbols:add"></i>
+        </n-button>
+      </n-popselect>
     </div>
     <n-tree
       ref="treeInstRef"
@@ -318,7 +343,7 @@ function renderPrefix(data: { option: Tree }) {
       v-show="original.cursor != '0'"
     >
       <n-button size="small" type="primary" :loading="reqStore.reqLoading" @click="loadMoreFn"
-        >加载更多
+      >加载更多
       </n-button>
     </div>
     <div
@@ -327,7 +352,7 @@ function renderPrefix(data: { option: Tree }) {
       v-show="search.cursor != '0'"
     >
       <n-button size="small" type="primary" :loading="reqStore.reqLoading" @click="loadMoreFn"
-        >加载更多
+      >加载更多
       </n-button>
     </div>
   </div>

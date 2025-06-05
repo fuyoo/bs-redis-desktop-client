@@ -8,12 +8,12 @@ const route = useRoute()
            min="260px"
            default-size="260px">
     <template #1>
+      <n-dialog-provider>
       <CoKeys></CoKeys>
+      </n-dialog-provider>
     </template>
     <template #2>
-      <n-modal-provider>
       <router-view :key="route.path"></router-view>
-      </n-modal-provider>
     </template>
   </n-split>
 </template>
