@@ -91,7 +91,7 @@ const { height } = useResize()
         :data="records"
         :loading="reqStore.reqLoading"
         :pagination="pager"
-        :style="{ height: `${height - 200}px` }"
+        :style="{ height: `${height - 140}px` }"
         flex-height
       />
     </div>

@@ -3,7 +3,7 @@ import { computed, ref, shallowRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useReqStore } from '@/stores/req.ts'
 import { useI18n } from 'vue-i18n'
-
+import { db, type ConnectionHost } from '@/db'
 const router = useRouter()
 const route = useRoute()
 const reqStore = useReqStore()
@@ -23,8 +23,16 @@ const tab = computed(() => {
     return 'info'
   }
 })
+const selectedDb = ref(Number((route.query.db as string) || -1))
 const dbs = shallowRef<Record<string, any>[]>([])
 const fetchDbs = async () => {
+  if (selectedDb.value < 0) {
+    // fetch host info
+    const inf = await db.hosts.get<ConnectionHost>(parseInt(route.params.id as string))
+    // set default db
+    selectedDb.value = Number(inf?.node?.[0].db || 0)
+  }
+
   const resp = await reqStore.reqWithHost<string>({
     path: '/cmd',
     data: ['config', 'get', 'databases']
@@ -35,10 +43,9 @@ const fetchDbs = async () => {
     value: i
   }))
 }
-const selectedDb = ref(Number((route.query.db as string) || 0))
 fetchDbs()
 const reload = async (v: number) => {
-  if (v == Number(route.query.db || 0)) {
+  if (v == Number(route.query.db || selectedDb.value)) {
     return
   }
   await router.replace({
@@ -82,7 +89,7 @@ const reload = async (v: number) => {
               trigger="click"
             >
               <span>
-                <span></span>{{ t('normal.0') }}.{{ route.query.db || 0 }}
+                <span></span>{{ t('normal.0') }}.{{ route.query.db || selectedDb }}
                 <i class="i-material-symbols:arrow-drop-down-rounded"></i>
               </span>
             </n-popselect>

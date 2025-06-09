@@ -23,7 +23,6 @@ const template = {
   maskClosable: false,
 }
 export const addStringKey = (dialog: DialogApiInjection) => {
-  console.log(dialog)
   dialog.create({
     ...template,
     title: "New",
