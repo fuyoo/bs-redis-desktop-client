@@ -1,27 +1,29 @@
 <script setup lang="tsx">
-import {useReqStore} from '@/stores/req.ts'
-import {reactive, ref, h, computed} from 'vue'
-import {useRoute, useRouter} from 'vue-router'
-import {type DropdownOption} from 'naive-ui'
-import {Folder, FolderOpenOutline, KeyOutline, Trash} from '@vicons/ionicons5'
-import {NIcon} from 'naive-ui'
-import {useResize} from '@/hooks/life.ts'
-import {ID} from '@/tools/keys.ts'
-import type {RedisKeyType, Tree} from '@/types.ts'
+import { useReqStore } from '@/stores/req.ts'
+import { reactive, ref, h, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { type DropdownOption } from 'naive-ui'
+import { Folder, FolderOpenOutline, KeyOutline, Trash } from '@vicons/ionicons5'
+import { NIcon } from 'naive-ui'
+import { useResize } from '@/hooks/life.ts'
+import { ID } from '@/tools/keys.ts'
+import type { RedisKeyType, Tree } from '@/types.ts'
 import KeysWorker from '@/worker/keys.ts?worker'
+import { useI18n } from 'vue-i18n'
 import {
   addHashKey,
   addListKey,
   addSetKey,
   addStringKey,
   addZSetKey,
-  options
-} from "@/pages/host/components/CoKeys/actions.tsx";
+  options,
+} from '@/pages/host/components/CoKeys/actions.tsx'
 
 const keysWorker = new KeysWorker()
 const router = useRouter()
 const reqStore = useReqStore()
 const route = useRoute()
+const { t } = useI18n()
 let originalKeyList = [] as Tree[]
 // this is to do search
 const search = reactive<{
@@ -71,7 +73,7 @@ const queryData = async (isSearch?: boolean) => {
       let arr = []
 
       if (search.cursor === '0') {
-        arr = v.splice(1).map((e) => ({type: 'key', label: e, icon: 'key', id: ID()}) as Tree)
+        arr = v.splice(1).map((e) => ({ type: 'key', label: e, icon: 'key', id: ID() }) as Tree)
       } else {
         arr = search.tree.concat(
           v.splice(1).map(
@@ -105,10 +107,10 @@ const queryData = async (isSearch?: boolean) => {
       if (original.cursor === '0') {
         originalKeyList = v
           .splice(1)
-          .map((e) => ({type: 'key', label: e, icon: 'key', id: ID()}) as Tree)
+          .map((e) => ({ type: 'key', label: e, icon: 'key', id: ID() }) as Tree)
       } else {
         v.splice(1).forEach((e) => {
-          originalKeyList.push({type: 'key', label: e, icon: 'key', id: ID()})
+          originalKeyList.push({ type: 'key', label: e, icon: 'key', id: ID() })
         })
       }
       original.cursor = v[0]
@@ -130,7 +132,7 @@ const queryData = async (isSearch?: boolean) => {
 }
 queryData()
 
-const {height} = useResize(115)
+const { height } = useResize(115)
 const calcHeight = computed(() => {
   if (search.match !== '') {
     if (search.cursor === '0') {
@@ -182,13 +184,13 @@ const menuOptions = ref<DropdownOption[]>([
   {
     label: '删除',
     key: 'delete',
-    icon: () => h(NIcon, null, {default: () => h(Trash)}),
+    icon: () => h(NIcon, null, { default: () => h(Trash) }),
   },
 ])
 const x = ref(0)
 const y = ref(0)
 const supportDataType = ['string', 'list', 'set', 'zset', 'hash']
-const nodeProps = ({option}: { option: Tree }) => {
+const nodeProps = ({ option }: { option: Tree }) => {
   return {
     async onClick() {
       if (option.type === 'key') {
@@ -230,12 +232,12 @@ const handleSelect = async (act: string) => {
   const data = focusNodeData
   if (act === 'delete') {
     if (data?.type === 'key') {
-      const {code} = await reqStore.reqWithHost<string>({
+      const { code } = await reqStore.reqWithHost<string>({
         path: '/cmd',
         data: ['del', data.value],
       })
       if (code === 0) {
-        await queryData(search.match !== "")
+        await queryData(search.match !== '')
       }
       return
     }
@@ -258,7 +260,7 @@ const handleSelect = async (act: string) => {
         data: ['del', key],
       })
     }
-    await queryData(search.match !== "")
+    await queryData(search.match !== '')
   }
 }
 // throttle
@@ -278,26 +280,25 @@ function renderPrefix(data: { option: Tree }) {
   })
 }
 
-
 const dialog = useDialog()
 // add
 const addFn = (v: RedisKeyType) => {
   switch (v) {
-    case "string":
-      addStringKey(dialog)
-      break;
-    case "hash":
-      addHashKey(dialog)
-      break;
-    case "set":
-      addSetKey(dialog)
-      break;
-    case "list":
-      addListKey(dialog)
-      break;
-    case "zset":
-      addZSetKey(dialog)
-      break;
+    case 'string':
+      addStringKey(dialog, t('title.0', { type: 'string' }))
+      break
+    case 'hash':
+      addHashKey(dialog, t('title.0', { type: 'hash' }))
+      break
+    case 'set':
+      addSetKey(dialog, t('title.0', { type: 'set' }))
+      break
+    case 'list':
+      addListKey(dialog, t('title.0', { type: 'list' }))
+      break
+    case 'zset':
+      addZSetKey(dialog, t('title.0', { type: 'zset' }))
+      break
   }
 }
 </script>
@@ -343,7 +344,7 @@ const addFn = (v: RedisKeyType) => {
       v-show="original.cursor != '0'"
     >
       <n-button size="small" type="primary" :loading="reqStore.reqLoading" @click="loadMoreFn"
-      >加载更多
+        >加载更多
       </n-button>
     </div>
     <div
@@ -352,7 +353,7 @@ const addFn = (v: RedisKeyType) => {
       v-show="search.cursor != '0'"
     >
       <n-button size="small" type="primary" :loading="reqStore.reqLoading" @click="loadMoreFn"
-      >加载更多
+        >加载更多
       </n-button>
     </div>
   </div>
