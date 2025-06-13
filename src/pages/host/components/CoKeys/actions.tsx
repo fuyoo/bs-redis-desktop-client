@@ -1,5 +1,8 @@
 import type { DialogApiInjection } from 'naive-ui/es/dialog/src/DialogProvider'
 import NewStringForm from '@/pages/host/components/CoKeys/compoents/NewStringForm.vue'
+import NewSetForm from '@/pages/host/components/CoKeys/compoents/NewSetForm.vue'
+import NewListForm from '@/pages/host/components/CoKeys/compoents/NewListForm.vue'
+import NewHashForm from '@/pages/host/components/CoKeys/compoents/NewHashForm.vue'
 
 export const options = [
   {
@@ -42,7 +45,7 @@ export const addListKey = (dialog: DialogApiInjection, title?: string) => {
   dialog.create({
     title: title ?? 'New Key',
     content: () => {
-      return <div>good job</div>
+      return <NewListForm></NewListForm>
     },
     draggable: true,
   })
@@ -52,7 +55,7 @@ export const addHashKey = (dialog: DialogApiInjection, title?: string) => {
   dialog.create({
     title: title ?? 'New Key',
     content: () => {
-      return <div>good job</div>
+      return <NewHashForm></NewHashForm>
     },
     draggable: true,
   })
@@ -62,7 +65,7 @@ export const addSetKey = (dialog: DialogApiInjection, title?: string) => {
   dialog.create({
     title: title ?? 'New Key',
     content: () => {
-      return <div>good job</div>
+      return <NewSetForm></NewSetForm>
     },
     draggable: true,
   })
