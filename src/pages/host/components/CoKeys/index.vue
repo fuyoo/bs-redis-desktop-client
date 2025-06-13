@@ -133,18 +133,6 @@ const queryData = async (isSearch?: boolean) => {
 queryData()
 
 const { height } = useResize(115)
-const calcHeight = computed(() => {
-  if (search.match !== '') {
-    if (search.cursor === '0') {
-      return height.value + 30 + 'px'
-    }
-    return height.value + 'px'
-  }
-  if (original.cursor === '0') {
-    return height.value + 30 + 'px'
-  }
-  return height.value + 'px'
-})
 const updatePrefixWithExpand = (
   _keys: Array<string | number>,
   _option: Array<Tree | null>,
@@ -329,11 +317,11 @@ const addFn = (v: RedisKeyType) => {
       show-line
       :render-prefix="renderPrefix"
       :on-update:expanded-keys="updatePrefixWithExpand"
-      :data="search.match != '' ? search.tree : original.tree"
+      :data="search.match !== '' ? search.tree : original.tree"
       virtual-scroll
       expand-on-click
       :node-props="nodeProps"
-      :style="{ height: calcHeight }"
+      :style="{ height: height+'px' }"
       key-field="id"
       children-field="children"
       class="whitespace-nowrap"
@@ -341,27 +329,27 @@ const addFn = (v: RedisKeyType) => {
     <div
       class="flex flex-1 w-full justify-center items-center"
       v-if="!search.match"
-      v-show="original.cursor != '0'"
     >
-      <n-button size="small" type="primary" :loading="reqStore.reqLoading" @click="loadMoreFn"
+      <n-button  v-show="original.cursor !== '0'" size="small" type="primary" :loading="reqStore.reqLoading" @click="loadMoreFn"
         >加载更多
       </n-button>
+      <n-button v-show="original.cursor === '0'" size="small" type="primary">更新数据</n-button>
     </div>
     <div
       v-else
       class="flex flex-1 w-full justify-center items-center"
-      v-show="search.cursor != '0'"
     >
-      <n-button size="small" type="primary" :loading="reqStore.reqLoading" @click="loadMoreFn"
+      <n-button v-show="search.cursor !== '0'" size="small" type="primary" :loading="reqStore.reqLoading" @click="loadMoreFn"
         >加载更多
       </n-button>
+      <n-button v-show="search.cursor === '0'" size="small" type="primary">更新数据</n-button>
     </div>
   </div>
   <n-dropdown
     trigger="manual"
     placement="bottom-start"
     :show="showDropdownRef"
-    :options="menuOptions as any"
+    :options="menuOptions"
     :x="x"
     :y="y"
     @select="handleSelect"

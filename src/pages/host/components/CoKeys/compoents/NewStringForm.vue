@@ -32,7 +32,7 @@ const submitFn = async () => {
   if (form.expires > 0) {
     await req.reqWithHost<boolean>({
       path:"/cmd",
-      data: ['pexpire',form.key,form.expires.toString()]
+      data: ['expire',form.key,form.expires.toString()]
     })
   }
 
@@ -42,7 +42,7 @@ const submitFn = async () => {
 </script>
 
 <template>
-  <n-form ref="formRef" label-placement="left" label-width="100px" size="small" :model="form" :rules="rules">
+  <n-form class="pt-5" ref="formRef" label-placement="left" label-width="100px" size="small" :model="form" :rules="rules">
     <n-form-item :label="$t('keyForm.label.0')" path="key" required>
       <n-input clearable v-model:value="form.key"></n-input>
     </n-form-item>
@@ -53,7 +53,7 @@ const submitFn = async () => {
     <n-form-item :label="$t('keyForm.label.2')">
       <n-input-number class="w-full" v-model:value="form.expires">
         <template #suffix>
-          ms
+          s
         </template>
       </n-input-number>
     </n-form-item>
