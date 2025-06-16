@@ -289,6 +289,15 @@ const addFn = (v: RedisKeyType) => {
       break
   }
 }
+const refreshFn = (s: boolean) => {
+  if (s) {
+    search.tree = []
+  } else {
+    original.tree = []
+  }
+  console.log('refreshFn',s, original)
+ queryData(s)
+}
 </script>
 <template>
   <div ref="treeBoxRef" class="w-full flex flex-col flex-1 justify-start items-start">
@@ -321,28 +330,40 @@ const addFn = (v: RedisKeyType) => {
       virtual-scroll
       expand-on-click
       :node-props="nodeProps"
-      :style="{ height: height+'px' }"
+      :style="{ height: height + 'px' }"
       key-field="id"
       children-field="children"
       class="whitespace-nowrap"
     />
-    <div
-      class="flex flex-1 w-full justify-center items-center"
-      v-if="!search.match"
-    >
-      <n-button  v-show="original.cursor !== '0'" size="small" type="primary" :loading="reqStore.reqLoading" @click="loadMoreFn"
+    <div class="flex flex-1 w-full justify-center items-center" v-if="!search.match">
+      <n-button
+        v-show="original.cursor !== '0'"
+        size="small"
+        type="primary"
+        :loading="reqStore.reqLoading"
+        @click="loadMoreFn"
         >加载更多
       </n-button>
-      <n-button v-show="original.cursor === '0'" size="small" type="primary">更新数据</n-button>
+      <n-button
+        @click="refreshFn(false)"
+        v-show="original.cursor === '0'"
+        size="small"
+        type="primary"
+        >更新数据
+      </n-button>
     </div>
-    <div
-      v-else
-      class="flex flex-1 w-full justify-center items-center"
-    >
-      <n-button v-show="search.cursor !== '0'" size="small" type="primary" :loading="reqStore.reqLoading" @click="loadMoreFn"
+    <div v-else class="flex flex-1 w-full justify-center items-center">
+      <n-button
+        v-show="search.cursor !== '0'"
+        size="small"
+        type="primary"
+        :loading="reqStore.reqLoading"
+        @click="loadMoreFn"
         >加载更多
       </n-button>
-      <n-button v-show="search.cursor === '0'" size="small" type="primary">更新数据</n-button>
+      <n-button @click="refreshFn(true)" v-show="search.cursor === '0'" size="small" type="primary"
+        >更新数据</n-button
+      >
     </div>
   </div>
   <n-dropdown

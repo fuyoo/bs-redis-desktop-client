@@ -25,6 +25,7 @@ const message = useMessage()
 const req = useReqStore()
 const submitFn = async () => {
   await formRef.value?.validate()
+  debugger
  await req.reqWithHost<boolean>({
     path:"/cmd",
     data: ['set',form.key,form.data ]
