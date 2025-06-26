@@ -98,10 +98,10 @@ const changeValue = () => {
       </n-space>
     </co-info-header>
     <div class="p-4">
-      <n-alert v-if="largerThan" type="info"  :bordered="false">
+      <n-alert v-if="largerThan" type="info" class="mb-4"  :bordered="false">
         {{$t('tips[1]',{size: '1Mb'})}} <n-button size="tiny" type="primary" quaternary>{{$t("actions.6")}}</n-button>
       </n-alert>
-      <textarea readonly class="mt-4 w-full h-full resize-none b-none outline-none" v-model="content" />
+      <textarea readonly class=" w-full h-full resize-none b-none outline-none" v-model="content" />
     </div>
   </div>
 </template>

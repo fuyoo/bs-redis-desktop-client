@@ -39,6 +39,7 @@ export default {
   tips: [
     'Current data type unsupported yet.',
     'Due to the data being larger than {size}, the displayed data is truncated. You can click the button next to it to download the original data',
+    'Currently Key {key} not found.'
   ],
   title: ['New {type} Type Key'],
 }

@@ -45,6 +45,10 @@ const routes: RouteRecordRaw[] = [
                 component: () => import('@/pages/host/key-types/co-set/index.vue'),
               },
               {
+                path: 'none/:key',
+                component: () => import('@/pages/host/key-types/co-none/index.vue'),
+              },
+              {
                 path: 'list/:key',
                 component: () => import('@/pages/host/key-types/co-list/index.vue'),
               },

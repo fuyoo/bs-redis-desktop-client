@@ -177,7 +177,7 @@ const menuOptions = ref<DropdownOption[]>([
 ])
 const x = ref(0)
 const y = ref(0)
-const supportDataType = ['string', 'list', 'set', 'zset', 'hash']
+const supportDataType = ['string', 'list', 'set', 'zset', 'hash','none']
 const nodeProps = ({ option }: { option: Tree }) => {
   return {
     async onClick() {
