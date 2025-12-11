@@ -61,7 +61,7 @@ async fn info(connection_info: ConnectionImpl, data: &str) -> Result<Response<Op
 
 /// secarch keys param.
 #[derive(Serialize, Deserialize, Debug)]
-struct KeyParam {
+pub struct KeyParam {
     pub cursor: Option<usize>,
     pub key: String,
     pub count: Option<usize>,

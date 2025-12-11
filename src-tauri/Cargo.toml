@@ -4,7 +4,7 @@ version = "2.0.0-1"
 description = "BS Redis Desktop Client"
 authors = ["you"]
 edition = "2021"
-crate-type = ["staticlib", "cdylib", "rlib"]
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -13,7 +13,7 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 # here we enable unstable features to support multiple webview.
-tauri = { version = "2", features = ["devtools", "unstable"] }
+tauri = { version = "2", features = ["tray-icon", "image-png","devtools", "unstable"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 log = { version = "0.4.21", features = [] }
@@ -23,7 +23,12 @@ redis = { version = "0.25.4", features = ["tokio-comp"] }
 anyhow = "1.0.86"
 async-trait = "0.1.81"
 embed_plist = "1.2.2"
+tauri-plugin-log = "2"
 
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-single-instance = "2"
+tauri-plugin-updater = "2"
+tauri-plugin-window-state = "2"
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
 custom-protocol = ["tauri/custom-protocol"]
