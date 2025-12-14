@@ -9,10 +9,15 @@ export default {
     ['Github', 'github.com/fuyoo/bs-redis-desktop-client'],
   ],
   settings: ['Settings', 'Language', 'Version'],
-  actions: ['Ok', 'Cancel', 'Delete', 'Modify', 'Add'],
+  actions: ['Ok', 'Cancel', 'Delete', 'Edit', 'Add', 'Insert', 'Download'],
+
+  keyForm: {
+    label: ['Key Name', 'Data', 'Expire'],
+    msg: ['Key name is required', 'Data is required'],
+  },
   home: {
     form: {
-      lable: ['Name', 'Host', 'Port', 'Database', 'Username', 'Password', 'Cluster'],
+      label: ['Name', 'Host', 'Port', 'Database', 'Username', 'Password', 'Cluster'],
       hint: [
         'Record Name(Required)',
         'Connection Host(Required)',
@@ -29,5 +34,12 @@ export default {
   },
   hostInfo: ['Memory', 'Server', 'Stats', 'Details', 'Key Anylaysis'],
   normal: ['Database', 'Please select a key.'],
-  timeFormat: ['d', 'h', 'm', 's', 'mill','never'],
+  timeFormat: ['d', 'h', 'm', 's', 'mill', 'never'],
+  table: ['Data', 'Operate'],
+  tips: [
+    'Current data type unsupported yet.',
+    'Due to the data being larger than {size}, the displayed data is truncated. You can click the button next to it to download the original data',
+    'Currently Key {key} not found.'
+  ],
+  title: ['New {type} Type Key'],
 }

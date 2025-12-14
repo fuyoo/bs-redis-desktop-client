@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, shallowRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useReqStore } from '@/stores/req.ts'
 import { useI18n } from 'vue-i18n'
+import { db, type ConnectionHost } from '@/db'
 const router = useRouter()
 const route = useRoute()
 const reqStore = useReqStore()
@@ -10,41 +11,49 @@ const { t } = useI18n()
 const changeTab = async (tab: string) => {
   await router.push({
     path: `/tab/${route.params.id}/main/${tab}`,
-    query: route.query,
+    query: route.query
   })
   console.log(route.path)
 }
 const tab = computed(() => {
   if (route.path.includes('database')) {
     return 'database'
-  } else {
+  }
+  else {
     return 'info'
   }
 })
-const dbs = shallowRef([])
+const selectedDb = ref(Number((route.query.db as string) || -1))
+const dbs = shallowRef<Record<string, any>[]>([])
 const fetchDbs = async () => {
+  if (selectedDb.value < 0) {
+    // fetch host info
+    const inf = await db.hosts.get<ConnectionHost>(parseInt(route.params.id as string))
+    // set default db
+    selectedDb.value = Number(inf?.node?.[0].db || 0)
+  }
+
   const resp = await reqStore.reqWithHost<string>({
     path: '/cmd',
-    data: ['config', 'get', 'databases'],
+    data: ['config', 'get', 'databases']
   })
 
   dbs.value = new Array(Number(resp.data.split('\n')[1])).fill(0).map((_, i) => ({
     label: `${t('normal.0')}.${i}`,
-    value: i,
+    value: i
   }))
 }
-const selectedDb = ref(Number((route.query.db as string) || 0))
 fetchDbs()
 const reload = async (v: number) => {
-  if (v == Number(route.query.db || 0)) {
+  if (v == Number(route.query.db || selectedDb.value)) {
     return
   }
   await router.replace({
     path: `/tab/${route.params.id}/main/database`,
     query: {
       ...route.query,
-      db: v,
-    },
+      db: v
+    }
   })
   location.reload()
 }
@@ -80,7 +89,7 @@ const reload = async (v: number) => {
               trigger="click"
             >
               <span>
-                <span></span>{{ t('normal.0') }}.{{ route.query.db || 0 }}
+                <span></span>{{ t('normal.0') }}.{{ route.query.db || selectedDb }}
                 <i class="i-material-symbols:arrow-drop-down-rounded"></i>
               </span>
             </n-popselect>
@@ -117,6 +126,7 @@ const reload = async (v: number) => {
 
 .active {
   position: relative;
+
   &::after {
     content: '';
     position: absolute;
@@ -128,6 +138,7 @@ const reload = async (v: number) => {
     background: var(--q-primary);
     color: var(--q-primary);
   }
+
   .c {
     color: var(--q-primary);
   }

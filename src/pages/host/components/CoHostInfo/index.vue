@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 
 import { useReqStore } from '@/stores/req.ts'
-import { showHostConfigureDetail } from '@/tools.ts'
+import { showHostConfigureDetail } from '@/tools'
 import { useRoute } from 'vue-router'
 const route = useRoute()
 const reqStore = useReqStore()

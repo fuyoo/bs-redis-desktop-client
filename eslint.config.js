@@ -35,4 +35,11 @@ export default [
       'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     },
   },
+  { parserOptions: {
+      ecmaVersion: 2020,
+      sourceType: 'module',
+      ecmaFeatures: {
+        jsx: true, // 确保开启 jsx 支持
+      },
+    }}
 ]
