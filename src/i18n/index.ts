@@ -47,7 +47,18 @@ export const injectI18n = (app: App) => {
   // Set i18n instance on app
   app.use(i18n)
 }
-
+export const getLocate = () => {
+  // obtain currently language
+  const local = localStorage.getItem('lang') ?? (Lang.getLocale() || 'zh-CN')
+  switch (local) {
+    case 'zh-CN':
+      return zhCN
+    case 'ruRU':
+      return ruRU
+    default:
+      return enUS
+  }
+}
 export const useLocate = () => {
   const $i18n = useI18n()
   const locate = computed(() => {

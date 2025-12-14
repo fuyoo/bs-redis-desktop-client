@@ -25,7 +25,8 @@ interface BackendResponse<T> {
 
 interface Tab {
   id: string
-  name?: string
+  name?: string,
+  url?: string
 }
 
 declare const __APP_PKG: Package

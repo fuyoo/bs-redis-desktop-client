@@ -10,8 +10,9 @@ use crate::{api::resp::Response, r_ok};
 pub struct Tab {
     pub id: String,
     pub name: Option<String>,
+    pub active: bool,
 }
-static TAB_BAR_HEIGHT: f64 = 50.;
+
 #[tauri::command]
 pub async fn tab_change(app: tauri::AppHandle, tab: Tab) -> Result<Response<()>> {
     // first we should check webview is created? if it has, show it hidden others.
@@ -35,14 +36,13 @@ pub async fn tab_change(app: tauri::AppHandle, tab: Tab) -> Result<Response<()>>
             let v = webview::WebviewBuilder::new(
                 &tab.id,
                 tauri::WebviewUrl::App(format!("/#/tab/{}/main/info", &tab.id).parse().unwrap()),
-            );
+            ).auto_resize();
             let fac = view.current_monitor()?.unwrap().scale_factor();
             let size = view.inner_size()?.to_logical::<f64>(fac);
-            println!("{:#?}", size);
             view.add_child(
                 v,
-                LogicalPosition::<f64>::new(0., TAB_BAR_HEIGHT),
-                LogicalSize::new(size.width, size.height - TAB_BAR_HEIGHT),
+                LogicalPosition::<f64>::new(0., 0.),
+                LogicalSize::new(size.width, size.height),
             )?;
             // here we hide other views
             let vbs = view.webviews();
@@ -64,10 +64,6 @@ pub async fn tab_change(app: tauri::AppHandle, tab: Tab) -> Result<Response<()>>
             if tab.id == "main" {
                 return Ok(r_ok!((), None));
             }
-            vb.set_position(LogicalPosition::<f64>::new(0., TAB_BAR_HEIGHT))?;
-            let fac = view.current_monitor()?.unwrap().scale_factor();
-            let size = view.inner_size()?.to_logical::<f64>(fac);
-            vb.set_size(LogicalSize::new(size.width, size.height - TAB_BAR_HEIGHT))?;
             vb.show()?;
         }
     }
@@ -112,20 +108,3 @@ pub async fn tab_close(app: tauri::AppHandle, tab: Tab) -> Result<Response<bool>
     Ok(r_ok!(v, None))
 }
 
-#[tauri::command]
-pub async fn tab_view_resize(app: tauri::AppHandle, id: String) -> Result<Response<bool>> {
-    // if tab id is main,we do not anything.
-    if &id == "main" {
-        return Ok(r_ok!(true, None));
-    }
-    if let Some(vb) = app.app_handle().get_webview(&id) {
-        // first we should check webview is created? if it has, show it and hidden others.
-        let view = app.app_handle().get_window("main").unwrap();
-        vb.set_position(LogicalPosition::new(0., TAB_BAR_HEIGHT))?;
-        let fac = view.current_monitor()?.unwrap().scale_factor();
-        let size = view.inner_size()?.to_logical::<f64>(fac);
-        vb.set_size(LogicalSize::new(size.width, size.height - TAB_BAR_HEIGHT))?;
-        vb.show()?;
-    }
-    Ok(r_ok!(true, None))
-}

@@ -10,6 +10,7 @@ import { ID } from '@/tools/keys.ts'
 import type { RedisKeyType, Tree } from '@/types.ts'
 import KeysWorker from '@/worker/keys.ts?worker'
 import { useI18n } from 'vue-i18n'
+import {dialog} from '@/tools'
 import {
   addHashKey,
   addListKey,
@@ -268,7 +269,6 @@ function renderPrefix(data: { option: Tree }) {
   })
 }
 
-const dialog = useDialog()
 // add
 const addFn = (v: RedisKeyType) => {
   switch (v) {

@@ -2,7 +2,7 @@
 import {useI18n} from "vue-i18n";
 import {type FormInst} from "naive-ui"
 import {useReqStore} from "@/stores/req.ts";
-
+import {dialog} from "@/tools"
 const {t} = useI18n()
 const form = reactive({
   key: "",
@@ -20,7 +20,7 @@ const rules = {
     renderMessage: () => t("keyForm.msg.1")
   }
 }
-const dialog =useDialog()
+
 const message = useMessage()
 const req = useReqStore()
 const submitFn = async () => {

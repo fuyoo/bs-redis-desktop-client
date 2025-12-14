@@ -54,7 +54,7 @@ fn build_try(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
             #[cfg(target_os = "macos")]
             let _tray = _tray.icon_as_template(true);
              #[cfg(not(target_os = "macos"))]
-            let icon = include_bytes!("../icons/icon.ico");
+            let icon = include_bytes!("../icons/icon.png");
              #[cfg(not(target_os = "macos"))]
             let img = tauri::image::Image::from_bytes(icon)?;
             #[cfg(not(target_os = "macos"))]
@@ -121,7 +121,6 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
             api::request,
             tabs::tab_list,
             tabs::tab_change,
-            tabs::tab_view_resize,
             tabs::tab_close
         ]);
     let app = app.on_page_load(|wb, evt| match evt.event() {

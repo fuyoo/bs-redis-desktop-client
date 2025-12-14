@@ -1,17 +1,16 @@
 <script lang="ts" setup>
-// adapt quasar dialog. custom component as quasar dialog content.
 import { type ConnectionHost, db } from '@/db'
-import { useDialogPluginComponent } from 'quasar'
+import { dialog } from '@/tools'
 import { reactive, shallowRef, toRaw } from 'vue'
-defineEmits([
-  ...useDialogPluginComponent.emits,
-])
+import type { FormInst, FormItemRule, FormRules } from 'naive-ui'
+import { useI18n } from 'vue-i18n'
+import { useTabStore } from '@/stores/tab.ts'
+const { t } = useI18n()
 const props = defineProps<{
   data?: ConnectionHost
 }>()
-//why have below code? refrence https://quasar.dev/quasar-plugins/dialog#writing-the-custom-component
-const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
-const formModel = reactive<ConnectionHost>({
+
+const formModel = ref<ConnectionHost>({
   name: '',
   node: [
     {
@@ -19,53 +18,153 @@ const formModel = reactive<ConnectionHost>({
     },
   ],
   cluster: false,
-  ...(toRaw(props.data)),
+  ...toRaw(props.data),
 })
-const formRef = shallowRef<any>()
+const resetForm = () => {
+  formModel.value = {
+    name: '',
+    node: [
+      {
+        host: '',
+        port: '',
+        db: '',
+        username: '',
+        password: '',
+      },
+    ],
+    cluster: false,
+  }
+}
+watch(
+  () => props.data,
+  (val) => {
+    if (!val) {
+      resetForm()
+      return
+    }
+    formModel.value = { ...val }
+    formRef.value?.restoreValidation()
+  },
+)
+const formRef = shallowRef<FormInst | null>(null)
 
-console.log(db.hosts)
+const rules: FormRules = {
+  name: [
+    {
+      required: true,
+      validator(rule: FormItemRule, value: string) {
+        if (!value || value.length === 0) {
+          return new Error(t('home.form.rule.0'))
+        }
+        return true
+      },
+      trigger: ['input', 'blur'],
+    },
+  ],
+  'node.0.host': [
+    {
+      required: true,
+      validator(rule: FormItemRule, value: string) {
+        if (!value || value.length === 0) {
+          return new Error(t('home.form.rule.1'))
+        }
+        return true
+      },
+      trigger: ['input', 'blur'],
+    },
+  ],
+}
+const loading = reactive({
+  test: false,
+  submit: false,
+})
 const submitFn = async () => {
-  const r = await formRef.value?.validate()
-  if (!r) return
-  await db.hosts.put(toRaw(formModel))
-  onDialogOK(toRaw(formModel))
+  await formRef.value?.validate()
+  console.log(formModel)
+  const v = JSON.parse(JSON.stringify(formModel.value))
+  await db.hosts.put(v)
+  resetForm()
+}
+const testConnection = async () => {
+  await formRef.value?.validate()
+  try {
+    loading.test = true
+  } finally {
+    loading.test = false
+  }
+}
+const doConnection = async () => {
+  await formRef.value?.validate()
+  try {
+    loading.submit = true
+  } finally {
+    loading.submit = false
+  }
+}
+const handlePositive = async (id: number) => {
+  await db.hosts.delete(id)
+}
+const tab = useTabStore()
+const connectTo = async () => {
+  await tab.change({ id: ''+(props.data?.id || 0), name: props.data?.name })
+  console.log('connect to', props.data)
 }
 </script>
-<template>
-  <div>
-    <q-dialog ref="dialogRef" @hide="onDialogHide">
-      <q-card class="q-dialog-plugin">
-        <q-bar>
-          <span></span>
-          <q-space />
-          <q-btn dense flat icon="close" v-close-popup> </q-btn>
-        </q-bar>
 
-        <q-scroll-area class="h-460px">
-          <q-form ref="formRef" class="q-gutter-md p-4">
-            <q-input v-model="formModel.name" filled :label="$t('home.form.label[0]')" :hint="$t('home.form.hint[0]')"
-              lazy-rules :rules="[(val) => (val && val.length > 0) || $t('home.form.rule[0]')]" />
-            <q-input v-model="formModel.node[0].host" filled :label="$t('home.form.label[1]')"
-              :hint="$t('home.form.hint[1]')" lazy-rules
-              :rules="[(val) => (val && val.length > 0) || $t('home.form.rule[1]')]" />
-            <q-input v-model="formModel.node[0].port" filled :label="$t('home.form.label[2]')"
-              :hint="$t('home.form.hint[2]')" />
-            <q-input v-model="formModel.node[0].db" filled :label="$t('home.form.label[3]')"
-              :hint="$t('home.form.hint[3]')" />
-            <q-input v-model="formModel.node[0].username" filled :label="$t('home.form.label[4]')"
-              :hint="$t('home.form.hint[4]')" />
-            <q-input v-model="formModel.node[0].password" filled :label="$t('home.form.label[5]')"
-              :hint="$t('home.form.hint[5]')" />
-            <q-toggle v-model="formModel.cluster" :label="$t('home.form.label[6]')" />
-          </q-form>
-        </q-scroll-area>
-        <!-- buttons example -->
-        <q-card-actions align="right">
-          <q-btn color="primary" :label="$t('actions[0]')" @click="submitFn" />
-          <q-btn color="primary" :label="$t('actions[1]')" @click="onDialogCancel" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-  </div>
+<template>
+  <n-form ref="formRef" :model="formModel" :rules="rules" label-placement="left" label-width="100">
+    <n-form-item path="name" :label="$t('home.form.label[0]')">
+      <n-input v-model:value="formModel.name" :placeholder="$t('home.form.hint[0]')" />
+    </n-form-item>
+
+    <n-form-item path="node.0.host" :label="$t('home.form.label[1]')">
+      <n-input v-model:value="formModel.node[0].host" :placeholder="$t('home.form.hint[1]')" />
+    </n-form-item>
+
+    <n-form-item :label="$t('home.form.label[2]')">
+      <n-input v-model:value="formModel.node[0].port" :placeholder="$t('home.form.hint[2]')" />
+    </n-form-item>
+
+    <n-form-item :label="$t('home.form.label[3]')">
+      <n-input v-model:value="formModel.node[0].db" :placeholder="$t('home.form.hint[3]')" />
+    </n-form-item>
+
+    <n-form-item :label="$t('home.form.label[4]')">
+      <n-input v-model:value="formModel.node[0].username" :placeholder="$t('home.form.hint[4]')" />
+    </n-form-item>
+
+    <n-form-item :label="$t('home.form.label[5]')">
+      <n-input
+        v-model:value="formModel.node[0].password"
+        type="password"
+        :placeholder="$t('home.form.hint[5]')"
+      />
+    </n-form-item>
+
+    <!--    <n-form-item :label="$t('home.form.label[6]')">
+      <n-switch v-model:value="formModel.cluster" />
+    </n-form-item>-->
+    <n-space justify="center">
+      <n-button tertiary @click="testConnection">
+        {{ $t('actions[7]') }}
+      </n-button>
+      <n-button @click="doConnection" v-if="props.data?.id" type="primary">
+        {{ $t('actions[8]') }}
+      </n-button>
+      <n-button type="primary" @click="submitFn" v-if="props.data?.id">
+        {{ $t('actions[3]') }}
+      </n-button>
+      <n-button type="primary" @click="submitFn" v-else>
+        {{ $t('actions[0]') }}
+      </n-button>
+      <n-popconfirm @positive-click="() => handlePositive(props.data?.id)" v-if="props.data?.id">
+        <template #trigger>
+          <n-button @click="connectTo" type="warning">
+            {{ $t('actions[2]') }}
+          </n-button>
+        </template>
+        {{ $t('tips[3]') }}
+      </n-popconfirm>
+    </n-space>
+  </n-form>
 </template>
-<style lang="scss"></style>

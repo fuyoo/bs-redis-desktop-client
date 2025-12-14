@@ -1,5 +1,5 @@
 <template>
-  <q-page class="flex flex-column items-start justify-center">
+  <div class="flex flex-column items-start justify-center">
     <div class="mt-10 w-120">
       <div class="flex justify-center items-center flex-col pb-5">
         <img src="@/assets/icon.ico" class="w-20 h-20">
@@ -17,7 +17,7 @@
         <q-badge color="red" floating>new</q-badge>
       </div>
     </div>
-  </q-page>
+  </div>
 </template>
 
 <script setup lang="ts">

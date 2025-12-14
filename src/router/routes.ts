@@ -4,6 +4,15 @@ import settings from '@/pages/settings/index.vue'
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
+    component: () => import('@/layouts/layout.vue'),
+    redirect: '/home',
+    children: [
+      { path: '/home', component: () => import('@/pages/home/home.vue') },
+      { path: '/settings', component: settings },
+    ]
+  },
+  /*{
+    path: '/',
     component: () => import('@/layouts/MainLayout.vue'),
     redirect: '/home',
     children: [
@@ -18,7 +27,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/host/detail.vue'),
       },
     ],
-  },
+  },*/
   {
     path: '/tab/:id',
     component: () => import('@/layouts/HostViewLayout.vue'),
