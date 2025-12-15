@@ -4,20 +4,21 @@ import type { ConfigProviderProps } from 'naive-ui'
 import { createDiscreteApi, darkTheme, lightTheme } from 'naive-ui'
 import { computed, ref } from 'vue'
 import { getLocate } from '@/i18n'
+import { parse } from 'platform'
 const theme = ref<'light' | 'dark'>('light')
 const configProviderPropsRef = computed<ConfigProviderProps>(() => {
-  const  locate  = getLocate()
-  return ({
+  const locate = getLocate()
+  return {
     theme: theme.value === 'light' ? lightTheme : darkTheme,
-    locate
-  })
+    locate,
+  }
 })
 
 export const { message, notification, dialog, loadingBar, modal } = createDiscreteApi(
   ['message', 'dialog', 'notification', 'loadingBar', 'modal'],
   {
-    configProviderProps: configProviderPropsRef
-  }
+    configProviderProps: configProviderPropsRef,
+  },
 )
 
 export const showHostConfigureDetail = async (id: string) => {
@@ -35,13 +36,22 @@ export const showHostConfigureDetail = async (id: string) => {
 }
 
 export const dataToHuman = (data: string): string => {
-  const bytes = parseInt(data, 10);
-  console.log(bytes);
-  if (isNaN(bytes) || bytes < 0) return '0 B';
+  const bytes = parseInt(data, 10)
+  console.log(bytes)
+  if (isNaN(bytes) || bytes < 0) return '0 B'
 
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-  const index = Math.floor(Math.log(bytes) / Math.log(1024));
-  const size = bytes / Math.pow(1024, index);
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+  const index = Math.floor(Math.log(bytes) / Math.log(1024))
+  const size = bytes / Math.pow(1024, index)
 
-  return `${size.toFixed(0)} ${sizes[index]}`;
-};
+  return `${size.toFixed(0)} ${sizes[index]}`
+}
+
+export const Platform = (() => {
+  const os = parse()
+  return {
+    macos: os.os?.family?.includes('OS X'),
+    windows: os.os?.family?.includes('Windows'),
+    linux: os.os?.family?.includes('Linux'),
+  }
+})()

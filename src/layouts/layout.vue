@@ -1,40 +1,43 @@
 <script setup lang="ts">
-import { invoke } from '@tauri-apps/api/core'
 import { dialog } from '@/tools'
 import { useI18n } from 'vue-i18n'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { useRoute, useRouter } from 'vue-router'
-
+import { Platform } from "@/tools"
+import { listen } from '@tauri-apps/api/event'
+import { useTab } from '../hooks/tab'
 const router = useRouter()
 const route = useRoute()
-const homePageId = 'home-page'
+const homePageId = 'main'
+const settingsId = 'settings'
+const currentRoute = route.fullPath
+const { t } = useI18n()
 // focus tab.
 const name = ref('')
-if (route.path.indexOf('/home') > -1) name.value = 'home-page'
+if (route.path.indexOf('/home') > -1) name.value = homePageId
 onMounted(() => {
   const d = document.querySelector('.n-tabs-pad')
   if (d) {
     d.innerHTML = `<div data-tauri-drag-region style="height:100%;width:100%;"></div>`
   }
 })
-const tabList = ref<Tab[]>([])
-const getTabs = async () => {
-  const resp = await invoke<BackendResponse<Tab[]>>('tab_list')
-  tabList.value = [
-    {
-      id: 'home-page',
-      name: t('home.name'),
-    },
-    ...resp.data,
-  ]
+const { tabList, update, current, change, close } = useTab(t)
+update()
+  .then(() => {
+    const tab = current()
+    if (tab) {
+      name.value = tab.id
+    }
+  })
+const handleClose = async (tabName: string) => {
+  console.log('close', tabName)
+  close(tabName)
 }
-getTabs()
 enum Operation {
   mini,
   max,
   exit,
 }
-const { t } = useI18n()
 const handleOperation = async (o: Operation) => {
   switch (o) {
     case Operation.exit: {
@@ -57,55 +60,45 @@ const isHome = computed(() => {
   return name.value == homePageId
 })
 const handleSetting = () => {
-  name.value = ''
-  router.push('/settings')
+  change({
+    id: settingsId,
+    name: 'settings',
+    url: "/#/settings"
+  })
 }
 
 const handleBeforeLeave = async (tabName: string) => {
-  if (tabName == 'home-page') {
-    await router.push({
-      path: `/home`,
-      query: route.query,
-    })
-    return true
-  }
-  return true
+  const tab = tabList.value.find((e) => e.id == tabName)!
+  change(tab)
+  return false
 }
+const unlisten = listen("update-tabs", (evt) => {
+  update()
+})
+
+onBeforeUnmount(async () => {
+  (await unlisten)()
+})
 </script>
 
 <template>
   <div class="flex flex-col w-100vw h-100vh">
     <div class="relative z-10" data-tauri-drag-region>
-      <n-tabs
-        tab-class="py-1!"
-        class="h-40px"
-        data-tauri-drag-region
-        size="small"
-        type="card"
-        @before-leave="handleBeforeLeave"
-        v-model:value="name"
-      >
+      <n-tabs @close="handleClose" tab-class="py-1!" class="h-40px" data-tauri-drag-region size="small" type="card"
+        @before-leave="handleBeforeLeave" v-model:value="name">
         <template #prefix>
-          <div class="px-4 relative">
-            bs
+          <div class="px-4 relative" :class="{ 'pl-50px': Platform.macos }">
             <div class="absolute left-0 top-0 w-full h-full" data-tauri-drag-region></div>
           </div>
         </template>
-        <n-tab
-          class="mt-10px"
-          v-for="item in tabList"
-          :closable="item.id != homePageId"
-          :key="item.id"
-          :label="item.name"
-          :name="item.id"
-          ><template #default>
+        <n-tab class="mt-10px" v-for="item in tabList" :closable="item.id != homePageId" :key="item.id"
+          :label="item.name" :name="item.id"><template #default>
             <n-space :size="6">
               <i class="i-material-symbols:home-app-logo" v-if="isHome"></i>
               <i class="i-material-symbols:home-app-logo" v-else></i>
               {{ item.name }}
             </n-space>
-          </template></n-tab
-        >
+          </template></n-tab>
         <template #suffix>
           <n-space class="pr-3">
             <n-button @click="handleSetting" quaternary circle size="small">
@@ -113,23 +106,18 @@ const handleBeforeLeave = async (tabName: string) => {
                 <i class="i-ic:outline-settings"></i>
               </template>
             </n-button>
-            <n-button @click="handleOperation(Operation.mini)" quaternary circle size="small">
+            <n-button v-if="!Platform.macos" @click="handleOperation(Operation.mini)" quaternary circle size="small">
               <template #icon>
                 <i class="i-material-symbols:check-indeterminate-small"></i>
               </template>
             </n-button>
-            <n-button @click="handleOperation(Operation.max)" quaternary circle size="small">
+            <n-button v-if="!Platform.macos" @click="handleOperation(Operation.max)" quaternary circle size="small">
               <template #icon>
                 <i class="i-fluent:full-screen-maximize-16-filled"></i>
               </template>
             </n-button>
-            <n-button
-              @click="handleOperation(Operation.exit)"
-              type="error"
-              quaternary
-              circle
-              size="small"
-            >
+            <n-button v-if="!Platform.macos" @click="handleOperation(Operation.exit)" type="error" quaternary circle
+              size="small">
               <template #icon>
                 <i class="i-material-symbols:close-rounded"></i>
               </template>

@@ -9,7 +9,18 @@ export default {
     ['Github', 'github.com/fuyoo/bs-redis-desktop-client'],
   ],
   settings: ['Settings', 'Language', 'Version'],
-  actions: ['Ok', 'Cancel', 'Delete', 'Edit', 'Add', 'Insert', 'Download', 'Test Connection','Connect'],
+  actions: [
+    'Ok',
+    'Cancel',
+    'Delete',
+    'Edit',
+    'Add',
+    'Insert',
+    'Download',
+    'Test Connection',
+    'Connect',
+    'Save',
+  ],
 
   keyForm: {
     label: ['Key Name', 'Data', 'Expire'],
@@ -41,7 +52,7 @@ export default {
     'Current data type unsupported yet.',
     'Due to the data being larger than {size}, the displayed data is truncated. You can click the button next to it to download the original data',
     'Currently Key {key} not found.',
-    'Are sure delete it？'
+    'Are sure delete it？',
   ],
   title: ['New {type} Type Key'],
 }

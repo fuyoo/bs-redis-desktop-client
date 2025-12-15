@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use anyhow::Result;
 use async_trait::async_trait;
 use redis::{Client, Cmd, FromRedisValue, Value};
@@ -16,7 +18,7 @@ pub struct ConnectionInfo {
 // connection impl
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ConnectionImpl {
-    pub id: usize,
+    pub id: Option<usize>,
     pub name: String,
     pub node: Vec<ConnectionInfo>,
     pub cluster: Option<bool>,
@@ -44,7 +46,7 @@ pub struct RedisSingleClient(Client);
 #[async_trait]
 impl RedisClientImpl for RedisSingleClient {
     async fn do_command<T: FromRedisValue>(self, cmd: &Cmd) -> anyhow::Result<T> {
-        let mut conn = self.0.get_connection()?;
+        let mut conn = self.0.get_connection_with_timeout(Duration::from_secs(5))?;
         return Ok(cmd.query::<T>(&mut conn)?);
     }
 }

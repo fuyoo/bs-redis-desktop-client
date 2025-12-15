@@ -13,8 +13,9 @@
         class="flex justify-between items-center px-5 h-12 bg-gray-50 mb-5 rounded relative select-none cursor-pointer">
         <span class="text-4"><i class="i-material-symbols:tips-and-updates-outline-rounded text-5 mr-1"></i>
           {{ $t('settings[2]') }}</span>
-        <span class="relative">v{{ version }}</span>
-        <q-badge color="red" floating>new</q-badge>
+        <n-badge value="新">
+          <span class="relative">v{{ version }}</span>
+        </n-badge>
       </div>
     </div>
   </div>

@@ -1,7 +1,7 @@
-import { createI18n,useI18n } from 'vue-i18n'
+import { createI18n, useI18n } from 'vue-i18n'
 
 import messages from './lang'
-import { Lang, type QuasarLanguage } from 'quasar'
+
 import { type App, computed } from 'vue'
 import { enUS, ruRU, zhCN } from 'naive-ui'
 
@@ -24,20 +24,8 @@ declare module 'vue-i18n' {
 /* eslint-enable @typescript-eslint/no-empty-object-type */
 
 export const injectI18n = (app: App) => {
-  // import lang pack
-  const languages = import.meta.glob('../../node_modules/quasar/lang/(zh-CN|en-US).js', {
-    eager: true,
-    import: 'default',
-  })
   // obtain currently language
-  const local = localStorage.getItem('lang') ?? (Lang.getLocale() || 'zh-CN')
-  // set currently language
-  Object.keys(languages).forEach((k) => {
-    const val = languages[k] as QuasarLanguage
-    if (val.isoName == local) {
-      Lang.set(val)
-    }
-  })
+  const local = localStorage.getItem('lang') ?? 'en-US'
   const i18n = createI18n<{ message: MessageSchema }, MessageLanguages>({
     locale: local,
     legacy: false,
@@ -49,7 +37,7 @@ export const injectI18n = (app: App) => {
 }
 export const getLocate = () => {
   // obtain currently language
-  const local = localStorage.getItem('lang') ?? (Lang.getLocale() || 'zh-CN')
+  const local = localStorage.getItem('lang') ?? 'en-US'
   switch (local) {
     case 'zh-CN':
       return zhCN

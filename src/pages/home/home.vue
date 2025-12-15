@@ -3,17 +3,11 @@
     <div class="w-188px pl-2 pt-2 pb-2 h-full">
       <n-button block @click="newConnection">新链接</n-button>
       <div class="h-2"></div>
-      <n-tabs
-        tab-class="relative h-9"
-        placement="left"
-        size="small"
-        style="height: calc(100vh - 100px)"
-        type="card"
-        v-model:value="tab"
-      >
+      <n-tabs tab-class="relative h-9" placement="left" size="small" style="height: calc(100vh - 100px)" type="card"
+        v-model:value="tab">
         <n-tab v-for="item in hosts" :name="`${item.id}`" :title="item.name" class="w-180px">
           <template #default>
-            <div class="absolute left-0 right-8 h-full flex items-center indent-1em">
+            <div class="absolute left-0 right-0 h-full flex items-center indent-1em">
               <n-ellipsis>{{ item.name }}</n-ellipsis>
             </div>
           </template>
@@ -21,10 +15,7 @@
       </n-tabs>
     </div>
     <div class="flex-1 relative">
-      <n-scrollbar
-        class="w-full h-full absolute left-0 top-0"
-        content-class="flex justify-center items-start"
-      >
+      <n-scrollbar class="w-full h-full absolute left-0 top-0" content-class="flex justify-center items-start">
         <div class="p-4 m-5 w-600px rounded-lg">
           <CoHostForm :data="tabData"></CoHostForm>
         </div>
@@ -51,13 +42,13 @@ watch(
 watch(
   () => tab.value,
   (val) => {
-    console.log(hosts.value, val)
     const v = toRaw(hosts.value.find((e) => e.id?.toString() == val))
-    if ( v) tabData.value = toRaw(v)
+    if (v) tabData.value = toRaw(v)
     else tabData.value = undefined
   },
 )
 const newConnection = () => {
   tab.value = 'new'
 }
+
 </script>

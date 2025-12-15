@@ -2,9 +2,9 @@ import { defineStore } from 'pinia'
 
 import { db, type ConnectionHost } from '@/db'
 import { invoke } from '@tauri-apps/api/core'
-import { Notify } from 'quasar'
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
+import { message } from '@/tools'
 export interface CommonRequestParams {
   connectionInfo: ConnectionHost
   path: string
@@ -27,16 +27,7 @@ const request = async <T>({
   const body = JSON.parse(resp || '{"code":-1,"msg":"Response is empty"}') as BackendResponse<T>
   // if code is not 0, show error message
   if (body.code !== 0 && notify !== false) {
-    Notify.create({
-      position: 'bottom',
-      message: body.msg,
-      color: 'negative',
-      timeout: 0,
-      attrs: {
-        style: 'line-height: 1;',
-      },
-      actions: [{ icon: 'close', dense: true, rounded: true, handler: () => {}, color: 'yellow' }],
-    })
+    message.warning(body.msg)
   }
   return body
 }
@@ -46,7 +37,7 @@ export const useReqStore = defineStore('req', () => {
   // at here, we should get host from route params.
   const route = useRoute()
   // define a  timer to throttle the loading status
-  let timer:any;
+  let timer: any
   const reqWithHost = async <R>(option: {
     path: string
     data?: any
@@ -70,11 +61,11 @@ export const useReqStore = defineStore('req', () => {
         notify: option.notify,
       })
       // throttle timer
-      timer = setTimeout(()=>reqLoading.value=false,100)
+      timer = setTimeout(() => (reqLoading.value = false), 100)
       return resp
     } catch (e) {
       // throttle timer
-      timer = setTimeout(()=>reqLoading.value=false,100)
+      timer = setTimeout(() => (reqLoading.value = false), 100)
       throw e
     }
   }
