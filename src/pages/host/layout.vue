@@ -28,7 +28,7 @@ const dbs = shallowRef<Record<string, any>[]>([])
 const fetchDbs = async () => {
   if (selectedDb.value < 0) {
     // fetch host info
-    const inf = await db.hosts.get<ConnectionHost>(parseInt(route.params.id as string))
+    const inf = await db.hosts.get(parseInt(route.params.id as string))
     // set default db
     selectedDb.value = Number(inf?.node?.[0].db || 0)
   }
@@ -59,62 +59,31 @@ const reload = async (v: number) => {
 }
 </script>
 <template>
-  <div class="pt-2">
-    <n-tabs
-      type="card"
-      size="small"
-      :default-value="tab"
-      :on-update:value="changeTab"
-      animated
-      pane-wrapper-style="display:none"
-    >
+  <div class="absolute left-0 top-1px w-full h-full flex flex-col">
+    <div class="h-2 shrink-0"></div>
+    <n-tabs class="shrink-0" type="card" size="small" :default-value="tab" :on-update:value="changeTab" animated
+      pane-wrapper-style="display:none">
       <template #prefix>
         <div class="w-5"></div>
       </template>
-      <n-tab-pane name="info" tab="info">
-        <template #tab>
-          <i class="i-hugeicons:cpu-settings text-5"></i>
-        </template>
-      </n-tab-pane>
-      <n-tab-pane name="database" tab="database">
-        <template #tab>
-          <i class="i-hugeicons:database text-5"></i>
-
-          <div class="ml-1" v-if="route.query.db || tab == 'database'" @click.stop>
-            <n-popselect
-              v-model:value="selectedDb"
-              :on-update:value="reload"
-              scrollable
-              :options="dbs"
-              trigger="click"
-            >
-              <span>
-                <span></span>{{ t('normal.0') }}.{{ route.query.db || selectedDb }}
-                <i class="i-material-symbols:arrow-drop-down-rounded"></i>
-              </span>
-            </n-popselect>
-          </div>
-        </template>
-      </n-tab-pane>
+      <n-tab name="info" tab="info">
+        <i class="i-hugeicons:cpu-settings text-5"></i>
+      </n-tab>
+      <n-tab name="database" tab="database">
+        <i class="i-hugeicons:database text-5"></i>
+        <div class="ml-1" v-if="route.query.db || tab == 'database'" @click.stop>
+          <n-popselect v-model:value="selectedDb" :on-update:value="reload" scrollable :options="dbs" trigger="click">
+            <span>
+              <span></span>{{ t('normal.0') }}.{{ route.query.db || selectedDb }}
+              <i class="i-material-symbols:arrow-drop-down-rounded"></i>
+            </span>
+          </n-popselect>
+        </div>
+      </n-tab>
     </n-tabs>
-  </div>
-  <!-- <div class="flex gap-4 h-40px b-b-1px b-b-solid items-center b-b-#eee">
-    <div class="ml-5 h-full flex items-center" :class="{ active: tab === 'info' }">
-      <q-btn flat round dense @click="changeTab('info')">
-        <i class="i-hugeicons:cpu-settings text-5 c"></i>
-      </q-btn>
+    <div class="flex flex-1 relative">
+      <router-view />
     </div>
-    <div class="h-full flex items-center" :class="{ active: tab === 'database' }">
-      <q-btn flat round dense @click="changeTab('database')">
-        <i class="i-hugeicons:database text-5 c"></i>
-      </q-btn>
-      <n-dropdown trigger="click" :options="dbs" @select="handleSelect">
-        <n-button>点击！</n-button>
-      </n-dropdown>
-    </div>
-  </div> -->
-  <div class="w-full bg-white h-[calc(100%-41px)] overflow-auto">
-    <router-view />
   </div>
 </template>
 

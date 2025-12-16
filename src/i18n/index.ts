@@ -1,3 +1,4 @@
+import { listen } from '@tauri-apps/api/event'
 import { createI18n, useI18n } from 'vue-i18n'
 
 import messages from './lang'
@@ -50,6 +51,7 @@ export const getLocate = () => {
 export const useLocate = () => {
   const $i18n = useI18n()
   const locate = computed(() => {
+    console.log($i18n.locale.value)
     switch ($i18n.locale.value) {
       case 'zh-CN':
         return zhCN
@@ -59,5 +61,12 @@ export const useLocate = () => {
         return enUS
     }
   })
-  return { locate }
+  const listenLocateChange = () => {
+    listen('emit-event', (e: any) => {
+      if (e.evt === 'change_locale') {
+        $i18n.locale.value = e.payload.data
+      }
+    })
+  }
+  return { locate, listenLocateChange }
 }

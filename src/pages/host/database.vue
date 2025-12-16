@@ -4,18 +4,13 @@ import CoKeys from '@/pages/host/components/CoKeys/index.vue'
 const route = useRoute()
 </script>
 <template>
-  <n-split direction="horizontal"  :resize-trigger-size="1" max="600px"
-           min="260px"
-           default-size="260px">
+  <n-split direction="horizontal" :resize-trigger-size="1" max="600px" min="260px" default-size="260px">
     <template #1>
-      <n-dialog-provider>
       <CoKeys></CoKeys>
-      </n-dialog-provider>
     </template>
     <template #2>
       <router-view :key="route.path"></router-view>
     </template>
   </n-split>
 </template>
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

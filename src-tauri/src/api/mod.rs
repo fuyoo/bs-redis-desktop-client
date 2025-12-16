@@ -5,7 +5,7 @@ use crate::api::rdb::{ConnectionImpl, RedisClientImpl};
 use crate::api::resp::Response;
 use redis::{cmd, Value};
 use serde::{Deserialize, Serialize};
-use tauri::{command, Result};
+use tauri::{Emitter, Manager, Result, command};
 pub mod rdb;
 pub mod resp;
 use crate::{r_404, r_error, r_ok};
@@ -81,4 +81,16 @@ async fn do_query(connection_info: ConnectionImpl, data: &str) -> Result<Respons
     let client = connection_info.into_client()?;
     let resp = client.do_command::<Value>(&mut cmd_).await?;
     Ok(r_ok!(rdb::convert_to_string(resp)?, None))
+}
+
+#[derive(Serialize,Clone, Debug)]
+pub struct Evt {
+  pub evt: String,
+  pub data: String,
+}
+
+#[command]
+pub async fn emit_event(app: tauri::AppHandle,evt: String, data: String) -> Result<Response<()>> {
+  app.app_handle().emit("emit-event",Evt{evt,data})?;
+  Ok(r_ok!((), None))
 }

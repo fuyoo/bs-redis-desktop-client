@@ -1,5 +1,4 @@
 import type { RouteRecordRaw } from 'vue-router'
-import settings from '@/pages/settings/index.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -8,7 +7,7 @@ const routes: RouteRecordRaw[] = [
     redirect: '/home',
     children: [
       { path: '/home', component: () => import('@/pages/home/home.vue') },
-      { path: '/settings', component: settings },
+      { path: '/settings', component: () => import('@/pages/settings/index.vue') },
       {
         path: '/tab/:id',
         component: () => import('@/layouts/HostViewLayout.vue'),

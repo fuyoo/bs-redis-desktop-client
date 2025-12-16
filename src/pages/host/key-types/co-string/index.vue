@@ -1,11 +1,12 @@
 <script setup lang="tsx">
 import { useReqStore } from '@/stores/req.ts'
-import { ref, shallowRef,computed } from 'vue'
+import { ref, shallowRef, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useModal,type ModalReactive } from 'naive-ui'
+import { type ModalReactive } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
 import CoInfoHeader from '@/pages/host/components/CoInfoHeader/index.vue'
 import { Key } from '@/tools/keys.ts'
+import { modal } from "@/tools"
 // redis key
 const key = Key()
 // i18n helper function
@@ -38,8 +39,6 @@ const fetchData = async () => {
 fetchData()
 // change value model.
 const vModel = ref<string>('')
-// naive ui modal
-const modal = useModal()
 // submit to change value
 const submitFn = (m: ModalReactive) => {
   reqStore
@@ -58,7 +57,7 @@ const changeValue = () => {
   const m = modal.create({
     title: t('actions.3'),
     preset: 'card',
-    draggable:true,
+    draggable: true,
     maskClosable: false,
     style: {
       width: '580px',
@@ -98,8 +97,8 @@ const changeValue = () => {
       </n-space>
     </co-info-header>
     <div class="p-4">
-      <n-alert v-if="largerThan" type="info" class="mb-4"  :bordered="false">
-        {{$t('tips[1]',{size: '1Mb'})}} <n-button size="tiny" type="primary" quaternary>{{$t("actions.6")}}</n-button>
+      <n-alert v-if="largerThan" type="info" class="mb-4" :bordered="false">
+        {{ $t('tips[1]', { size: '1Mb' }) }} <n-button size="tiny" type="primary" quaternary>{{ $t("actions.6") }}</n-button>
       </n-alert>
       <textarea readonly class=" w-full h-full resize-none b-none outline-none" v-model="content" />
     </div>

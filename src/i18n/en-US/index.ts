@@ -2,13 +2,13 @@
 // so you can safely delete all default props below
 
 export default {
-  exit: 'Are you sure exit this app？',
+  exit: 'Are you sure exit this app?',
   menu: [
     ['Host', 'redis database host'],
     ['Settings', 'app settings'],
     ['Github', 'github.com/fuyoo/bs-redis-desktop-client'],
   ],
-  settings: ['Settings', 'Language', 'Version'],
+  settings: ['Settings', 'Language', 'Version', 'Theme'],
   actions: [
     'Ok',
     'Cancel',

@@ -25,10 +25,12 @@ export const request = async <T>({
     const body = JSON.parse(resp || '{"code":-1,"msg":"Response is empty"}') as BackendResponse<T>
     // if code is not 0, show error message
     if (body.code !== 0 && notify !== false) {
+      message.destroyAll()
       message.warning(body.msg)
     }
     return body
   } catch (e: any) {
+    message.destroyAll()
     message.error(e)
     return {
       code: -1,
@@ -45,10 +47,12 @@ export const req = {
       const resp = await invoke<BackendResponse<T>>(comand, data)
       // if code is not 0, show error message
       if (resp.code !== 0) {
+        message.destroyAll()
         message.warning(resp.msg)
       }
       return resp
     } catch (e: any) {
+      message.destroyAll()
       message.error(e)
       return {
         code: -1,

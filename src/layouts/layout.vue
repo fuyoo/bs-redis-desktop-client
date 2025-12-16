@@ -2,15 +2,23 @@
 import { dialog } from '@/tools'
 import { useI18n } from 'vue-i18n'
 import { getCurrentWindow } from '@tauri-apps/api/window'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { Platform } from "@/tools"
 import { listen } from '@tauri-apps/api/event'
 import { useTab } from '../hooks/tab'
-const router = useRouter()
+import { useThemeVars } from 'naive-ui'
+const vars = useThemeVars()
+const bgColor = computed(() => {
+  if (vars.value.baseColor === '#000') {
+    return `rgb(34 34 34 )`
+  } else {
+    return `rgb(255 255 255)`
+  }
+})
+console.log('baseColor', vars.value)
 const route = useRoute()
 const homePageId = 'main'
 const settingsId = 'settings'
-const currentRoute = route.fullPath
 const { t } = useI18n()
 // focus tab.
 const name = ref('')
@@ -56,9 +64,7 @@ const handleOperation = async (o: Operation) => {
       break
   }
 }
-const isHome = computed(() => {
-  return name.value == homePageId
-})
+
 const handleSetting = () => {
   change({
     id: settingsId,
@@ -82,7 +88,9 @@ onBeforeUnmount(async () => {
 </script>
 
 <template>
-  <div class="flex flex-col w-100vw h-100vh">
+  <div class="flex flex-col w-100vw h-100vh bg-dark" :style="{
+    background: bgColor
+  }">
     <div class="relative z-10" data-tauri-drag-region>
       <n-tabs @close="handleClose" tab-class="py-1!" class="h-40px" data-tauri-drag-region size="small" type="card"
         @before-leave="handleBeforeLeave" v-model:value="name">
@@ -94,8 +102,8 @@ onBeforeUnmount(async () => {
         <n-tab class="mt-10px" v-for="item in tabList" :closable="item.id != homePageId" :key="item.id"
           :label="item.name" :name="item.id"><template #default>
             <n-space :size="6">
-              <i class="i-material-symbols:home-app-logo" v-if="isHome"></i>
-              <i class="i-material-symbols:home-app-logo" v-else></i>
+              <i class="i-material-symbols:home-app-logo" v-if="item.id === homePageId"></i>
+              <i class="i-material-symbols:database" v-else></i>
               {{ item.name }}
             </n-space>
           </template></n-tab>

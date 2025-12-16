@@ -131,7 +131,8 @@ const connectTo = async () => {
   await formRef.value?.validate()
   try {
     loading.connect = true
-    await checkStatus()
+    const code = await checkStatus()
+    if (code != 0) return
     const v = pureData()
     change(v)
   } finally {
@@ -148,29 +149,29 @@ const handlePositive = async (id?: number) => {
 
 <template>
   <n-form ref="formRef" :model="formModel" :rules="rules" label-placement="left" label-width="100">
-    <n-form-item path="name" :label="$t('home.form.label[0]')">
+    <n-form-item path="name" :label="t('home.form.label[0]')">
       <n-input v-model:value="formModel.name" :placeholder="$t('home.form.hint[0]')" />
     </n-form-item>
 
-    <n-form-item path="node.0.host" :label="$t('home.form.label[1]')">
-      <n-input v-model:value="formModel.node[0].host" :placeholder="$t('home.form.hint[1]')" />
+    <n-form-item path="node.0.host" :label="t('home.form.label[1]')">
+      <n-input v-model:value="formModel.node[0].host" :placeholder="t('home.form.hint[1]')" />
     </n-form-item>
 
-    <n-form-item :label="$t('home.form.label[2]')">
-      <n-input v-model:value="formModel.node[0].port" :placeholder="$t('home.form.hint[2]')" />
+    <n-form-item :label="t('home.form.label[2]')">
+      <n-input v-model:value="formModel.node[0].port" :placeholder="t('home.form.hint[2]')" />
     </n-form-item>
 
-    <n-form-item :label="$t('home.form.label[3]')">
-      <n-input v-model:value="formModel.node[0].db" :placeholder="$t('home.form.hint[3]')" />
+    <n-form-item :label="t('home.form.label[3]')">
+      <n-input v-model:value="formModel.node[0].db" :placeholder="t('home.form.hint[3]')" />
     </n-form-item>
 
-    <n-form-item :label="$t('home.form.label[4]')">
-      <n-input v-model:value="formModel.node[0].username" :placeholder="$t('home.form.hint[4]')" />
+    <n-form-item :label="t('home.form.label[4]')">
+      <n-input v-model:value="formModel.node[0].username" :placeholder="t('home.form.hint[4]')" />
     </n-form-item>
 
-    <n-form-item :label="$t('home.form.label[5]')">
+    <n-form-item :label="t('home.form.label[5]')">
       <n-input v-model:value="formModel.node[0].password" type="password" show-password-on="click"
-        :placeholder="$t('home.form.hint[5]')" />
+        :placeholder="t('home.form.hint[5]')" />
     </n-form-item>
 
     <!--    <n-form-item :label="$t('home.form.label[6]')">
@@ -178,24 +179,24 @@ const handlePositive = async (id?: number) => {
     </n-form-item>-->
     <n-space justify="center">
       <n-button :loading="loading.test" tertiary @click="testConnection">
-        {{ $t('actions[7]') }}
+        {{ t('actions[7]') }}
       </n-button>
       <n-button @click="connectTo" :loading="loading.connect" v-if="props.data?.id" type="primary">
-        {{ $t('actions[8]') }}
+        {{ t('actions[8]') }}
       </n-button>
       <n-button type="primary" @click="submitFn" v-if="props.data?.id">
-        {{ $t('actions[9]') }}
+        {{ t('actions[9]') }}
       </n-button>
       <n-button type="primary" @click="submitFn" v-else>
-        {{ $t('actions[0]') }}
+        {{ t('actions[0]') }}
       </n-button>
       <n-popconfirm @positive-click="() => handlePositive(props.data?.id)" v-if="props.data?.id">
         <template #trigger>
           <n-button type="warning">
-            {{ $t('actions[2]') }}
+            {{ t('actions[2]') }}
           </n-button>
         </template>
-        {{ $t('tips[3]') }}
+        {{ t('tips[3]') }}
       </n-popconfirm>
     </n-space>
   </n-form>

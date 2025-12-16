@@ -34,6 +34,7 @@ const columns = reactive([
   { title: t('table[0]'), key: 'value' },
   {
     title: t('table[1]'),
+    key: 'action',
     width: 200,
     render: (_: Record<string, any>) => {
       return (
@@ -80,20 +81,12 @@ const { height } = useResize()
   <div class="w-full h-full">
     <co-info-header v-model:size="size" type="string">
       <div><n-button size="tiny" type="primary">
-        <template #icon><i class="i-pajamas:insert"></i></template>
-         {{ $t('actions[5]') }}</n-button></div>
+          <template #icon><i class="i-pajamas:insert"></i></template>
+          {{ $t('actions[5]') }}</n-button></div>
     </co-info-header>
     <div class="p-5">
-      <n-data-table
-        remote
-        ref="table"
-        :columns="columns"
-        :data="records"
-        :loading="reqStore.reqLoading"
-        :pagination="pager"
-        :style="{ height: `${height - 140}px` }"
-        flex-height
-      />
+      <n-data-table remote ref="table" :columns="columns" :data="records" :loading="reqStore.reqLoading"
+        :pagination="pager" :style="{ height: `${height - 140}px` }" flex-height />
     </div>
   </div>
 </template>

@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import {useI18n} from "vue-i18n";
-import {type FormInst} from "naive-ui"
-import {useReqStore} from "@/stores/req.ts";
+import { useI18n } from "vue-i18n";
+import { type FormInst } from "naive-ui"
+import { useReqStore } from "@/stores/req.ts";
+import { message, dialog } from "@/tools"
 
-const {t} = useI18n()
+const { t } = useI18n()
 const form = reactive({
   key: "",
   expires: 0,
@@ -20,20 +21,18 @@ const rules = {
     renderMessage: () => t("keyForm.msg.1")
   }
 }
-const dialog =useDialog()
-const message = useMessage()
 const req = useReqStore()
 const submitFn = async () => {
   await formRef.value?.validate()
   debugger
- await req.reqWithHost<boolean>({
-    path:"/cmd",
-    data: ['set',form.key,form.data ]
+  await req.reqWithHost<boolean>({
+    path: "/cmd",
+    data: ['set', form.key, form.data]
   })
   if (form.expires > 0) {
     await req.reqWithHost<boolean>({
-      path:"/cmd",
-      data: ['expire',form.key,form.expires.toString()]
+      path: "/cmd",
+      data: ['expire', form.key, form.expires.toString()]
     })
   }
 
@@ -43,7 +42,8 @@ const submitFn = async () => {
 </script>
 
 <template>
-  <n-form class="pt-5" ref="formRef" label-placement="left" label-width="100px" size="small" :model="form" :rules="rules">
+  <n-form class="pt-5" ref="formRef" label-placement="left" label-width="100px" size="small" :model="form"
+    :rules="rules">
     <n-form-item :label="$t('keyForm.label.0')" path="key" required>
       <n-input clearable v-model:value="form.key"></n-input>
     </n-form-item>
@@ -64,6 +64,4 @@ const submitFn = async () => {
   </n-form>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

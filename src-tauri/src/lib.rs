@@ -121,7 +121,8 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
             api::request,
             tabs::tab_list,
             tabs::tab_change,
-            tabs::tab_close
+            tabs::tab_close,
+            api::emit_event
         ]);
     let app = app.on_page_load(|wb, evt| match evt.event() {
         PageLoadEvent::Finished => {

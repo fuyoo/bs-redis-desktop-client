@@ -1,7 +1,11 @@
 <template>
   <div class="flex absolute left-0 top-0 w-full">
-    <div class="w-188px pl-2 pt-2 pb-2 h-full">
-      <n-button block @click="newConnection">新链接</n-button>
+    <div class="w-180px pl-2 pt-2 pb-2 h-full">
+      <n-button tertiary type="primary" block @click="newConnection">
+        <template #icon>
+          <i class="i-material-symbols:add"></i>
+        </template>
+        新链接</n-button>
       <div class="h-2"></div>
       <n-tabs tab-class="relative h-9" placement="left" size="small" style="height: calc(100vh - 100px)" type="card"
         v-model:value="tab">

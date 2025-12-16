@@ -2,9 +2,9 @@
 import { computed, ref } from 'vue'
 
 import { useReqStore } from '@/stores/req.ts'
-import { showHostConfigureDetail } from '@/tools'
 import { useRoute } from 'vue-router'
-const route = useRoute()
+import { useI18n } from "vue-i18n"
+const { t } = useI18n()
 const reqStore = useReqStore()
 const config = ref<Record<string, Record<string, any>>>({})
 const fetchInfo = async () => {
@@ -44,11 +44,11 @@ const helper = (k: string, section: string) => {
 }
 
 const columns = [
-  { name: 'db', label: 'db', field: 'db', align: 'left' },
-  { name: 'keys', label: 'keys', field: 'keys', align: 'left' },
-  { name: 'expires', label: 'expires', field: 'expires', align: 'left' },
-  { name: 'avg_ttl', label: 'avg_ttl', field: 'avg_ttl', align: 'left' },
-  { name: 'subexpiry', label: 'subexpiry', field: 'subexpiry', align: 'left' },
+  { title: 'db', key: 'db', },
+  { title: 'keys', key: 'keys', },
+  { title: 'expires', key: 'expires', },
+  { title: 'avg_ttl', key: 'avg_ttl', },
+  { title: 'subexpiry', key: 'subexpiry', },
 ] as any
 const rows = computed(() => {
   const space = config.value['Keyspace']?.map((item: string) => {
@@ -68,65 +68,62 @@ const rows = computed(() => {
     })
     return obj
   })
+  console.log(space)
   return space || []
 })
 </script>
 <template>
-  <n-scrollbar class="h-full w-full" trigger="none">
-    <div class="w-full flex gap-4 p-4">
-      <q-card flat class="flex-1 b b-solid b-#eee">
-        <q-card-section class="flex justify-between items-center">
-          <div class="text-h6">{{ $t('hostInfo[1]') }}</div>
-          <q-btn
-            icon="info"
-            dense
-            flat
-            rounded
-            @click="showHostConfigureDetail(route.params.id as string)"
-          ></q-btn>
-        </q-card-section>
-        <q-separator />
-        <q-card-actions vertical>
-          <q-chip>redis_version: {{ helper('redis_version', 'Server') }}</q-chip>
-          <q-chip>uptime_in_days: {{ helper('uptime_in_days', 'Server') }}</q-chip>
-          <q-chip>executable: {{ helper('executable', 'Server') }}</q-chip>
-          <q-chip>config_file:{{ helper('config_file', 'Server') }} </q-chip>
-        </q-card-actions>
-      </q-card>
-      <q-card flat class="flex-1 b b-solid b-#eee">
-        <q-card-section>
-          <div class="text-h6">{{ $t('hostInfo[0]') }}</div>
-        </q-card-section>
-        <q-separator />
-        <q-card-actions vertical>
-          <q-chip>Used Memory: {{ helper('used_memory_human', 'Memory') }}</q-chip>
-          <q-chip>Memory Peak: {{ helper('used_memory_peak_human', 'Memory') }}</q-chip>
-          <q-chip>Total System Memory: {{ helper('total_system_memory_human', 'Memory') }}</q-chip>
-          <q-chip>Used Lua Memory :{{ helper('used_memory_lua_human', 'Memory') }} </q-chip>
-        </q-card-actions>
-      </q-card>
-      <q-card flat class="flex-1 b b-solid b-#eee">
-        <q-card-section>
-          <div class="text-h6">{{ $t('hostInfo[2]') }}</div>
-        </q-card-section>
-        <q-separator />
-        <q-card-actions vertical>
-          <q-chip>Connected Clients :{{ helper('connected_clients', 'Clients') }} </q-chip>
-          <q-chip
-            >Total Connections Received: {{ helper('total_connections_received', 'Stats') }}</q-chip
-          >
-          <q-chip
-            >Total Commands Processed: {{ helper('total_commands_processed', 'Stats') }}</q-chip
-          >
-          <q-chip>Rejected Connections: {{ helper('rejected_connections', 'Status') }}</q-chip>
-        </q-card-actions>
-      </q-card>
-      <q-card flat class="w-full b b-solid b-#eee">
-        <q-card-section>
-          <div class="text-h6">{{ $t('hostInfo[4]') }}</div>
-        </q-card-section>
-        <q-table flat class="w-full b b-solid b-#eee" :columns="columns" :rows="rows"></q-table>
-      </q-card>
+  <n-scrollbar class="h-full w-full absolute left-0 top-0">
+    <div class="flex gap-4 p-4 flex-wrap">
+      <n-descriptions content-class="whitespace-nowrap" label-class="whitespace-nowrap" size="small" class="flex-1"
+        :columns="1" label-placement="left" bordered :title="t('hostInfo[1]')">
+        <n-descriptions-item label="redis_version">
+          {{ helper('redis_version', 'Server') }}
+        </n-descriptions-item>
+        <n-descriptions-item label="uptime_in_days">
+          {{ helper('uptime_in_days', 'Server') }}
+        </n-descriptions-item>
+        <n-descriptions-item label="executable">
+          {{ helper('uptime_in_days', 'Server') }}
+        </n-descriptions-item>
+        <n-descriptions-item label="config_file">
+          {{ helper('config_file', 'Server') }}
+        </n-descriptions-item>
+      </n-descriptions>
+      <n-descriptions content-class="whitespace-nowrap" label-class="whitespace-nowrap" size="small" class="flex-1"
+        :columns="1" label-placement="left" bordered :title="t('hostInfo[0]')">
+        <n-descriptions-item label="Used Memory">
+          {{ helper('used_memory_human', 'Memory') }}
+        </n-descriptions-item>
+        <n-descriptions-item label="Memory Peak">
+          {{ helper('used_memory_peak_human', 'Memory') }}
+        </n-descriptions-item>
+        <n-descriptions-item label="Total System Memory">
+          {{ helper('total_system_memory_human', 'Memory') }}
+        </n-descriptions-item>
+        <n-descriptions-item label="Used Lua Memory">
+          {{ helper('used_memory_lua_human', 'Memory') }}
+        </n-descriptions-item>
+      </n-descriptions>
+      <n-descriptions content-class="whitespace-nowrap" label-class="whitespace-nowrap" size="small" class="flex-1"
+        :columns="1" label-placement="left" bordered :title="t('hostInfo[2]')">
+        <n-descriptions-item label="Connected Clients">
+          {{ helper('used_memory_human', 'Memory') }}
+        </n-descriptions-item>
+        <n-descriptions-item label="Total Connections Received">
+          {{ helper('total_connections_received', 'Stats') }}
+        </n-descriptions-item>
+        <n-descriptions-item label="Total Commands Processed">
+          {{ helper('total_commands_processed', 'Stats') }}
+        </n-descriptions-item>
+        <n-descriptions-item label="Rejected Connections">
+          {{ helper('rejected_connections', 'Status') }}
+        </n-descriptions-item>
+      </n-descriptions>
+    </div>
+    <div class="p-4">
+      <n-h4 prefix="bar">{{ t('hostInfo[4]') }}</n-h4>
+      <n-data-table size="small" class="w-full" :columns="columns" :data="rows"></n-data-table>
     </div>
   </n-scrollbar>
 </template>

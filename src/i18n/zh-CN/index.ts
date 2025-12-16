@@ -5,7 +5,7 @@ export default {
     ['设置', '应用系统设置'],
     ['Github', 'github.com/fuyoo/bs-redis-desktop-client'],
   ],
-  settings: ['设置', '语言', '版本'],
+  settings: ['设置', '语言', '版本', '主题'],
   actions: ['确定', '取消', '删除', '修改', '添加', '插入', '下载', '测试连接', '连接', '保存'],
   home: {
     name: '主页',
