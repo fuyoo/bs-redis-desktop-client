@@ -10,10 +10,10 @@ const onChange = () => {
 <template>
   <n-radio-group @change="onChange" v-model:value="theme" size="small" type="button">
     <n-radio-button value="light">
-      <i class="i-material-symbols:dark-mode-rounded"></i>
+      <i class="i-material-symbols:light-mode-rounded"></i>
     </n-radio-button>
     <n-radio-button value="dark">
-      <i class="i-material-symbols:light-mode-rounded"></i>
+      <i class="i-material-symbols:dark-mode-rounded"></i>
     </n-radio-button>
     <n-radio-button value="auto">
       <i class="i-material-symbols:night-sight-auto-rounded"></i>
