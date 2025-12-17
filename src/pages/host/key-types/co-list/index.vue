@@ -27,6 +27,7 @@ const fetchLen = async () => {
 }
 fetchLen()
 
+// tab fields
 const columns = reactive([
   {
     title: '#',
@@ -44,6 +45,7 @@ const columns = reactive([
     width: 200,
     render: (row: Record<string, any>) => {
 
+      // delete data
       const delFn = async (row: Record<string, any>) => {
         try {
           row.delLoaing = true
@@ -56,6 +58,7 @@ const columns = reactive([
           row.delLoaing = false
         }
       }
+      // look detail
       const look =  (row: Record<string, any>) => {
         dialog.create({
           title: t('actions[12]'),
@@ -78,7 +81,10 @@ const columns = reactive([
     },
   },
 ])
+//  records
 const records = shallowRef<Record<string, any>[]>([])
+
+// obtain records
 const fetchRecords = async () => {
   await fetchLen()
   const resp = await reqStore.reqWithHost<string>({
@@ -102,6 +108,7 @@ const fetchRecords = async () => {
 fetchRecords()
 onPageChanged(fetchRecords)
 const { height } = useResize()
+// insert data to list
 const addData = async () => {
   const formModel = reactive({
     value: '',
@@ -154,6 +161,7 @@ const addData = async () => {
     </n-form>,
   })
 }
+// edit data
 const editFn = async (row:Record<string,any>,index: number) => {
   const formModel = reactive({
     value: row.value,
