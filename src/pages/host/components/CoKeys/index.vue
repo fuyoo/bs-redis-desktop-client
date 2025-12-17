@@ -2,24 +2,23 @@
 import { useReqStore } from '@/stores/req.ts'
 import { reactive, ref, h, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { type DropdownOption } from 'naive-ui'
+import { type DropdownOption, type TreeOption } from 'naive-ui'
 import { Folder, FolderOpenOutline, KeyOutline, Trash } from '@vicons/ionicons5'
 import { NIcon } from 'naive-ui'
-import { useResize } from '@/hooks/life.ts'
 import { ID } from '@/tools/keys.ts'
 import type { RedisKeyType, Tree } from '@/types.ts'
 import KeysWorker from '@/worker/keys.ts?worker'
 import { useI18n } from 'vue-i18n'
-import {dialog} from '@/tools'
+import { dialog } from '@/tools'
 import {
-  addHashKey,
+  useActions,
+} from '@/pages/host/components/CoKeys/actions.tsx'
+const { addHashKey,
   addListKey,
   addSetKey,
   addStringKey,
   addZSetKey,
-  options,
-} from '@/pages/host/components/CoKeys/actions.tsx'
-
+  options, } = useActions(dialog)
 const keysWorker = new KeysWorker()
 const router = useRouter()
 const reqStore = useReqStore()
@@ -132,13 +131,11 @@ const queryData = async (isSearch?: boolean) => {
   search.loading = false
 }
 queryData()
-
-const { height } = useResize(115)
 const updatePrefixWithExpand = (
   _keys: Array<string | number>,
-  _option: Array<Tree | null>,
+  _option: Array<TreeOption | null>,
   meta: {
-    node: Tree | null
+    node: TreeOption | null
     action: 'expand' | 'collapse' | 'filter'
   },
 ) => {
@@ -167,7 +164,7 @@ const loadMoreFn = () => {
   }
 }
 
-let focusNodeData: Tree | null
+let focusNodeData: TreeOption | null
 const showDropdownRef = ref(false)
 const menuOptions = ref<DropdownOption[]>([
   {
@@ -178,8 +175,8 @@ const menuOptions = ref<DropdownOption[]>([
 ])
 const x = ref(0)
 const y = ref(0)
-const supportDataType = ['string', 'list', 'set', 'zset', 'hash','none']
-const nodeProps = ({ option }: { option: Tree }) => {
+const supportDataType = ['string', 'list', 'set', 'zset', 'hash', 'none']
+const nodeProps = ({ option }: { option: TreeOption }) => {
   return {
     async onClick() {
       if (option.type === 'key') {
@@ -189,7 +186,7 @@ const nodeProps = ({ option }: { option: Tree }) => {
         })
         if (!supportDataType.includes(t.data)) {
           await router.replace({
-            path: `/tab/${route.params.id}/main/database/unsupported/${btoa(option.value!)}`,
+            path: `/tab/${route.params.id}/main/database/unsupported/${btoa(option.value! as string)}`,
             replace: true,
             query: {
               ...route.query,
@@ -198,7 +195,7 @@ const nodeProps = ({ option }: { option: Tree }) => {
           return
         }
         await router.replace({
-          path: `/tab/${route.params.id}/main/database/${t.data}/${btoa(option.value!)}`,
+          path: `/tab/${route.params.id}/main/database/${t.data}/${btoa(option.value! as string)}`,
           replace: true,
           query: {
             ...route.query,
@@ -263,29 +260,31 @@ const doFilter = async () => {
   }, 100)
 }
 
-function renderPrefix(data: { option: Tree }) {
-  return h(NIcon, null, {
-    default: () => h(data.option.type === 'key' ? KeyOutline : Folder),
-  })
+function renderPrefix(data: { option: TreeOption }) {
+  if (data.option.type === 'key') {
+    return <NIcon> <KeyOutline /> </NIcon>
+  } else {
+    return <NIcon> <Folder /> </NIcon>
+  }
 }
 
 // add
 const addFn = (v: RedisKeyType) => {
   switch (v) {
     case 'string':
-      addStringKey(dialog, t('title.0', { type: 'string' }))
+      addStringKey(t('title.0', { type: 'string' }))
       break
     case 'hash':
-      addHashKey(dialog, t('title.0', { type: 'hash' }))
+      addHashKey(t('title.0', { type: 'hash' }))
       break
     case 'set':
-      addSetKey(dialog, t('title.0', { type: 'set' }))
+      addSetKey(t('title.0', { type: 'set' }))
       break
     case 'list':
-      addListKey(dialog, t('title.0', { type: 'list' }))
+      addListKey(t('title.0', { type: 'list' }))
       break
     case 'zset':
-      addZSetKey(dialog, t('title.0', { type: 'zset' }))
+      addZSetKey(t('title.0', { type: 'zset' }))
       break
   }
 }
@@ -295,87 +294,63 @@ const refreshFn = (s: boolean) => {
   } else {
     original.tree = []
   }
-  console.log('refreshFn',s, original)
- queryData(s)
+  queryData(s)
 }
 </script>
 <template>
-  <div ref="treeBoxRef" class="w-full flex flex-col flex-1 justify-start items-start">
-    <div class="flex gap-1 p-2 shadow w-full">
-      <n-input
-        clearable
-        class="flex-1"
-        size="tiny"
-        v-model:value="search.match"
-        @update:value="doFilter"
-        placeholder="redis query format"
-      >
-        <template #prefix>
-          <i class="i-material-symbols:database-search-rounded"></i>
-        </template>
-      </n-input>
-      <n-popselect :on-update:value="addFn" :options="options" trigger="click">
-        <n-button round type="primary" size="tiny">
-          <i class="i-material-symbols:add"></i>
+  <div ref="treeBoxRef" class="w-full flex flex-col flex-1 justify-start items-start h-full">
+    <div class=" shadow w-full">
+      <div class="p-2 flex gap-2">
+        <n-input size="small" clearable v-model:value="search.match" @update:value="doFilter"
+          placeholder="redis query format">
+          <template #prefix>
+            <i class="i-material-symbols:database-search-rounded"></i>
+          </template>
+        </n-input>
+        <n-popselect :on-update:value="addFn" :options="options" trigger="click">
+          <n-button size="small" tertiary circle type="primary">
+            <i class="i-material-symbols:add"></i>
+          </n-button>
+        </n-popselect>
+      </div>
+    </div>
+    <div class="flex-1 relative w-full">
+      <n-tree ref="treeInstRef" class="h-full " block-node show-line ellipsis :render-prefix="renderPrefix"
+        :on-update:expanded-keys="updatePrefixWithExpand" :data="search.match !== '' ? search.tree : original.tree"
+        virtual-scroll expand-on-click :node-props="nodeProps" key-field="id" children-field="children" />
+    </div>
+    <div class="flex w-full justify-center items-center py-2">
+      <n-space v-if="!search.match">
+        <n-button tertiary v-show="original.cursor !== '0'" size="small" :loading="original.loading"
+          @click="loadMoreFn">
+          <template #icon>
+            <i class="i-material-symbols-light:text-select-move-forward-word-rounded rotate-90"></i>
+          </template>
         </n-button>
-      </n-popselect>
-    </div>
-    <n-tree
-      ref="treeInstRef"
-      block-line
-      show-line
-      :render-prefix="renderPrefix"
-      :on-update:expanded-keys="updatePrefixWithExpand"
-      :data="search.match !== '' ? search.tree : original.tree"
-      virtual-scroll
-      expand-on-click
-      :node-props="nodeProps"
-      :style="{ height: height + 'px' }"
-      key-field="id"
-      children-field="children"
-      class="whitespace-nowrap"
-    />
-    <div class="flex flex-1 w-full justify-center items-center" v-if="!search.match">
-      <n-button
-        v-show="original.cursor !== '0'"
-        size="small"
-        type="primary"
-        :loading="reqStore.reqLoading"
-        @click="loadMoreFn"
-        >加载更多
-      </n-button>
-      <n-button
-        @click="refreshFn(false)"
-        v-show="original.cursor === '0'"
-        size="small"
-        type="primary"
-        >更新数据
-      </n-button>
-    </div>
-    <div v-else class="flex flex-1 w-full justify-center items-center">
-      <n-button
-        v-show="search.cursor !== '0'"
-        size="small"
-        type="primary"
-        :loading="reqStore.reqLoading"
-        @click="loadMoreFn"
-        >加载更多
-      </n-button>
-      <n-button @click="refreshFn(true)" v-show="search.cursor === '0'" size="small" type="primary"
-        >更新数据</n-button
-      >
+        <n-button tertiary @click="refreshFn(false)" :loading="original.loading" v-show="original.cursor === '0'"
+          size="small">
+          <template #icon>
+            <i class="i-material-symbols-light:directory-sync"></i>
+          </template>
+        </n-button>
+      </n-space>
+      <n-space v-else>
+        <n-button tertiary v-show="search.cursor !== '1'" size="small" :loading="search.loading"
+          @click="loadMoreFn"><template #icon>
+            <i class="i-material-symbols-light:text-select-move-forward-word-rounded rotate-90"></i>
+          </template>
+        </n-button>
+        <n-button tertiary :loading="search.loading" @click="refreshFn(true)" v-show="search.cursor === '0'"
+          size="small">
+          <template #icon>
+            <i class="i-material-symbols-light:directory-sync"></i>
+          </template>
+        </n-button>
+      </n-space>
     </div>
   </div>
-  <n-dropdown
-    trigger="manual"
-    placement="bottom-start"
-    :show="showDropdownRef"
-    :options="menuOptions"
-    :x="x"
-    :y="y"
-    @select="handleSelect"
-    @clickoutside="() => (showDropdownRef = false)"
-  />
+  <n-dropdown trigger="manual" placement="bottom-start" :show="showDropdownRef" :options="menuOptions" :x="x" :y="y"
+    @select="handleSelect" @clickoutside="() => (showDropdownRef = false)" />
 </template>
 
 <style lang="scss" scoped></style>

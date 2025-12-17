@@ -20,10 +20,13 @@ export default {
     'Test Connection',
     'Connect',
     'Save',
+    'Load More',
+    'Refresh',
+    'Look',
   ],
 
   keyForm: {
-    label: ['Key Name', 'Data', 'Expire'],
+    label: ['Key Name', 'Data', 'Expire', 'Field', 'Direction'],
     msg: ['Key name is required', 'Data is required'],
   },
   home: {
@@ -53,6 +56,9 @@ export default {
     'Due to the data being larger than {size}, the displayed data is truncated. You can click the button next to it to download the original data',
     'Currently Key {key} not found.',
     'Are sure delete it？',
+    'Total {size}',
+    'Insert',
+    'Modify',
   ],
   title: ['New {type} Type Key'],
 }

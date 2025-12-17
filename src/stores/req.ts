@@ -46,7 +46,7 @@ export const useReqStore = defineStore('req', () => {
   }): Promise<BackendResponse<R>> => {
     clearTimeout(timer)
     reqLoading.value = true
-    const host = await db.hosts.get({ id: parseInt(route.params.id as string) })
+    const host = await db.hosts.get(parseInt(route.params.id as string))
     if (route.query.db && host) {
       host.node[0].db = route.query.db as string
     }
@@ -62,6 +62,12 @@ export const useReqStore = defineStore('req', () => {
       })
       // throttle timer
       timer = setTimeout(() => (reqLoading.value = false), 100)
+
+      if (resp.code !== 0) {
+        message.destroyAll()
+        message.warning(resp.msg)
+        return Promise.reject(resp)
+      }
       return resp
     } catch (e) {
       // throttle timer

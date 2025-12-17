@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
+import { t } from "@/i18n";
 import { type FormInst } from "naive-ui"
 import { useReqStore } from "@/stores/req.ts";
 import { dialog } from '@/tools'
 import { message } from "@/tools"
-const { t } = useI18n()
 const form = reactive({
   key: "",
   expires: 0,
@@ -49,16 +48,16 @@ const submitFn = async () => {
 <template>
   <n-form class="pt-5" ref="formRef" label-placement="left" label-width="100px" size="small" :model="form"
     :rules="rules">
-    <n-form-item :label="$t('keyForm.label.0')" path="key" required>
+    <n-form-item :label="t('keyForm.label.0')" path="key" required>
       <n-input clearable v-model:value="form.key"></n-input>
     </n-form-item>
-    <n-form-item :label="$t('keyForm.label.3')" path="field" required>
+    <n-form-item :label="t('keyForm.label.3')" path="field" required>
       <n-input clearable type="textarea" v-model:value="form.field"></n-input>
     </n-form-item>
-    <n-form-item :label="$t('keyForm.label.1')" path="data" required>
+    <n-form-item :label="t('keyForm.label.1')" path="data" required>
       <n-input clearable type="textarea" v-model:value="form.data"></n-input>
     </n-form-item>
-    <n-form-item :label="$t('keyForm.label.2')">
+    <n-form-item :label="t('keyForm.label.2')">
       <n-input-number class="w-full" v-model:value="form.expires">
         <template #suffix>
           s
@@ -66,7 +65,7 @@ const submitFn = async () => {
       </n-input-number>
     </n-form-item>
     <n-form-item label=" ">
-      <n-button type="primary" @click="submitFn">{{ $t('actions.0') }}</n-button>
+      <n-button type="primary" @click="submitFn">{{ t('actions.0') }}</n-button>
     </n-form-item>
   </n-form>
 </template>

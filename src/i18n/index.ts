@@ -23,22 +23,25 @@ declare module 'vue-i18n' {
   export interface DefineNumberFormat {}
 }
 /* eslint-enable @typescript-eslint/no-empty-object-type */
-
+let i18n: any
 export const injectI18n = (app: App) => {
   // obtain currently language
   const local = localStorage.getItem('lang') ?? 'en-US'
-  const i18n = createI18n<{ message: MessageSchema }, MessageLanguages>({
+  i18n = createI18n<{ message: MessageSchema }, MessageLanguages>({
     locale: local,
     legacy: false,
     messages,
   })
-
   // Set i18n instance on app
   app.use(i18n)
+}
+export const t = (...args: any[]) => {
+  return i18n.global.t(...args)
 }
 export const getLocate = () => {
   // obtain currently language
   const local = localStorage.getItem('lang') ?? 'en-US'
+  console.log(`obtain currently language`, local)
   switch (local) {
     case 'zh-CN':
       return zhCN

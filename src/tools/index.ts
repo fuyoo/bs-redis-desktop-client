@@ -1,25 +1,51 @@
 import { Window } from '@tauri-apps/api/window'
 import { Webview } from '@tauri-apps/api/webview'
-import type { ConfigProviderProps } from 'naive-ui'
-import { createDiscreteApi, darkTheme, lightTheme } from 'naive-ui'
-import { computed, ref } from 'vue'
+import { createDiscreteApi, darkTheme, lightTheme, zhCN } from 'naive-ui'
 import { getLocate } from '@/i18n'
 import { parse } from 'platform'
-const theme = ref<'light' | 'dark'>('light')
-const configProviderPropsRef = computed<ConfigProviderProps>(() => {
+
+export const storageKey = 'theme-mode'
+type ThemeMode = 'light' | 'dark' | 'auto'
+export const getMode = () => {
+  return (localStorage.getItem(storageKey) || 'auto') as ThemeMode
+}
+export const getTheme = () => {
+  const mode = getMode()
+  switch (mode) {
+    case 'light':
+      return lightTheme
+    case 'dark':
+      return darkTheme
+    default:
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? darkTheme : lightTheme
+  }
+}
+const configProviderProps = () => {
   const locate = getLocate()
   return {
-    theme: theme.value === 'light' ? lightTheme : darkTheme,
-    locate,
+    theme: getTheme(),
+    locate: zhCN,
   }
-})
+}
 
-export const { message, notification, dialog, loadingBar, modal } = createDiscreteApi(
+const { message, dialog, notification, loadingBar, modal } = createDiscreteApi(
   ['message', 'dialog', 'notification', 'loadingBar', 'modal'],
   {
-    configProviderProps: configProviderPropsRef,
+    configProviderProps: configProviderProps(),
   },
 )
+export const createHelper = () => {
+  const locate = getLocate()
+  const opt = {
+    theme: getTheme(),
+    locate,
+  }
+  return createDiscreteApi(['message', 'dialog', 'notification', 'loadingBar', 'modal'], {
+    configProviderProps: opt,
+  })
+}
+
+export { message, dialog, notification, loadingBar, modal }
 
 export const showHostConfigureDetail = async (id: string) => {
   const appWindow = new Window('host-config-detail', {

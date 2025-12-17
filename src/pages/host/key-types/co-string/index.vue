@@ -88,19 +88,20 @@ const changeValue = () => {
 </script>
 
 <template>
-  <div class="w-full h-full">
+  <div class="w-full h-full flex flex-col">
     <co-info-header v-model:size="size" type="string">
       <n-space>
-        <n-button type="primary" size="tiny" @click="changeValue">
+        <n-button quaternary type="primary" size="small" @click="changeValue">
           <template #icon><i class="i-material-symbols:edit-square-rounded"></i></template> {{ $t('actions[3]') }}
         </n-button>
       </n-space>
     </co-info-header>
-    <div class="p-4">
+    <div class="p-4 flex-1 flex flex-col">
       <n-alert v-if="largerThan" type="info" class="mb-4" :bordered="false">
-        {{ $t('tips[1]', { size: '1Mb' }) }} <n-button size="tiny" type="primary" quaternary>{{ $t("actions.6") }}</n-button>
+        {{ $t('tips[1]', { size: '1Mb' }) }}
+        <n-button size="tiny" type="primary" quaternary>{{ $t("actions.6") }}</n-button>
       </n-alert>
-      <textarea readonly class=" w-full h-full resize-none b-none outline-none" v-model="content" />
+      <n-input type="textarea" :resizable="false" readonly class="flex-1" v-model:value="content"></n-input>
     </div>
   </div>
 </template>

@@ -1,8 +1,9 @@
-import { Webview } from '@tauri-apps/api/webview'
 import { lightTheme, darkTheme } from 'naive-ui'
 import { shallowRef, onMounted, onBeforeUnmount, inject } from 'vue'
 import { req } from '@/api'
 import { listen } from '@tauri-apps/api/event'
+
+import { getMode, storageKey } from '@/tools'
 export const useResize = (sub?: number) => {
   const height = shallowRef(100)
   const width = shallowRef(0)
@@ -31,10 +32,9 @@ export const useResize = (sub?: number) => {
     width,
   }
 }
-type ThemeMode = 'light' | 'dark' | 'auto'
+
 export const useTheme = () => {
   const theme = shallowRef(lightTheme)
-  const storageKey = 'theme-mode'
   const setTheme = (
     mode: 'light' | 'dark' | 'auto',
     t?: Ref<typeof lightTheme | typeof darkTheme>,
@@ -73,9 +73,6 @@ export const useTheme = () => {
   }
   const unlistenTheme = () => {
     window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', onMediaChange)
-  }
-  const getMode = () => {
-    return (localStorage.getItem(storageKey) || 'auto') as ThemeMode
   }
   const initThemeMode = () => {
     const mode = getMode()

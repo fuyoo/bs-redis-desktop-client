@@ -12,7 +12,9 @@ listenLocateChange()
 
 <template>
   <n-config-provider :locale="locate" :theme="theme">
-    <RouterView />
+    <n-dialog-provider>
+      <RouterView />
+    </n-dialog-provider>
   </n-config-provider>
 </template>
 

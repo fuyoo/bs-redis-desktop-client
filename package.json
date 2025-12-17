@@ -21,7 +21,7 @@
     "format": "prettier --write src/"
   },
   "devDependencies": {
-    "@iconify/json": "^2.2.287",
+    "@iconify/json": "2.2.287",
     "@tauri-apps/api": "^2.1.1",
     "@tauri-apps/cli": "^2.1.0",
     "@tauri-apps/plugin-shell": "^2.2.0",

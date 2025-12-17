@@ -10,7 +10,7 @@ const routes: RouteRecordRaw[] = [
       { path: '/settings', component: () => import('@/pages/settings/index.vue') },
       {
         path: '/tab/:id',
-        component: () => import('@/layouts/HostViewLayout.vue'),
+        component: () => import('@/layouts/host-layout.vue'),
         children: [
           {
             path: 'main',

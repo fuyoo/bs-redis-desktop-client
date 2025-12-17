@@ -3,12 +3,13 @@ import { useReqStore } from '@/stores/req.ts'
 import { onBeforeUnmount, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import {dataToHuman} from '@/tools'
+import { dataToHuman } from '@/tools'
+import { useThemeVars } from 'naive-ui'
 
 const route = useRoute()
 const { t } = useI18n()
 const prop = defineProps<{ type?: string }>()
-
+const vars = useThemeVars()
 const vSizeModel = defineModel('size')
 const reqStore = useReqStore()
 const baseInfo = reactive({
@@ -16,7 +17,7 @@ const baseInfo = reactive({
   pttl: '',
 })
 
-const trans = (k:string | string[]) => atob(k as string)
+const trans = (k: string | string[]) => atob(k as string)
 let timer = -1 as any
 const fetchInfo = async () => {
   // clear interval, prevention memory leak
@@ -29,7 +30,7 @@ const fetchInfo = async () => {
   vSizeModel.value = mem.data
   const pttl = await reqStore.reqWithHost<string>({
     path: '/cmd',
-    data: ['pttl',  trans(route.params.key)],
+    data: ['pttl', trans(route.params.key)],
   })
   baseInfo.pttl = pttl.data
   if (Number(pttl.data) > 1000) {
@@ -70,16 +71,29 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="b-b b-b-dashed b-b-#eee p-4 flex justify-between items-center">
-  <div class=" gap-2 flex">
-    <b>{{ trans(route.params.key as string) }}</b>
-    <q-badge><i class="i-iconamoon:type-bold mr-1"></i> {{ type?.toUpperCase() }}</q-badge>
-    <q-badge><i class="i-material-symbols:memory-alt mr-1"></i> {{ dataToHuman(baseInfo.memory) }}</q-badge>
-    <q-badge>
-      <i class="i-material-symbols:nest-clock-farsight-analog-outline"></i>TTL
-      {{ formatMilliseconds(baseInfo.pttl) }}
-    </q-badge>
-  </div>
+  <div :style="{ '--n-border-color': vars.borderColor }"
+    class="b-b b-b-dashed b-b-[var(--n-border-color)] px-4 py-2 flex justify-between items-center">
+    <div class="flex flex-col gap-1 mr-10">
+      <n-text strong>
+        <i class="i-material-symbols:key-outline rotate--45"></i>
+        {{ trans(route.params.key as string) }}</n-text>
+      <div class="flex gap-2">
+        <n-tag size="small">
+          <template #icon>
+            <i class="i-iconamoon:type-bold mr-1"></i>
+          </template>{{ type?.toUpperCase() }}</n-tag>
+        <n-tag size="small">
+          <template #icon>
+            <i class="i-material-symbols:memory-alt"></i>
+          </template>
+          {{ dataToHuman(baseInfo.memory)
+          }}</n-tag>
+        <n-tag size="small">
+          <template #icon><i class="i-material-symbols:nest-clock-farsight-analog-outline"></i></template>
+          TTL {{ formatMilliseconds(baseInfo.pttl) }}
+        </n-tag>
+      </div>
+    </div>
     <slot></slot>
   </div>
 </template>
