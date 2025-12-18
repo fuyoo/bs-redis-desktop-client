@@ -9,10 +9,10 @@ import { ID } from '@/tools/keys.ts'
 import type { RedisKeyType, Tree } from '@/types.ts'
 import KeysWorker from '@/worker/keys.ts?worker'
 import { useI18n } from 'vue-i18n'
-import { dialog } from '@/tools'
+const dialog = useDialog()
 import {
   useActions,
-} from '@/pages/host/components/CoKeys/actions.tsx'
+} from '@/hooks/actions.tsx'
 const { addHashKey,
   addListKey,
   addSetKey,

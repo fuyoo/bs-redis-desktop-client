@@ -7,6 +7,7 @@ import { Platform } from "@/tools"
 import { listen } from '@tauri-apps/api/event'
 import { useTab } from '../hooks/tab'
 import { useThemeVars } from 'naive-ui'
+import { req } from '@/api'
 const vars = useThemeVars()
 const bgColor = computed(() => {
   if (vars.value.baseColor === '#000') {
@@ -53,6 +54,9 @@ const handleOperation = async (o: Operation) => {
         content: t('exit'),
         negativeText: t('actions.1'),
         positiveText: t('actions.0'),
+        onPositiveClick: async () => {
+          req.do("quit")
+        },
       })
       break
     }

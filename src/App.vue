@@ -2,12 +2,14 @@
 import { RouterView } from 'vue-router'
 import { useLocate } from '@/i18n'
 import { useTheme } from './hooks/life';
+import { buildTray } from './tools/tray';
 const { theme, initThemeMode, listenChange } = useTheme()
 provide('theme', theme)
 const { locate, listenLocateChange } = useLocate()
 initThemeMode()
 listenChange()
 listenLocateChange()
+buildTray()
 </script>
 
 <template>

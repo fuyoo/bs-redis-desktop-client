@@ -8,7 +8,9 @@ import { useI18n } from 'vue-i18n'
 import { useResize } from '@/hooks/life.ts'
 import {message} from "@/tools/index.ts"
 import type { FormInst } from 'naive-ui'
+import { useActions } from '@/hooks/actions'
 const dialog  = useDialog()
+const {checkKeyIsExist} = useActions(dialog)
 const { t } = useI18n()
 const size = ref(0)
 const key = Key()
@@ -53,6 +55,11 @@ const columns = reactive([
             path: '/cmd',
             data: ['lrem', key, '1', row.value],
           })
+         try {
+           await checkKeyIsExist(key, true, true)
+          } catch (error) {
+            console.error('Error:', error)
+          }
           fetchRecords()
         } finally {
           row.delLoaing = false
@@ -62,14 +69,14 @@ const columns = reactive([
       const look =  (row: Record<string, any>) => {
         dialog.create({
           title: t('actions[12]'),
-          content:() => <n-input type="textarea" rows={8} class="my-4" readonly v-model:value={row.value} />,
+          content:() => <n-input type="textarea" resizable={false} rows={8} class="my-4" readonly v-model:value={row.value} />,
         })
       }
       return (
         <n-space>
-          {(pager.itemCount > 1) && <n-button type="warning" size="tiny" quaternary onClick={() => delFn(row)}>
+           <n-button type="warning" size="tiny" quaternary onClick={() => delFn(row)}>
             {t('actions[2]')}
-          </n-button>}
+          </n-button>
           <n-button type="primary" size="tiny" quaternary onClick={() => editFn(row,calcIndex(row.no))}>
             {t('actions[3]')}
           </n-button>
@@ -96,7 +103,7 @@ const fetchRecords = async () => {
       `${pager.page * pager.pageSize - 1}`,
     ],
   })
-  records.value = resp.data.split('\n').map((item: string, i: number) => {
+  records.value = resp.data.split('\n').filter(i => i != '').map((item: string, i: number) => {
     return {
       title: item,
       value: item,
@@ -116,7 +123,7 @@ const addData = async () => {
   })
   const rules = {
     value: [{
-      required: false,
+      required: true,
       message: t('keyForm.msg.1'),
       trigger: 'blur',
     }],
@@ -140,7 +147,7 @@ const addData = async () => {
   }
   dialog.create({
     title: t('tips.5'),
-    content:() => <n-form ref={formRef} mode={formModel} rules={rules} label-placement="left" label-width="80">
+    content:() => <n-form ref={formRef} model={formModel} rules={rules} label-placement="left" label-width="80">
       <n-form-item label={t('keyForm.label.1')} path="value" >
         <n-input type="textarea" v-model:value={formModel.value}  />
       </n-form-item>
@@ -208,7 +215,7 @@ const editFn = async (row:Record<string,any>,index: number) => {
 
 <template>
   <div class="w-full h-full">
-    <co-info-header v-model:size="size" type="string">
+    <co-info-header v-model:size="size" type="list">
       <div><n-button @click="addData" quaternary size="small" type="primary">
           <template #icon><i class="i-pajamas:insert"></i></template>
           {{ $t('actions[5]') }}</n-button></div>

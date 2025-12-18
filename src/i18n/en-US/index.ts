@@ -3,6 +3,9 @@
 
 export default {
   exit: 'Are you sure exit this app?',
+  tray: {
+    quit: 'Quit',
+  },
   menu: [
     ['Host', 'redis database host'],
     ['Settings', 'app settings'],
@@ -23,11 +26,13 @@ export default {
     'Load More',
     'Refresh',
     'Look',
+    'Search',
+    'Reset',
   ],
 
   keyForm: {
-    label: ['Key Name', 'Data', 'Expire', 'Field', 'Direction'],
-    msg: ['Key name is required', 'Data is required'],
+    label: ['Key Name', 'Data', 'Expire', 'Field', 'Direction', 'Score', 'Member'],
+    msg: ['Key name is required', 'Data is required', 'Score is required', 'Member is required'],
   },
   home: {
     name: 'Home',
@@ -50,7 +55,7 @@ export default {
   hostInfo: ['Memory', 'Server', 'Stats', 'Details', 'Key Anylaysis'],
   normal: ['Database', 'Please select a key.'],
   timeFormat: ['d', 'h', 'm', 's', 'mill', 'never'],
-  table: ['Data', 'Operate'],
+  table: ['Data', 'Operate', 'Key', 'Score', 'Member'],
   tips: [
     'Current data type unsupported yet.',
     'Due to the data being larger than {size}, the displayed data is truncated. You can click the button next to it to download the original data',
@@ -59,6 +64,9 @@ export default {
     'Total {size}',
     'Insert',
     'Modify',
+    'Key {key} already exists.',
+    'Operate Success.',
+    'New Connection',
   ],
   title: ['New {type} Type Key'],
 }

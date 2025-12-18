@@ -5,63 +5,6 @@ use std::sync::Mutex;
 use tauri::webview::PageLoadEvent;
 use tauri::Manager;
 use tauri::RunEvent;
-use tauri::menu::{Menu, MenuItem};
-use tauri::tray::{TrayIconBuilder, TrayIconEvent, MouseButton};
-fn build_try(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
-    let quit_i = MenuItem::with_id(app, "quit", "关闭", true, None::<&str>)?;
-            let menu = Menu::with_items(app, &[&quit_i])?;
-
-            let _tray = TrayIconBuilder::new()
-                .menu(&menu)
-                .on_menu_event(|app, event| match event.id.as_ref() {
-                    "quit" => {
-                        println!("quit menu item was clicked");
-                        app.exit(0);
-                    }
-                    _ => {
-                        println!("menu item {:?} not handled", event.id);
-                    }
-                })
-                .show_menu_on_left_click(false)
-                .on_tray_icon_event(|tray, event| match event {
-                    TrayIconEvent::Click { button, .. } => match button {
-                        MouseButton::Left => {
-                            #[cfg(target_os = "macos")]
-                            let _ = tauri::AppHandle::show(tray.app_handle());
-                            #[cfg(not(target_os = "macos"))]
-                            {
-                             let win = tray.app_handle()
-                                .get_webview_window("main")
-                                .expect("no main window");
-                                win.show()
-                                .expect("failed to show window");
-                               let _ = win.set_focus();
-                               let _ = win.unminimize();
-                            }
-                           
-                        }
-                        _ => {}
-                    },
-                    _ => {}
-                });
-            // 设置图标
-            #[cfg(target_os = "macos")]
-            let icon = include_bytes!("../icons/template.png");
-            #[cfg(target_os = "macos")]
-            let img = tauri::image::Image::from_bytes(icon)?;
-            #[cfg(target_os = "macos")]
-            let _tray = _tray.icon(img);
-            #[cfg(target_os = "macos")]
-            let _tray = _tray.icon_as_template(true);
-             #[cfg(not(target_os = "macos"))]
-            let icon = include_bytes!("../icons/icon.png");
-             #[cfg(not(target_os = "macos"))]
-            let img = tauri::image::Image::from_bytes(icon)?;
-            #[cfg(not(target_os = "macos"))]
-            let _tray = _tray.icon(img);
-            _tray.build(app)?;
-            Ok(())
-}
 pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     let mut app = tauri::Builder::default();
     // Access the system shell. Allows you to spawn child processes
@@ -80,20 +23,6 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
             )
             .build(),
     );
-    // listen window event
-    app = app.on_window_event(|win, evt| match evt {
-        tauri::WindowEvent::CloseRequested { api, .. } => match win.label() {
-            "main" => {
-                api.prevent_close();
-                #[cfg(target_os = "macos")]
-                let _ = tauri::AppHandle::hide(win.app_handle());
-                #[cfg(not(target_os = "macos"))]
-                let _ = win.hide();
-            }
-            _ => {}
-        },
-        _ => {}
-    });
     app = app.plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
         let win = app.get_webview_window("main").expect("no main window");
         let _ = win.show();
@@ -109,21 +38,35 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
             Some(win) => {
                 let _ = win.set_decorations(false);
             }
-        }
-        build_try(_app)?;
+        };
 
         Ok(())
     });
 
-    app = app
-        .manage(Mutex::new(Vec::<tabs::Tab>::new()))
-        .invoke_handler(tauri::generate_handler![
-            api::request,
-            tabs::tab_list,
-            tabs::tab_change,
-            tabs::tab_close,
-            api::emit_event
-        ]);
+    // listen window event
+    app = app.on_window_event(|win, evt| match evt {
+        tauri::WindowEvent::CloseRequested { api, .. } => match win.label() {
+            "main" => {
+                api.prevent_close();
+                #[cfg(target_os = "macos")]
+                let _ = tauri::AppHandle::hide(win.app_handle());
+                #[cfg(not(target_os = "macos"))]
+                let _ = win.hide();
+            }
+            _ => {}
+        },
+        _ => {}
+    });
+    app = app.manage(Mutex::new(Vec::<tabs::Tab>::new()));
+    app = app.invoke_handler(tauri::generate_handler![
+        api::request,
+        tabs::tab_list,
+        tabs::tab_change,
+        tabs::tab_close,
+        api::emit_event,
+        api::quit,
+        api::init_tray,
+    ]);
     let app = app.on_page_load(|wb, evt| match evt.event() {
         PageLoadEvent::Finished => {
             let win = wb.window();

@@ -5,7 +5,7 @@
         <template #icon>
           <i class="i-material-symbols:add"></i>
         </template>
-        新链接</n-button>
+        {{ t('tips.9') }}</n-button>
       <div class="h-2"></div>
       <n-tabs tab-class="relative h-9" placement="left" size="small" style="height: calc(100vh - 100px)" type="card"
         v-model:value="tab">
@@ -33,6 +33,8 @@ import CoHostForm from './components/CoHostForm.vue'
 import { useObservable } from '@vueuse/rxjs'
 import { type ConnectionHost, db } from '@/db.ts'
 import { liveQuery } from 'dexie'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 const tab = ref('')
 const hosts: Ref<ConnectionHost[]> = useObservable(liveQuery(() => db.hosts.toArray()) as any)
 const tabData = ref()

@@ -108,7 +108,7 @@ const rows = computed(() => {
       <n-descriptions content-class="whitespace-nowrap" label-class="whitespace-nowrap" size="small" class="flex-1"
         :columns="1" label-placement="left" bordered :title="t('hostInfo[2]')">
         <n-descriptions-item label="Connected Clients">
-          {{ helper('used_memory_human', 'Memory') }}
+          {{ helper('connected_clients', 'Clients') }}
         </n-descriptions-item>
         <n-descriptions-item label="Total Connections Received">
           {{ helper('total_connections_received', 'Stats') }}

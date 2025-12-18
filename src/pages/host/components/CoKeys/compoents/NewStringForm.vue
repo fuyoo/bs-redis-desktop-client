@@ -2,8 +2,10 @@
 import { t } from "@/i18n";
 import { type FormInst } from "naive-ui"
 import { useReqStore } from "@/stores/req.ts";
-import { message, dialog } from "@/tools"
-
+import { message } from "@/tools"
+import { useActions } from "@/hooks/actions";
+const dialog = useDialog()
+const { checkKeyIsExist } = useActions(dialog)
 
 const form = reactive({
   key: "",
@@ -24,6 +26,7 @@ const rules = {
 const req = useReqStore()
 const submitFn = async () => {
   await formRef.value?.validate()
+  await checkKeyIsExist(form.key)
   await req.reqWithHost<boolean>({
     path: "/cmd",
     data: ['set', form.key, form.data]
