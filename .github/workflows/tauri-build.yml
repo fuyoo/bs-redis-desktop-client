@@ -121,9 +121,8 @@ jobs:
         run: tauri build --target ${{ matrix.rust-target }}
         env:
           # 可选：Windows 代码签名（需在 GitHub Secrets 中添加）
-          TAURI_PRIVATE_KEY: ${{ secrets.KEY }}
-          TAURI_KEY_PASSWORD: ${{ secrets.KEY_SECRECT }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ github.workspace }}/private.key
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.KEY_SECRECT }}
 
       # 步骤 9：收集产物（统一输出目录，方便上传）
       - name: Collect build artifacts
