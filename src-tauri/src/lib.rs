@@ -6,7 +6,9 @@ use tauri::webview::PageLoadEvent;
 use tauri::Manager;
 use tauri::RunEvent;
 pub fn run() -> Result<(), Box<dyn std::error::Error>> {
-    let mut app = tauri::Builder::default();
+    let mut app = tauri::Builder::default()
+        .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_updater::Builder::new().build());
     // Access the system shell. Allows you to spawn child processes
     // and manage files and URLs using their default application.
     app = app.plugin(tauri_plugin_shell::init());

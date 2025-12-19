@@ -1,13 +1,14 @@
 {
   "build": {
     "beforeDevCommand": "pnpm dev",
-    "beforeBuildCommand": "",
+    "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist",
     "devUrl": "http://localhost:9000"
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "createUpdaterArtifacts": true,
+    "targets": ["nsis","appimage","dmg","app"],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -19,12 +20,31 @@
       "entitlements": "Release.entitlements",
       "exceptionDomain": "",
       "frameworks": []
+    },
+    "windows": {
+      "nsis": {
+         "compression": "zlib",
+      "languages": ["SimpChinese"],
+      "installerIcon": "icons/icon.ico",
+      "minimumWebview2Version": "115.0.0"
+      }
     }
+    
   },
   "productName": "BS",
-  "version": "2.0.0-1",
   "identifier": "link.xsa.bs",
-  "plugins": {},
+  "plugins": {
+    "updater": {
+      "pubkey":"dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDk5RkJDNEI3QzZGREI4RTkKUldUcHVQM0d0OFQ3bVdwRTVBc1NKT3o0ZHV4UmNxZ3FPOEFPZmtUZDc2SVA4V0x3aGU2a2I3dDgK",
+      "endpoints": [
+        "https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/refs/heads/dev/{{target}}.json"  
+      ],
+      "dangerousInsecureTransportProtocol": true,
+      "windows": {
+        "installMode": "passive"
+      }
+    }
+  },
   "app": {
     "security": {
       "csp": null

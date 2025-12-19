@@ -28,6 +28,8 @@ export default {
     'Look',
     'Search',
     'Reset',
+    'Update',
+    'Install',
   ],
 
   keyForm: {
@@ -67,6 +69,11 @@ export default {
     'Key {key} already exists.',
     'Operate Success.',
     'New Connection',
+    'Download successful. Do you want to install it immediately?',
   ],
   title: ['New {type} Type Key'],
+  update: {
+    title: 'New Version Available',
+    install: 'Install',
+  },
 }

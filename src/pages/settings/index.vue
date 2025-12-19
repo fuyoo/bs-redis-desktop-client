@@ -40,8 +40,9 @@
 import CoLanguage from './components/CoLanguage.vue'
 import CoTheme from './components/CoTheme.vue'
 import CoListItem from './components/CoListItem.vue'
-// below type assert code aim to pass vscode ts-plugin type checking.
-const version = __APP_PKG.version
-console.log("--->,__APP_VERSION__", __APP_PKG)
-const theme = ref('light')
+import { getVersion } from '@tauri-apps/api/app';
+const version = ref('')
+getVersion().then(res => {
+  version.value = res
+})
 </script>

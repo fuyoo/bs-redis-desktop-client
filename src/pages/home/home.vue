@@ -21,6 +21,14 @@
     <div class="flex-1 relative">
       <n-scrollbar class="w-full h-full absolute left-0 top-0" content-class="flex justify-center items-start">
         <div class="p-4 m-5 w-600px rounded-lg">
+          <n-alert :bordered="false" v-if="newVersion" class="mb-6" type="success" closable>
+            <template #header>
+              {{ t("update.title") }}
+              <n-button type="primary" text @click="askUpdate()">{{ t('actions.12') }}</n-button></template>
+            <template #icon>
+              <i class="i-material-symbols:tips-and-updates-outline-rounded"></i>
+            </template>
+          </n-alert>
           <CoHostForm :data="tabData"></CoHostForm>
         </div>
       </n-scrollbar>
@@ -34,7 +42,10 @@ import { useObservable } from '@vueuse/rxjs'
 import { type ConnectionHost, db } from '@/db.ts'
 import { liveQuery } from 'dexie'
 import { useI18n } from 'vue-i18n'
+import { useUpdate } from '@/hooks/update'
+import { check } from '@tauri-apps/plugin-updater'
 const { t } = useI18n()
+const { checkUpdate, askUpdate } = useUpdate()
 const tab = ref('')
 const hosts: Ref<ConnectionHost[]> = useObservable(liveQuery(() => db.hosts.toArray()) as any)
 const tabData = ref()
@@ -56,5 +67,11 @@ watch(
 const newConnection = () => {
   tab.value = 'new'
 }
-
+const newVersion = ref(false)
+onMounted(() => {
+  checkUpdate()
+    .then((res) => {
+      newVersion.value = res != null
+    })
+})
 </script>

@@ -1,0 +1,183 @@
+name: Tauri Multi-Arch Build & Release
+
+# 触发条件：手动触发 + Tag 推送（v* 格式，如 v1.0.0）
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build ${{ matrix.os }}-${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false # 单个平台失败不影响其他平台
+      matrix:
+        include:
+          # -------------------------- Windows 平台 --------------------------
+          # Windows x86_64（Intel 芯片，NSIS 安装包）
+          - os: windows
+            arch: x86_64
+            runner: windows-latest
+            rust-target: x86_64-pc-windows-msvc
+            artifact-name: app-windows-x86_64.exe
+            bundle-path: src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*.exe
+            # Windows aarch64（ARM 芯片，便携版 exe，交叉编译）
+          - os: windows
+            arch: aarch64
+            runner: windows-latest
+            rust-target: aarch64-pc-windows-msvc
+            artifact-name: app-windows-aarch64-portable.exe
+            bundle-path: src-tauri/target/aarch64-pc-windows-msvc/release/*.exe
+
+          # -------------------------- macOS 平台 --------------------------
+          # macOS x86_64（Intel 芯片，DMG 镜像）
+          - os: macos
+            arch: x86_64
+            runner: macos-latest
+            rust-target: x86_64-apple-darwin
+            artifact-name: app-macos-x86_64.dmg
+            bundle-path: src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/*.dmg
+            # macOS arm64（Apple Silicon 芯片，DMG 镜像，原生编译）
+          - os: macos
+            arch: arm64
+            runner: macos-14
+            rust-target: aarch64-apple-darwin
+            artifact-name: app-macos-arm64.dmg
+            bundle-path: src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg
+
+          # -------------------------- Linux 平台 --------------------------
+          # Linux x86_64（Intel 芯片，AppImage）
+          - os: linux
+            arch: x86_64
+            runner: ubuntu-latest
+            rust-target: x86_64-unknown-linux-gnu
+            artifact-name: app-linux-x86_64.AppImage
+            bundle-path: src-tauri/target/x86_64-unknown-linux-gnu/release/bundle/appimage/*.AppImage
+            # Linux aarch64（ARM 芯片，AppImage，交叉编译）
+          - os: linux
+            arch: aarch64
+            runner: ubuntu-latest
+            rust-target: aarch64-unknown-linux-gnu
+            artifact-name: app-linux-aarch64.AppImage
+            bundle-path: src-tauri/target/aarch64-unknown-linux-gnu/release/bundle/appimage/*.AppImage
+
+    steps:
+      # 步骤 1：拉取仓库代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 步骤 2：安装 Node.js（匹配项目 Node 版本，缓存依赖）
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 步骤 3：安装前端依赖（npm/yarn/pnpm 按需修改）
+      - name: Install frontend dependencies
+        run: npm install
+
+      # 步骤 4：安装 Rust + 目标架构工具链
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          target: ${{ matrix.rust-target }}
+          components: rustfmt, clippy
+
+      # 步骤 5：安装交叉编译依赖（仅 Linux ARM64 需额外配置）
+      - name: Install cross-compile dependencies
+        if: matrix.os == 'linux' && matrix.arch == 'aarch64'
+        run: |
+          # 启用 ARM64 架构支持
+          sudo dpkg --add-architecture arm64
+          sudo apt-get update -y
+          # 安装交叉编译器 + ARM64 依赖（Tauri 核心依赖）
+          sudo apt-get install -y \
+            gcc-aarch64-linux-gnu \
+            libgtk-3-dev:arm64 \
+            libwebkit2gtk-4.0-dev:arm64 \
+            libssl-dev:arm64 \
+            libayatana-appindicator3-dev:arm64 \
+            librsvg2-dev:arm64
+        shell: bash
+
+      # 步骤 6：缓存 Rust 依赖（按平台+架构区分，避免冲突）
+      - name: Cache Rust dependencies
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+          key: ${{ matrix.os }}-${{ matrix.arch }}-rust-cache
+
+      # 步骤 7：安装 Tauri CLI（全局安装，确保命令可用）
+      - name: Install Tauri CLI
+        run: npm install -g @tauri-apps/cli
+
+      # 步骤 8：Tauri 跨架构打包（核心步骤：指定目标架构）
+      - name: Build Tauri app (${{ matrix.os }}-${{ matrix.arch }})
+        run: tauri build --target ${{ matrix.rust-target }}
+        env:
+          # 可选：Windows 代码签名（需在 GitHub Secrets 中添加）
+          TAURI_PRIVATE_KEY: ${{ secrets.KEY }}
+          TAURI_KEY_PASSWORD: ${{ secrets.KEY_SECRECT }}
+
+      # 步骤 9：收集产物（统一输出目录，方便上传）
+      - name: Collect build artifacts
+        run: |
+          # 创建产物输出目录
+          mkdir -p ./release-artifacts
+
+          # 查找匹配的构建产物
+          BUNDLE_FILE=$(ls ${{ matrix.bundle-path }} | head -n 1)
+
+          # 检查是否存在产物
+          if [ -z "$BUNDLE_FILE" ]; then
+            echo "Error: No bundle file found at ${{ matrix.bundle-path }}"
+            exit 1
+          fi
+
+          # 复制产物并重命名
+          cp "$BUNDLE_FILE" "./release-artifacts/${{ matrix.artifact-name }}"
+
+          # 设置环境变量供后续步骤使用
+          echo "ARTIFACT_PATH=./release-artifacts/${{ matrix.artifact-name }}" >> $GITHUB_ENV
+        shell: bash
+
+      # 步骤 10：上传到 GitHub Artifacts（临时存储，30 天有效期）
+      - name: Upload to Artifacts
+        if: env.ARTIFACT_PATH != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-${{ matrix.arch }}-build
+          path: ${{ env.ARTIFACT_PATH }}
+          retention-days: 30
+
+      # 步骤 11：推送 Tag 时，上传到 GitHub Releases（正式分发）
+      - name: Upload to GitHub Releases
+        if: startsWith(github.ref, 'refs/tags/') && env.ARTIFACT_PATH != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.ARTIFACT_PATH }}
+          body: |
+            ## 版本：${{ github.ref_name }}
+            支持 Intel/ARM 双架构的自动构建产物，按设备选择下载：
+
+            ### Windows
+            - Intel 芯片（x86_64）：[app-windows-x86_64.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/app-windows-x86_64.exe)
+            - ARM 芯片（aarch64）：[app-windows-aarch64-portable.exe](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/app-windows-aarch64-portable.exe)
+
+            ### macOS
+            - Intel 芯片（x86_64）：[app-macos-x86_64.dmg](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/app-macos-x86_64.dmg)
+            - Apple Silicon（M1/M2/M3）：[app-macos-arm64.dmg](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/app-macos-arm64.dmg)
+
+            ### Linux
+            - Intel 芯片（x86_64）：[app-linux-x86_64.AppImage](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/app-linux-x86_64.AppImage)
+            - ARM 芯片（aarch64）：[app-linux-aarch64.AppImage](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/app-linux-aarch64.AppImage)
+
+            > 说明：Linux ARM64 产物需在 Ubuntu/Debian 系 ARM 设备上运行，需提前安装依赖：`sudo apt-get install -y libgtk-3-0 libwebkit2gtk-4.0-37`
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

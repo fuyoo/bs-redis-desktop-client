@@ -2,7 +2,7 @@
 name = "bsrdc"
 version = "2.0.0-1"
 description = "BS Redis Desktop Client"
-authors = ["you"]
+authors = ["fuyoo"]
 edition = "2021"
 
 
@@ -19,11 +19,12 @@ serde_json = "1"
 log = { version = "0.4.21", features = [] }
 tauri-plugin-shell = "2"
 tauri-plugin-window-state = "2"
-redis = { version = "0.25.4", features = ["tokio-comp"] }
+redis = { version = "1", features = ["tokio-comp"] }
 anyhow = "1.0.86"
 async-trait = "0.1.81"
 embed_plist = "1.2.2"
 tauri-plugin-log = "2"
+tauri-plugin-process = "2"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-single-instance = "2"

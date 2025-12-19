@@ -1,3 +1,5 @@
+import { install } from 'naive-ui'
+
 export default {
   exit: '确定要退出软件吗？',
   tray: {
@@ -25,6 +27,8 @@ export default {
     '查看',
     '查询',
     '重置',
+    '更新',
+    '安装',
   ],
   home: {
     name: '主页',
@@ -64,6 +68,11 @@ export default {
     '键 {key} 已经存在.',
     '操作成功.',
     '新连接',
+    '下载成功，是否立即安装？',
   ],
   title: ['添加{type}类型键'],
+  update: {
+    title: '有新的版本更新',
+    install: '立即安装',
+  },
 }

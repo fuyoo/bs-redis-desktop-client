@@ -68,19 +68,62 @@ pub fn convert_to_string(ori: Value) -> Result<String> {
     let v = match ori {
         Value::Nil => "".to_string(),
         Value::Int(i) => i.to_string(),
-        Value::Data(d) => String::from_utf8_lossy(&d).to_string(),
-        Value::Bulk(b) => {
+        Value::BulkString(b) => {
+            String::from_utf8_lossy(&b).into()
+        }
+        Value::Okay => "OK".to_string(),
+        Value::SimpleString(s) => s,
+        Value::Map(items) => {
+            let mut result = String::new();
+            for (i, (key, value)) in items.clone().into_iter().enumerate() {
+                result.push_str(&format!(
+                    "{}: {}",
+                    convert_to_string(key)?,
+                    convert_to_string(value)?
+                ));
+                if i != items.len() - 1 {
+                    result.push_str(", ");
+                }
+            }
+            result
+        }
+        Value::Attribute { data,.. } => convert_to_string(*data)?,
+        Value::Set(values) => {
+            let mut result = String::new();
+            for (i, value) in values.clone().into_iter().enumerate() {
+                result.push_str(&convert_to_string(value)?);
+                if i != values.len() - 1 {
+                    result.push_str(", ");
+                }
+            }
+            result
+        }
+        Value::Double(d) => d.to_string(),
+        Value::Boolean(b) => b.to_string(),
+        Value::VerbatimString { format: _, text } => text,
+        Value::BigNumber(big_int) => big_int.to_string(),
+        Value::Push { kind: _, data } => {
+            let mut result = String::new();
+            for (i, item) in data.clone().into_iter().enumerate() {
+                result.push_str(&convert_to_string(item)?);
+                if i != data.len() - 1 {
+                    result.push_str(", ");
+                }
+            }
+            result
+        }
+        Value::ServerError(server_error) => server_error.to_string(),
+        Value::Array(d) => {
             let mut s = "".to_string();
-            for (k, v) in b.iter().enumerate() {
+            for (k, v) in d.iter().enumerate() {
                 s += &convert_to_string(v.clone())?;
-                if k != b.len() - 1 {
+                if k != d.len() - 1 {
                     s += "\n";
                 }
             }
             s
         }
-        Value::Status(s) => s.to_string(),
-        Value::Okay => "okey".to_string(),
+        _ => "".to_string(),
     };
     Ok(v)
 }
