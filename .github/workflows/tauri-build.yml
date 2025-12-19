@@ -109,7 +109,9 @@ jobs:
         with:
           workspaces: './src-tauri -> target'
           key: ${{ matrix.os }}-${{ matrix.arch }}-rust-cache
-
+      # 步骤 6.1：设置私钥
+      - name: Setup private key
+        run: echo "${{ secrets.KEY }}" > ${{ github.workspace }}/private.key && chmod 600 private.key
       # 步骤 7：安装 Tauri CLI（全局安装，确保命令可用）
       - name: Install Tauri CLI
         run: npm install -g @tauri-apps/cli
@@ -121,6 +123,7 @@ jobs:
           # 可选：Windows 代码签名（需在 GitHub Secrets 中添加）
           TAURI_PRIVATE_KEY: ${{ secrets.KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.KEY_SECRECT }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ github.workspace }}/private.key
 
       # 步骤 9：收集产物（统一输出目录，方便上传）
       - name: Collect build artifacts
