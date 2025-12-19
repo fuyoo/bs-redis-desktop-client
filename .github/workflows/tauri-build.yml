@@ -73,7 +73,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
       # 步骤 3：安装前端依赖（npm/yarn/pnpm 按需修改）
       - name: Install frontend dependencies
