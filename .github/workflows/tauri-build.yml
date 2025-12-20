@@ -55,6 +55,7 @@ jobs:
         run: |
           pnpm tauri signer generate -w  ${{github.workspace}}/key.key -p ${{secrets.KEY_SECRECT}} --force
           echo pwd
+          ls -a
           # 更新配置文件
           node replace.mjs
       - uses: tauri-apps/tauri-action@v0
