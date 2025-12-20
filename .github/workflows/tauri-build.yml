@@ -46,13 +46,10 @@ jobs:
 
       # 关键步骤：创建 Tauri 密钥目录并写入私钥
       - name: 配置 Tauri 更新私钥（Linux/macOS）
-        if: matrix.os != 'windows-latest'
         run: |
-          # 将私钥写入该目录的 tauri-update.key 文件
-          echo "dW50cnVzdGVkIGNvbW1lbnQ6IHJzaWduIGVuY3J5cHRlZCBzZWNyZXQga2V5ClJXUlRZMEl5bk55ZjNoMFdJaFcxN3R1T2lQRDJBOVQvdlgxYjdlRTNPZE9mQWp2dVBxc0FBQkFBQUFBQUFBQUFBQUlBQUFBQTM4V0JYV20zNkVLbHRGTWF5Sk93bDRTY0VwNEFIbzYyNVkxMm9YYnNyRWs3MStsUkJDdzByWm4wYzFKL1lOSEJaaG9OZFhJOGF2czBTNXJYeXgrWjNMOXNPQ3NJeGlBMDZUUGpPdnhiaVJiMXZQTkFLaEFpRGVqMkJxNG5uWUkxVTlxN211ZHRxSVE9Cg==" > ${{github.workspace}}/tauri-update.key
-          # 修改私钥权限（Linux/macOS 要求 600，否则 Tauri 会拒绝读取）
-          chmod 600 ${{github.workspace}}/tauri-update.key
-
+          pnpm tauri signer generate -w  ${{github.workspace}}/key.key -p ${{secrets.KEY_SECRECT}} --force
+          # 更新配置文件
+          node replace.mjs
       - name: 配置 Tauri 更新私钥（Windows）
         if: matrix.os == 'windows-latest'
         shell: pwsh
@@ -69,7 +66,7 @@ jobs:
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{secrets.token}}
-          TAURI_SIGNING_PRIVATE_KEY: ${{github.workspace}}/tauri-update.key
+          TAURI_SIGNING_PRIVATE_KEY: ${{github.workspace}}/key.key
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{secrets.KEY_SECRECT}}
         with:
           tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
