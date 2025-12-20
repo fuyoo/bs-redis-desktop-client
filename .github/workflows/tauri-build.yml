@@ -47,7 +47,7 @@ jobs:
       - name: install frontend dependencies
         run: npm install # change this to npm, pnpm or bun depending on which one you use.
 
-      - uses: tauri-apps/tauri-action@v2
+      - uses: tauri-apps/tauri-action
         env:
           GITHUB_TOKEN: ${{ secrets.token }}
         with:
