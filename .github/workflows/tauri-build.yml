@@ -55,7 +55,7 @@ jobs:
         run: |
           pnpm tauri signer generate -w  ${{github.workspace}}/key.key -p ${{secrets.KEY_SECRECT}} --force
           # 更新配置文件
-          node ${{github.workspace}}/replace.cjs
+          pnpm replace
 
       - uses: tauri-apps/tauri-action@v0
         env:
