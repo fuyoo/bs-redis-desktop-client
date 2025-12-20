@@ -54,10 +54,8 @@ jobs:
       - name: 配置 Tauri 更新私钥（Linux/macOS）
         run: |
           pnpm tauri signer generate -w  ${{github.workspace}}/key.key -p ${{secrets.KEY_SECRECT}} --force
-          pwd
-          ls -l
           # 更新配置文件
-          node ./replace.mjs
+          node ${{github.workspace}}/replace.cjs
 
       - uses: tauri-apps/tauri-action@v0
         env:
