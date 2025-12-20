@@ -44,22 +44,32 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
+      # 关键步骤：创建 Tauri 密钥目录并写入私钥
+      - name: 配置 Tauri 更新私钥（Linux/macOS）
+        if: matrix.os != 'windows-latest'
+        run: |
+          # 将私钥写入该目录的 tauri-update.key 文件
+          echo "${{ secrets.KEY }}" > ${{github.workspace}}/tauri-update.key
+          # 修改私钥权限（Linux/macOS 要求 600，否则 Tauri 会拒绝读取）
+          chmod 600 ${{github.workspace}}/tauri-update.key
+
+      - name: 配置 Tauri 更新私钥（Windows）
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          # 写入私钥（指定 UTF-8 编码，避免乱码）
+          ${{ secrets.KEY }} | Out-File -FilePath ${{github.workspace}}\tauri-update.key -Encoding utf8
+
       - name: install pnpm
         run: npm i -g pnpm
 
       - name: install frontend dependencies
         run: npm install # change this to npm, pnpm or bun depending on which one you use.
 
-      - name: Gen key
-        run: echo ${{secrets.KEY}} > ${{github.workspace}}/key.KEY
-      # 验证：查看文件是否写入成功
-      - name: 验证文件内容
-        run: cat ${{github.workspace}}/key.KEY  # 可选，仅用于测试，正式环境可删除
-
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{secrets.token}}
-          TAURI_SIGNING_PRIVATE_KEY: ${{github.workspace}}/key.KEY
+          TAURI_SIGNING_PRIVATE_KEY: ${{github.workspace}}/tauri-update.key
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{secrets.KEY_SECRECT}}
         with:
           tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
