@@ -1,6 +1,5 @@
-import  {readFileSync,writeFileSync} from  "fs"
-import {resolve} from "path"
-const __dirname = import.meta.dirname
+const  {readFileSync,writeFileSync} = require(  "fs")
+const {resolve} = require( "path")
 
 const file = resolve(__dirname, "./src-tauri/tauri.conf.release.json")
 const content = readFileSync(file)
