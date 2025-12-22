@@ -52,12 +52,14 @@ jobs:
 
       # 关键步骤：创建 Tauri 密钥并写入密钥
       - name: 配置 Tauri 更新私钥（Linux/macOS）
+        if: matrix.platform != 'windows-latest'
         run: |
-          pnpm tauri signer generate -w  ${{github.workspace}}/key.key -p ${{secrets.KEY_SECRECT}} --force
-          # 更新配置文件
-          pnpm replace
-          cat src-tauri/tauri.conf.release.json
-          cat key.key.pub
+          echo "${{secrets.KEY}}" > ${{github.workspace}}/key.key
+
+      - name: 配置 Tauri 签名私钥（Windows）
+        if: matrix.platform == 'windows-latest'
+        run: |
+          Set-Content -Path "${{github.workspace}}/key.key" -Value "${{secrets.KEY}}" -Encoding UTF8
 
       - uses: tauri-apps/tauri-action@v0
         env:

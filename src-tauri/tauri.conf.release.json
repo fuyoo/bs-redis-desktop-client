@@ -34,6 +34,7 @@
   "identifier": "link.xsa.bs",
   "plugins": {
     "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IHJzaWduIGVuY3J5cHRlZCBzZWNyZXQga2V5ClJXUlRZMEl5RVVwTTZwNnZkWXVzamd0anNBQnN4dnE5eXNGZ1pqS1hId29rcldUYjAxZ0FBQkFBQUFBQUFBQUFBQUlBQUFBQWhIWmlnVzlhU3U3RVlxTUEzakRLd01pb3hPNGJFYmxoUjlzdlV4S3RiT2czZElzUjhNRXJvUkFZaExVb001UTB5RVVCT2YzSDhkbHFYelpYcmFqZ2pXT2I5bjU2VHd3NmNKWUc0WGY1K29nSjZPU0JBbDU2WTlJVDcwSCtJell2Q0hhUnYyeVVZajA9Cg==",
       "endpoints": [
         "https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/refs/heads/dev/{{target}}.json"
       ],
