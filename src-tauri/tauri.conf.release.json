@@ -34,9 +34,8 @@
   "identifier": "link.xsa.bs",
   "plugins": {
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEFFMEEwQzlBMEJDMUIwRkIKUldUN3NNRUxtZ3dLcmkvL0FMU1o3U3h4d3RXNjdGbFB5ZWkydFFhcDJDZlcwamdlYlVDOUwyV2QK",
       "endpoints": [
-        "https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/refs/heads/dev/{{target}}.json"
+        "https://github.com/fuyoo/bs-redis-desktop-client/releases/latest/download/latest.json"
       ],
       "dangerousInsecureTransportProtocol": true,
       "windows": {

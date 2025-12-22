@@ -9,9 +9,7 @@ export const useUpdate = () => {
   const dialog = useDialog()
   const { t } = useI18n()
   const checkUpdate = async () => {
-    return await check({
-      target: 'macos-x86_64',
-    })
+    return await check()
   }
   const askUpdate = async () => {
     const version = await getVersion()
