@@ -8,7 +8,7 @@
   "bundle": {
     "active": true,
     "createUpdaterArtifacts": true,
-    "targets": ["nsis","appimage","dmg","app"],
+    "targets": ["nsis", "appimage", "dmg", "app"],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -23,21 +23,19 @@
     },
     "windows": {
       "nsis": {
-         "compression": "zlib",
-      "languages": ["SimpChinese"],
-      "installerIcon": "icons/icon.ico",
-      "minimumWebview2Version": "115.0.0"
+        "compression": "zlib",
+        "languages": ["SimpChinese"],
+        "installerIcon": "icons/icon.ico",
+        "minimumWebview2Version": "115.0.0"
       }
     }
-    
   },
   "productName": "BS",
   "identifier": "link.xsa.bs",
   "plugins": {
     "updater": {
-      "pubkey":"$PUBKEY",
       "endpoints": [
-        "https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/refs/heads/dev/{{target}}.json"  
+        "https://raw.githubusercontent.com/fuyoo/bs-redis-desktop-client/refs/heads/dev/{{target}}.json"
       ],
       "dangerousInsecureTransportProtocol": true,
       "windows": {
