@@ -72,4 +72,5 @@ jobs:
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: true
-          args: ${{ matrix.args }}
+          tauriScript: 'pnpm tauri build -c src-tauri/tauri.conf.release.json'
+          args: '-c src-tauri/tauri.conf.release.json'
