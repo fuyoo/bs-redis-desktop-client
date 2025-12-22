@@ -83,7 +83,7 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     #[cfg(debug_assertions)]
     let runner = app.build(tauri::generate_context!())?;
     #[cfg(not(debug_assertions))]
-    let runner = app.build(tauri::generate_context!("../tauri.conf.release.json"))?;
+    let runner = app.build(tauri::generate_context!("tauri.conf.release.json"))?;
     runner.run(|app, evt| match evt {
         RunEvent::Exit => {}
         RunEvent::ExitRequested { .. } => {}
