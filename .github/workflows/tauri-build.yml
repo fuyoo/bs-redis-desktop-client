@@ -69,4 +69,4 @@ jobs:
         with:
           tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
           releaseName: 'v__VERSION__'
-          args: '-c src-tauri/tauri.conf.release.json'
+          args: ${{matrix.args}} -c src-tauri/tauri.conf.release.json
