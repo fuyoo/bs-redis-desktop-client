@@ -28,8 +28,8 @@
           <i class="i-material-symbols:tips-and-updates-outline-rounded text-5 mr-1"></i>
         </template>
         <template #name>{{ $t('settings[2]') }}</template>
-        <n-badge value="New">
-          <n-text class="relative">v{{ version }}</n-text>
+        <n-badge :dot="update">
+          <n-button text @click="askUpdate()" class="relative">v{{ version }}</n-button>
         </n-badge>
       </co-list-item>
     </div>
@@ -41,8 +41,12 @@ import CoLanguage from './components/CoLanguage.vue'
 import CoTheme from './components/CoTheme.vue'
 import CoListItem from './components/CoListItem.vue'
 import { getVersion } from '@tauri-apps/api/app';
+import { useUpdate } from '@/hooks/update';
+const { checkUpdate, askUpdate } = useUpdate()
 const version = ref('')
-getVersion().then(res => {
+const update = ref<any>()
+getVersion().then(async res => {
   version.value = res
+  update.value = await checkUpdate()
 })
 </script>

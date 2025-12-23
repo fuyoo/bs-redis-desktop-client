@@ -43,7 +43,6 @@ import { type ConnectionHost, db } from '@/db.ts'
 import { liveQuery } from 'dexie'
 import { useI18n } from 'vue-i18n'
 import { useUpdate } from '@/hooks/update'
-import { check } from '@tauri-apps/plugin-updater'
 const { t } = useI18n()
 const { checkUpdate, askUpdate } = useUpdate()
 const tab = ref('')
