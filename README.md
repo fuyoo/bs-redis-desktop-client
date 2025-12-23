@@ -23,6 +23,20 @@ English | [中文](./docs/zh_CN.md)
 - [] ⚠️ Probabilistic (not plan.)
 - [] ⚠️ Time series (not plan.)
 
+## features
+
+> you can learn below features by this project
+
+- [x] single mode
+- [x] multiple webview
+- [x] software update
+- [x] multi-language
+- [x] vue3 + typescript + indexdb
+- [x] tray icon
+- [x] rust and forntend comunication
+- [x] re-open by click dock icon (macos only)
+- [x] and so on
+
 ## Software download and communication
 
 - [Home Page](http://bs.xsa.link)
