@@ -16,12 +16,12 @@ English | [中文](./docs/zh_CN.md)
 - [x] Sets
 - [x] Hashes
 - [x] Sorted sets
-- [] ⚠️ Streams (not plan.)
-- [] ⚠️ Geospatial (not plan.)
-- [] ⚠️ Bitmaps (not plan.)
-- [] ⚠️ Bitfields (not plan.)
-- [] ⚠️ Probabilistic (not plan.)
-- [] ⚠️ Time series (not plan.)
+- [ ] ⚠️ Streams (not plan.)
+- [ ] ⚠️ Geospatial (not plan.)
+- [ ] ⚠️ Bitmaps (not plan.)
+- [ ] ⚠️ Bitfields (not plan.)
+- [ ] ⚠️ Probabilistic (not plan.)
+- [ ] ⚠️ Time series (not plan.)
 
 ## features
 
