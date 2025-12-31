@@ -74,7 +74,7 @@ onBeforeUnmount(() => {
   <div :style="{ '--n-border-color': vars.borderColor }"
     class="b-b b-b-dashed b-b-[var(--n-border-color)] px-4 py-2 flex justify-between items-center">
     <div class="flex flex-col gap-1 mr-10">
-      <n-text strong>
+      <n-text strong class="word-break-all">
         <i class="i-material-symbols:key-outline rotate--45"></i>
         {{ trans(route.params.key as string) }}</n-text>
       <div class="flex gap-2">
