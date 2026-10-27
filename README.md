@@ -1,4 +1,8 @@
-# BS Redis Desktop Client
+<h1 align='center'>It's time to archive.</h1>
+
+> This tutorial no longer needs to be updated because AI tools are available.
+  
+## BS Redis Desktop Client
 
 > ⚠️ This is just a project for learning Rust and Tauri, not a complete and mature Redis client management tool. Over time, this project will be gradually improved and more features will be added.
 
